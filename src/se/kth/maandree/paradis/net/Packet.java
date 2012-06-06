@@ -29,5 +29,7 @@ public class Packet
     //Also send to self
     //Urgent
     //Object to send
+    //Time to live
+    //Age of packet
 }
 
