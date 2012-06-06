@@ -30,6 +30,12 @@ elif [[ $1 = "main" ]]; then
 
 elif [[ $1 = "main-da" ]]; then
     javaSeven -da -cp bin$jars se.kth.maandree.paradis.Program
+    
+elif [[ $1 = "falsehome" ]]; then
+    __myhome=$HOME
+    HOME='/dev/shm'
+    javaSeven -ea -cp bin$jars se.kth.maandree.paradis.Program
+    HOME=$__myhome
 
 
 ## completion
@@ -39,7 +45,7 @@ elif [[ $1 = "--completion--" ]]; then
 	local cur prev words cword
 	_init_completion -n = || return
 	
-	COMPREPLY=( $( compgen -W 'main main-da' -- "$cur" ) )
+	COMPREPLY=( $( compgen -W 'main main-da falsehome' -- "$cur" ) )
     }
     
     complete -o default -F _run run
