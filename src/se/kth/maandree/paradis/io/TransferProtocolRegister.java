@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.kth.maandree.paradis;
+package se.kth.maandree.paradis.io;
 
 import java.util.*;
 import java.io.*;

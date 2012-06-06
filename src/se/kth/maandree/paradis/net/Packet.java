@@ -15,44 +15,16 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.kth.maandree.paradis.io;
-
-import java.io.*;
+package se.kth.maandree.paradis.net;
 
 
 /**
- * Protocol for transfering {@code byte[]}s
+ * Network information packet class
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-class ByteArrayTransferProtocol implements TransferProtocol<byte[]>
+public class Packet
 {
-    //Has default constructor
-    
-    
-    
-    /**
-     * {@inheritDoc}
-     */
-    public byte[] read(final TransferInputStream stream) throws IOException
-    {
-	final int len = stream.readLen();
-	final byte[] rc = new byte[len];
-	for (int i = 0; i < len; i++)
-	    rc[i] = stream.readByte();
-	return rc;
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void write(final byte[] data, final TransferOutputStream stream) throws IOException
-    {
-	stream.writeLen(data.length);
-	for (int i = 0, n = data.length; i < n; i++)
-	    stream.writeByte(data[i]);
-    }
-    
+
 }
 
