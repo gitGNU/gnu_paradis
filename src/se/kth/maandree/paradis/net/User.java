@@ -25,6 +25,13 @@ package se.kth.maandree.paradis.net;
  */
 public class User
 {
-    
+    // UUID
+    // Name
+    // Local IP
+    // Public IP
+    // Used network port
+    // DNS names
+    // Connected to UUID
+    // Friends : {User + Last information update time}[]
 }
 

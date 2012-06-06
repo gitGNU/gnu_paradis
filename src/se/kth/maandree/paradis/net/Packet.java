@@ -25,6 +25,9 @@ package se.kth.maandree.paradis.net;
  */
 public class Packet
 {
-
+    //Packet UUID
+    //Also send to self
+    //Urgent
+    //Object to send
 }
 

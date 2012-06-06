@@ -25,6 +25,8 @@ package se.kth.maandree.paradis.net;
  */
 public class Multicast implements Cast
 {
-    
+    //From UUID
+    //To UUID[]
+    //Already received UUID[]
 }
 

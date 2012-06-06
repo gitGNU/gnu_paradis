@@ -25,6 +25,6 @@ package se.kth.maandree.paradis.net;
  */
 public class Anycast implements Cast
 {
-    
+    //From UUID
 }
 

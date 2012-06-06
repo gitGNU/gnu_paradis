@@ -25,6 +25,7 @@ package se.kth.maandree.paradis.net;
  */
 public class Unicast implements Cast
 {
-    
+    //From UUID
+    //To UUID
 }
 

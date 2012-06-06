@@ -25,6 +25,7 @@ package se.kth.maandree.paradis.net;
  */
 public class Broadcast implements Cast
 {
-    
+    //From UUID
+    //Already received UUID[]
 }
 
