@@ -1,0 +1,436 @@
+###  Coding style for Java and C  ###
+=====================================
+
+
+Indention and curly brackets
+----------------------------
+
+Indention is 4 characters; if possible you must uses blank
+spaces and not tabs spaces. This is default in GNU Emacs.
+
+Curly brackets are only used syntax requires it, when the all
+other alternatives in an if-statement with many alternatives
+have it, and as stand alone blocks (without if, while or alike)
+is used for clarity, or when switch cases whould otherwise have
+variable name conflictions.
+
+One line if:s, while:s, do..while:s and for:s does not use curly
+brackets. This is also applied when the only instructions is a
+block (another if, while or alike).
+
+Curly brackets are put on seperate lines, but if it is for, and
+only for, a method, an if, a for (including enhanced for) or a
+while (excluding do..while), the open curly brackets are put, iff
+it improves readability, on the same line has the first statement;
+we will call this compressed bracket use. The interior of the
+block must be at most four instructions with no blank lines. main
+and constructors does not qualify as methods in this case.
+
+Multiplie if:s or, but not and, multiple else if:s you that have
+to must two instructions, the if:s and else if:s should be put on
+one compressed line each, with two spaces between, heads curly
+brackets and instructions, in a tabular view. This include the
+else part iff there is only one if.
+
+This is how compressed bracket use look:
+
+        public void doWait()
+	{   synchronized (this.monitor)
+	    {    this.monitor.wait();
+	}   }
+
+Notice, which was not mentioned, that the closing brackets, in
+compressed bracket use, are put on the same line if possible.
+
+
+
+The do..while:s
+---------------
+
+The while in a do..while is put on a separate line with two
+extra spaces in the indention.
+
+        do			do  ....
+        {			  while
+            ....
+        }
+          while (...);
+
+
+
+else if:s
+---------
+
+else if are normally handled as one keyword with exactly one
+space between else and if, but if it feels logical the if is
+handled as the interior of the else, and put on the next line
+with one more indention.
+
+
+
+switch:es
+---------
+
+The case:s in swiches are indented, and their interior is
+further indented. The default is put in the end and just
+another case. Fall throughs must be commented with
+
+        //FALL THROUGH
+
+A blank line, or the end if the switch, must be put after
+the break in the end of a case.
+
+
+
+forever:s
+---------
+
+forever is repsented by for(;;), not by while (true).
+
+
+
+final:s
+-------
+
+All unexchangeable variables must be final, this includes
+all method and constructor parameters.
+
+
+
+Element order
+-------------
+
+The following are the order body elements, they are
+separated by three lines. Only one non-enclosed class,
+enum, interface or annotation may be put in one file.
+
+∙ Enum vales
+
+        Each end with a comma, and subclassing is not encuraged.
+	If the enum has more then just values, a semicolon is
+	used instead of the lasts values enum, in the same place.
+
+∙ Constants, in accessibility order (static final)
+
+    	Constants have one blank line between them, and can
+	be groups; groups have two blank lined between them.
+	Value setting help variables are put in beginning of
+	the groups.
+
+∙ Type initialisers
+
+        The documentation for these must have
+    
+		Type initialiser
+    
+	as the first paragraph.
+    	You may have multiple type initialisers.
+
+∙ Constructors
+
+	The documentation for these must have
+    
+		Constructor
+    
+	as the first paragraph.
+    
+	If you rather keep the default constructor you must
+	have the comment
+
+    	        //Has default constructor
+
+	in the contructors place.
+    
+	If class uses a private default constructor instead
+	of the public default constructor, the constructor
+    
+		/**
+        	 * Constructor
+        	 */
+		private ClassName()
+        	{
+        	    //Privatise default contructor
+       		}
+
+	is added. If the class does not have instances
+	the constructor
+    	
+		/**
+		 * Non-constructor
+		 */
+		private ClassName()
+		{
+		    assert false : "You may not create instances of this class [ClassName].";
+		}
+	
+	is added.
+    
+∙ Singleton/multiton implemenetation: constructor, getInstance, instance/instance map.
+
+∙ Initialisers
+
+	The documentation for these must have
+    
+		Initialiser
+    
+	as the first paragraph.
+	You may have multiple initialisers.
+
+∙ Main method
+     
+        public static void main(final String... args)
+
+∙ Other static variables
+
+∙ Non-static variables
+
+        Only final variables may be public.
+
+∙ Static methods
+
+∙ Non-static methods
+
+∙ Inner classes, enums, interfaces
+
+        Annotations should be in sperate files.
+
+∙ Getters and settes
+
+∙ Static methods
+
+∙ Non-static methods
+
+∙ Main method for tests
+     
+        public static void main(final String... args)
+
+∙ Everthing above with the same layout, but is used only for tests.
+
+
+
+final:s and try:s
+-----------------
+
+This mostly conserns final variables that are assinged in try-blocks,
+but can be used anywhere.
+
+Lets say you have a final variable namned 'marble', and you want to
+assign it in a try-block, and assign null, or something else, to it
+if you try fails. You will need another, help, variable, that is not
+final, in this case we name that variable '_marble', i.e. as the
+final variable, but with an prepending underscore.
+
+For example if we want to know which files in the stdout file, we
+use the code blocked below:
+    	
+    	final String stdout;
+	String _stdout;
+	try
+	{
+	    _stdout = (new File("/dev/stdout")).getCanonicalPath();
+	}
+	catch (final IOException err)
+	{
+	    _stdout = null;
+	}
+	stdout = _stdout;
+
+
+
+new:s, cast:s and in-line assignments
+-------------------------------------
+
+As seen in the previous section, anonymous objects are encapsulated
+in round brackets. With anonymous objects we mean objects that
+are created but not stored in a variable.
+
+This encapsulation is used for clarity for the exact same reason,
+but more importantly, casts are also encapsulated in round brackets,
+if an element is used without storing the cast.
+
+The two code patterns described above is still used if the object
+or cast is assigned inline, inside round brackets.
+For example if use the code in the previous section, but also
+wants to store the File object for "/dev/stdout", we use this code:
+    	
+    	final String stdout;
+	String _stdout;
+	File file = null;
+	try
+	{
+	    _stdout = (file = new File("/dev/stdout")).getCanonicalPath();
+	}
+	catch (final IOException err)
+	{
+	    _stdout = null;
+	}
+	stdout = _stdout;
+
+
+
+Connectives
+-----------
+
+If the order of the operands is fatal, but it does not have to do
+with null or boundary check, or is not otherwise clearly visible
+in the same statement; the statements line, must end with:
+
+         //Order is important
+
+Precedence rank of connectives should be assumed unkown. That is,
+operands including operands, such as = or another connective
+[that is &, &&, |, || or ^], must be encapsulated in round brackets.
+
+The fact that ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') is
+parsed as ((('a' <= c) && (c <= 'z')) || (('A' <= c) && (c <= 'Z')))
+should be ignored, and the later (full use of brackets) should
+always be used.
+
+The NOT connective should be used with care, there are several
+alternatives (including the NOT connective), here is an guildline,
+the higher up, the more likely to be the syntax of choice:
+	
+	∙ ((a != b) || (c != d))
+	
+	∙ (((a == b) && (c == d)) == false)
+	
+	∙ (false == ((a == b) && (c == d)))
+	
+	∙ (((a == b) && (c == d)) ^ true)
+	
+	∙ (true ^ ((a == b) && (c == d)))
+
+	∙ !((a == b) && (c == d))
+	
+	∙ (((a == b) && (c == d)) != true)
+	
+	∙ (true != ((a == b) && (c == d)))
+
+
+
+Events and errors
+-----------------
+
+Event parameters, such is the listener for GUI:s, should be named 'e'
+iff it is the only parameter.
+
+Exception parameters (in catch:es) should be named 'err', if it is
+in used by an outer catch, 'ierr' should be used instead, in 'jerr'
+if 'ierr' is also used.
+
+These four names are only allowed in this cases.
+
+
+
+Compact switch:es
+-----------------
+
+switch:es containing six or more simple cases (one alternatice), no
+multichoice cases and optionally a default, may be compact. It should
+be compact iff each case has one somewhat short instruction followed
+by break or return, or neither. But that ending must be the same for
+all. It is however possible to have groups of six, where the groups
+can have different endings relative to eachother. If the cases in a
+group does not have break or return, the group can end with break or
+return, this is ended on a line directly after the cases.
+Each case is written on one line, and the cases does not have, blank
+lines between them.
+default is written as normally.
+
+
+
+import:s and package:s
+----------------------
+
+Order:
+
+        ∙ [Copyright notice]
+	∙ package
+	∙ import from program packages
+	∙ (one blank line)
+	∙ import static from program packages
+	∙ (one blank line)
+	∙ import from library packages
+	∙ (one blank line)
+	∙ import from Java native packages
+	∙ (one blank line)
+	∙ import static from library packages
+	∙ (one blank line)
+	∙ import static from Java native packages
+	∙ (two blank line)
+	∙ [class documentation]
+
+Wildcard imports should be used when possible, but is optional
+if up to two classes is import from one Java native package or
+library package. But for static imports wildcard should only
+be used if there are many static imports.
+
+Library packages are group by library with one blank line between
+them. javax packages are imported before java packages, but without
+seperative blank lines.
+
+If a class is imported explicitly due to ambiguity it should end
+with the comment:
+
+        //Explicity
+
+
+
+Documentation
+-------------
+
+{@inheritDoc} should be used if you have nothing good to say,
+and the method is inherited from an interface or a superclass.
+
+{@link} is used when referring to classes, method or variables,
+keep in mind that $ referes to a subclass and # referes to a
+variable or method dot (.) is not used in these cases.
+
+Use HTML 5 (or XHTML), instead of the SGML based HTML 4.
+
+Literals are refered to by <code>literal</code>.
+
+<tt>X</code> referes to the parameter X.
+
+Use @throws, and not @exception, for exceptions.
+
+@param and @throws should be followed by atleast two spaces,
+followed by the parameters name or the exceptions classname,
+followed by atleast two spaces.
+@return, @version, @since and @author is followe to at least
+two spaces.
+These should be written in a tabular manner, and @param and
+@return is grouped together, @since and @version are groups.
+@author and @throws are only grouped with themself. (@author
+is not grouped with @throws.) One blank line is used between
+groups.
+These items are written in the following order:
+
+        ∙ @param
+        ∙ @return
+
+        ∙ @throws
+
+        ∙ @author
+
+        ∙ @since
+        ∙ @version
+
+All named classes, enums, interfaces and annotations should
+contain @author so everyone knows who to ask for help.
+
+@author has the syntax:
+
+        @author  SPOKEN_NAME [MIDDLE_NAME] LAST_NAME, <a href="mailto:E_MAIL_ADDRESS">E_MAIL_ADDRESS</a>
+
+Note that countries have differing name laws. SPOKEN_NAME
+refers the single name you are normally called, that is given.
+MIDDLE_NAME does NOT in for example Richard M. Stallman
+refer to Matthew, he has, by this convention, no middle name.
+A middle name is a name inherited from one of your parents
+(or ancestor) will LAST_NAME is the other one, the primary one.
+The M. in Richard M. Stallman is a first name, but also second
+name, and is not printed in our convention for @author,
+the a-tag for the e-mail address makes it long enough;
+MIDDLE_NAME is optional, us it only if you are regulary called
+by that name.
