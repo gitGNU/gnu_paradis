@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package se.kth.maandree.paradis;
 
 
@@ -25,6 +25,33 @@ package se.kth.maandree.paradis;
  */
 public class Program
 {
+    /**
+     * The name of the package, this should never be modified
+     */
+    public static final String PACKAGE = "paradis";
+    
+    /**
+     * The fork path of the package
+     */
+    public static final String FORK = "maandree";
+    
+    /**
+     * The version of the package
+     */
+    public static final String VERSION = "0.0.1.0";
+    
+    
+    
+    /**
+     * Non-constructor
+     */
+    private Program()
+    {
+	assert false : "You may not create instances of this class [Program].";
+    }
+    
+    
+    
     /**
      * This is the main entry point of the program
      * 

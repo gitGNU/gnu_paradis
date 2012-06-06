@@ -1,0 +1,18 @@
+The package is identified by three parameters:
+
+    name          This must always be ‘paradis’, otherwise other clients will reject it
+
+    fork path     If you write your implementation from scratch you should put your e-mail
+    	          here, otherwise you should append your e-mail address with a prepended
+		  slash (/) to the value in the fork you forked.
+		  If you have a github account, where your fork is hosted, the github account
+		  name can be used instead of your e-mail (the shorter the path is, the better.)
+		  This is important because all version of all implementions should be
+		  uniquely identifyable.
+
+    version	  This insisted for four (decimal) numerical parts, separated by dots (a.b.c.d):
+    		  
+		  part a:    Big changes, such as implementation redesign
+		  part b:    Normal changes, such as new features
+		  part c:    Small changes, such as bug fixed
+		  part d:    Miniscule changes, such as translations
