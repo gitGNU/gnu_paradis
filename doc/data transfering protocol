@@ -1,0 +1,30 @@
+In order to the program easy to port and make sure serialisation
+protocol change does not break version compatbility we use our
+own protocol for converting data to octet streams.
+
+
+Primitive types:
+
+    boolean  One bit data
+    byte     One byte data
+    short    Two byte data
+    char     Character up to 16-bit
+    wchar    Character up to 31-bit
+    int      Four byte data
+    long     Eight byte data
+    
+    
+    A boolean is transfered in one byte, either of value 1 or 0.
+    1 is for true, and 0 is for false. You should exception
+    non-zero for true.
+    
+    A byte consists of 8 bits (one byte), and is encoding normally.
+    
+    A short consists of two bytes, the first is the most significant.
+    
+    An int consists of four bytes, the first is the most significant, the later the less significant.
+    
+    An long consists of four bytes, the first is the most significant, the later the less significant.
+    
+    char and wchar is encoding in UTF-8.
+
