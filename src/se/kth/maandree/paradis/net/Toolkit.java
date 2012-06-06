@@ -120,7 +120,43 @@ public class Toolkit
     
     
     /**
-     * Tests whether a host is reachable
+     * Checks the alive status for the client, with test timeout at 4 seconds
+     * 
+     * @return  Statuses: 0. totally dead. 1. can reach to router, 2 can reach primary or
+     *          secondary standard DNS server, 3 can get public IP address and can reach
+     *          it, and satisfies level 2 as well.  Level 0 is returned if the client
+     *          cannot get its local IP address or cannot reachit.
+     */
+    public static byte getAliveStatus()
+    {
+	try
+	{   if (isReachable(getLocalIP()) == false)
+		return 0;
+	}
+	catch (final Throwable err)
+	{   return 0;
+	}
+	
+	final boolean level1 = isReachable("192.168.0.1") || isReachable("192.168.1.1");	
+	final boolean level2 = isReachable("83.255.245.11") || isReachable("193.150.193.150");
+	boolean level3 = level2;
+	if (level3)
+	    try
+	    {   level3 = isReachable(getPublicIP());
+	    }
+	    catch (final Throwable err)
+	    {   level3 = false;
+	    }
+	
+	if (level3)  return 3;
+	if (level2)  return 2;
+	if (level1)  return 1;
+	return 0;
+    }
+    
+    
+    /**
+     * Tests whether a host is reachable, with test timeout at 4 seconds
      * 
      * @param   host  The remote host's address, IP or DNS
      * @return        Whether the host is reachable
@@ -128,7 +164,7 @@ public class Toolkit
     public static boolean isReachable(final String host)
     {
 	try
-	{   return InetAddress.getByName(host).isReachable(5_000);
+	{   return InetAddress.getByName(host).isReachable(4_000);
 	}
 	catch (final Exception err)
         {   return false;
