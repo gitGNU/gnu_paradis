@@ -26,5 +26,30 @@ Primitive types:
     
     An long consists of four bytes, the first is the most significant, the later the less significant.
     
+    The most significant bit determines sign, turned on for negative, and turned off for non-negative
+    (positive or zero).  ~x = -x - 1
+    
     char and wchar is encoding in UTF-8.
+
+
+
+Primitive type arrays:
+
+    First the length of the array is transfered in 4 bytes as a bitwise inverted int,
+    but if the integer is less 2¹⁵ it is transfered regularly as a 2 byte short.
+    
+    For byte[], short[], int[] and long[] each element is transfered in order
+    with the same protocol as the elements have if they were not in an arrays.
+    char[] is transfered as short[].
+    boolean[] is compressed into bytes (|bytes| = ⌈|booleans| / 8⌉) with false
+    dummy boolean where. The booleans are transfered in ordered, where
+    false is represented by a 0 bit, and true is represented by a 1 bit;
+    in a group of 8, the first boolean occupies the most signiciant bit.
+
+
+String:
+
+    A string is transfered in UTF-8 (not UTF-16 or modified UTF-8)
+    with a prepending length of the number of bytes in the UTF-8 encoding.
+    The lengtyh is transfered as in arrays.
 
