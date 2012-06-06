@@ -53,3 +53,8 @@ String:
     with a prepending length of the number of bytes in the UTF-8 encoding.
     The lengtyh is transfered as in arrays.
 
+
+Object arrays:
+    
+    Transfered just like primitive arrays.
+
