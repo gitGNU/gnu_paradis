@@ -16,3 +16,7 @@ The package is identified by three parameters:
 		  part b:    Normal changes, such as new features
 		  part c:    Small changes, such as bug fixed
 		  part d:    Miniscule changes, such as translations
+
+The package should also have a reference to where you can get more information,
+but if it is missing, the string should be an empty string.
+

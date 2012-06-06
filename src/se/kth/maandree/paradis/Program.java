@@ -40,6 +40,11 @@ public class Program
      */
     public static final String VERSION = "0.0.1.0";
     
+    /**
+     * Reference to where you can get more information about this package
+     */
+    public static final String WEBSITE = "www.github.com/maandree/paradis";
+    
     
     
     /**
