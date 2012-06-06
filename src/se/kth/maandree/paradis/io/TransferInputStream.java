@@ -141,6 +141,24 @@ public class TransferInputStream extends FilterInputStream
     }
     
     /**
+     * Reads a 31-bit {@code int} that may have been compressed to 15-bits from the stream
+     * 
+     * @return  The read data
+     * 
+     * @throws  IOException  Inherited from {@link #read()}
+     */
+    public synchronized int readLen() throws IOException
+    {
+	short hi = readShort();
+	if (hi >= 0)
+	    return (int)hi;
+	
+	short lo = readShort();
+	
+	return ~(((int)hi << 16) | ((int)lo & 0xFFFF));
+    }
+    
+    /**
      * Reads a {@code long} from the stream
      * 
      * @return  The read data

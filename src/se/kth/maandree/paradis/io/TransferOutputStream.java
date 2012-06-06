@@ -148,6 +148,21 @@ public class TransferOutputStream extends FilterOutputStream
     }
     
     /**
+     * Writes a 31-bit {@code int} compressable to 15-bits to the stream
+     * 
+     * @param  data  The data to write
+     * 
+     * @throws  IOException  Inherited from {@link #write(int)}
+     */
+    public synchronized void writeLen(final int data) throws IOException
+    {
+	if ((data & 0x7FFF) != 0)
+	    writeShort((short)data);
+	else
+	    writeInt(~data);
+    }
+    
+    /**
      * Writes a {@code long} to the stream
      * 
      * @param  data  The data to write

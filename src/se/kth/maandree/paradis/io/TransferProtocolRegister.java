@@ -55,7 +55,13 @@ public class TransferProtocolRegister
      */
     static
     {
-	protocols.put(String.class, new StringTransferProtocol());
+	protocols.put(   String.class, new       StringTransferProtocol());
+	protocols.put(boolean[].class, new BooleanArrayTransferProtocol());
+	protocols.put(   byte[].class, new    ByteArrayTransferProtocol());
+	protocols.put(    int[].class, new     IntArrayTransferProtocol());
+	protocols.put(  short[].class, new   ShortArrayTransferProtocol());
+	protocols.put(   long[].class, new    LongArrayTransferProtocol());
+	protocols.put(   char[].class, new    CharArrayTransferProtocol());
     }
     
     
