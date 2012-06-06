@@ -79,8 +79,8 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeShort(final short data) throws IOException
     {
-	this.write((int)((data >>> 8) & 255));
-	this.write((int)(data & 255));
+	this.write((data >>> 8) & 255);
+	this.write(data & 255);
     }
     
     /**
@@ -105,7 +105,7 @@ public class TransferOutputStream extends FilterOutputStream
     public synchronized void writeWChar(final int data) throws IOException
     {
 	if (data < 0x80)
-            this.write(b);
+            this.write(data);
         else
 	{
 	    int m = 0x100;
@@ -141,10 +141,10 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeInt(final int data) throws IOException
     {
-	this.write((int)((data >>> 24) & 255));
-	this.write((int)((data >>> 16) & 255));
-	this.write((int)((data >>> 8) & 255));
-	this.write((int)(data & 255));
+	this.write((data >>> 24) & 255);
+	this.write((data >>> 16) & 255);
+	this.write((data >>> 8) & 255);
+	this.write(data & 255);
     }
     
     /**

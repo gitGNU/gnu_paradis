@@ -84,7 +84,7 @@ public class TransferInputStream extends FilterInputStream
      */
     public synchronized char readChar() throws IOException
     {
-	return (int)(readWChar());
+	return (char)(readWChar());
     }
     
     /**
