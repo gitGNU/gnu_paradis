@@ -200,6 +200,7 @@ public class TransferOutputStream extends FilterOutputStream
     {
 	if (data instanceof Object[])
 	{
+	    int len;
 	    final Object[] array = (Object[])data;
 	    writeLen(len = array.length);
 	    for (int i = 0; i < len; i++)

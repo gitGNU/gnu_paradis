@@ -191,9 +191,9 @@ public class TransferInputStream extends FilterInputStream
      * @param   type  The data type
      * @return        The read data
      * 
-     * @throws  IOException  Inherited from {@link #read()}
+     * @throws  IOException             Inherited from {@link #read()}
      */
-    public synchronized <T> T readObject(final Class<?> type) throws IOException
+    public synchronized <T> T readObject(final Class<T> type) throws IOException
     {
 	if (Object[].class.isAssignableFrom(type))
 	{
@@ -201,10 +201,16 @@ public class TransferInputStream extends FilterInputStream
 	    if (elementTypeString.startsWith("[") == false)
 		elementTypeString.substring(1);
 	    
-	    Class<?> elementType = Class.forName(elementTypeString);
+	    Class<?> elementType;
+	    try
+	    {   elementType = Class.forName(elementTypeString);
+	    }
+	    catch (final ClassNotFoundException err)
+	    {   throw new Error(err); // This cannot happen
+	    }
 	    
 	    int len;
-	    Object[] array = Object[len = readLen()];
+	    Object[] array = new Object[len = readLen()];
 	    for (int i = 0; i < len; i++)
 		array[i] = readObject(elementType);
 	}

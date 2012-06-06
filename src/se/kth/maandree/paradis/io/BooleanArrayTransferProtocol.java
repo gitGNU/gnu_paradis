@@ -53,7 +53,7 @@ class BooleanArrayTransferProtocol implements TransferProtocol<boolean[]>
 	    rc[(i << 3) | 7] = (d &   1) != 0;
 	}
 	
-	int n = len & 7;
+	n = len & 7;
 	if (n != 0)
 	{
 	    int off = (len >>> 3) + 1;
