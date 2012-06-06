@@ -36,7 +36,7 @@ class StringTransferProtocol implements TransferProtocol<String>
      */
     public String read(final TransferInputStream stream) throws IOException
     {
-	final int len = stream.readInt();
+	final int len = stream.readLen();
 	final char[] chars = new char[len << 1];
 	int ptr = 0;
 	
@@ -76,7 +76,7 @@ class StringTransferProtocol implements TransferProtocol<String>
 	    else
 		chars[ptr++] = (int)c;
 	
-	stream.writeInt(ptr);
+	stream.writeLen(ptr);
 	for (int i = 0; i < ptr; i++)
 	    stream.writeWChar(chars[i]);
     }
