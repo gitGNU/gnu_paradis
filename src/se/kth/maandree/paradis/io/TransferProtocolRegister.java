@@ -55,7 +55,7 @@ public class TransferProtocolRegister
      */
     static
     {
-	//Register standard protocols
+	protocols.put(String.class, new StringTransferProtocol());
     }
     
     
