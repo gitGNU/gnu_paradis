@@ -36,7 +36,7 @@ This is how compressed bracket use look:
 
         public void doWait()
 	{   synchronized (this.monitor)
-	    {    this.monitor.wait();
+	    {   this.monitor.wait();
 	}   }
 
 Notice, which was not mentioned, that the closing brackets, in
