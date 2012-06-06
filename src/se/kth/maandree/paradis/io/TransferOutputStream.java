@@ -58,6 +58,7 @@ public class TransferOutputStream extends FilterOutputStream
 	this.write(data ? 1 : 0);
     }
     
+    
     /**
      * Writes a {@code byte} to the stream
      * 
@@ -69,6 +70,7 @@ public class TransferOutputStream extends FilterOutputStream
     {
 	this.write((int)data & 255);
     }
+    
     
     /**
      * Writes a {@code short} to the stream
@@ -83,6 +85,7 @@ public class TransferOutputStream extends FilterOutputStream
 	this.write(data & 255);
     }
     
+    
     /**
      * Writes a {@code char} to the stream
      * 
@@ -94,6 +97,7 @@ public class TransferOutputStream extends FilterOutputStream
     {
 	writeWChar((int)data);
     }
+    
     
     /**
      * Writes an {@code int} as a character to the stream
@@ -132,6 +136,7 @@ public class TransferOutputStream extends FilterOutputStream
 	}
     }
     
+    
     /**
      * Writes an {@code int} to the stream
      * 
@@ -147,6 +152,7 @@ public class TransferOutputStream extends FilterOutputStream
 	this.write(data & 255);
     }
     
+    
     /**
      * Writes a 31-bit {@code int} compressable to 15-bits to the stream
      * 
@@ -161,6 +167,7 @@ public class TransferOutputStream extends FilterOutputStream
 	else
 	    writeInt(~data);
     }
+    
     
     /**
      * Writes a {@code long} to the stream
@@ -179,6 +186,27 @@ public class TransferOutputStream extends FilterOutputStream
 	this.write((int)((data >>> 16) & 255));
 	this.write((int)((data >>> 8) & 255));
 	this.write((int)(data & 255));
+    }
+    
+    
+    /**
+     * Writes an object to the stream
+     * 
+     * @param  data  The data to write
+     * 
+     * @throws  IOException  Inherited from {@link #write(int)}
+     */
+    public synchronized void writeObject(final Object data) throws IOException
+    {
+	if (data instanceof Object[])
+	{
+	    final Object[] array = (Object[])data;
+	    writeLen(len = array.length);
+	    for (int i = 0; i < len; i++)
+		writeObject(array[i]);
+	}
+	else
+	    TransferProtocolRegister.write(data, this);
     }
     
 }

@@ -48,6 +48,11 @@ public class TransferProtocolRegister
      */
     private static final HashMap<Class<?>, TransferProtocol<?>> protocols = new HashMap<>();
     
+    /**
+     * String to class map
+     */
+    private static final HashMap<String, Class<?>> classes = new HashMap<>();
+    
     
     
     /**
@@ -55,13 +60,13 @@ public class TransferProtocolRegister
      */
     static
     {
-	protocols.put(   String.class, new       StringTransferProtocol());
-	protocols.put(boolean[].class, new BooleanArrayTransferProtocol());
-	protocols.put(   byte[].class, new    ByteArrayTransferProtocol());
-	protocols.put(    int[].class, new     IntArrayTransferProtocol());
-	protocols.put(  short[].class, new   ShortArrayTransferProtocol());
-	protocols.put(   long[].class, new    LongArrayTransferProtocol());
-	protocols.put(   char[].class, new    CharArrayTransferProtocol());
+	register(   String.class, new       StringTransferProtocol());
+	register(boolean[].class, new BooleanArrayTransferProtocol());
+	register(   byte[].class, new    ByteArrayTransferProtocol());
+	register(    int[].class, new     IntArrayTransferProtocol());
+	register(  short[].class, new   ShortArrayTransferProtocol());
+	register(   long[].class, new    LongArrayTransferProtocol());
+	register(   char[].class, new    CharArrayTransferProtocol());
     }
     
     
@@ -81,6 +86,7 @@ public class TransferProtocolRegister
     /**
      * Reads one instance of the data type from a stream
      * 
+     * @param   type    The data type
      * @param   stream  The data input stream
      * @return          The next instance of the data type
      * 

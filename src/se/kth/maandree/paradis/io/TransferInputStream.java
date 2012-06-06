@@ -51,6 +51,7 @@ public class TransferInputStream extends FilterInputStream
 	return this.read() != 0;
     }
     
+    
     /**
      * Reads a {@code byte} from the stream
      * 
@@ -62,6 +63,7 @@ public class TransferInputStream extends FilterInputStream
     {
 	return (byte)(this.read());
     }
+    
     
     /**
      * Reads a {@code short} from the stream
@@ -75,6 +77,7 @@ public class TransferInputStream extends FilterInputStream
 	return (short)((this.read() << 8) | this.read());
     }
     
+    
     /**
      * Reads a {@code char} from the stream
      * 
@@ -86,6 +89,7 @@ public class TransferInputStream extends FilterInputStream
     {
 	return (char)(readWChar());
     }
+    
     
     /**
      * Reads an {@code int} as a character from the stream
@@ -125,6 +129,7 @@ public class TransferInputStream extends FilterInputStream
 	return buf;
     }
     
+    
     /**
      * Reads an {@code int} from the stream
      * 
@@ -139,6 +144,7 @@ public class TransferInputStream extends FilterInputStream
 	       (this.read() << 8) |
 	       this.read();
     }
+    
     
     /**
      * Reads a 31-bit {@code int} that may have been compressed to 15-bits from the stream
@@ -158,6 +164,7 @@ public class TransferInputStream extends FilterInputStream
 	return ~(((int)hi << 16) | ((int)lo & 0xFFFF));
     }
     
+    
     /**
      * Reads a {@code long} from the stream
      * 
@@ -175,6 +182,34 @@ public class TransferInputStream extends FilterInputStream
 	       ((long)(this.read()) << 16L) |
 	       ((long)(this.read()) << 8L) |
 	       (long)(this.read());
+    }
+    
+    
+    /**
+     * Reads an object from the stream
+     * 
+     * @param   type  The data type
+     * @return        The read data
+     * 
+     * @throws  IOException  Inherited from {@link #read()}
+     */
+    public synchronized <T> T readObject(final Class<?> type) throws IOException
+    {
+	if (Object[].class.isAssignableFrom(type))
+	{
+	    String elementTypeString = type.getName().substring(1);
+	    if (elementTypeString.startsWith("[") == false)
+		elementTypeString.substring(1);
+	    
+	    Class<?> elementType = Class.forName(elementTypeString);
+	    
+	    int len;
+	    Object[] array = Object[len = readLen()];
+	    for (int i = 0; i < len; i++)
+		array[i] = readObject(elementType);
+	}
+	
+	return TransferProtocolRegister.read(type, this);
     }
     
 }
