@@ -82,7 +82,7 @@ public class Toolkit
      * @throws  IOException  If it was not possible to get the IP address
      * 
      * @author  Calle Lejdbrandt, <a href="mailto:callel@kth.se">callel@kth.se</a>, as a port of <a href="www.gitub.com/maandree/cnt">CNT</a>.
-     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>, just changed failure precedure
+     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>, changed failure precedure
      */
     public static String getLocalIP() throws IOException
     {
@@ -95,7 +95,7 @@ public class Toolkit
 	    for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) //Get all interfaces
 	    {
 		NetworkInterface iface = en.nextElement();
-		if (!iface.isUp()) // If the interface is not up, then we don't want to use it.
+		if (iface.isUp() == false) // If the interface is not up, then we don't want to use it.
 		    continue;
 		
 		for (InterfaceAddress eth : iface.getInterfaceAddresses()) // Get ALL addresses listed on the interface
@@ -112,10 +112,10 @@ public class Toolkit
 	    }
 	}
 	catch (final Throwable err)
-	{   throws new IOException(err);
+	{   throw new IOException(err);
 	}
 	
-	throws new IOException();
+	throw new IOException();
     }
     
     
