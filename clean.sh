@@ -1,3 +1,5 @@
+#!/bin/sh
+
 rm -r bin  2>  /dev/null
 
 rm $(find . | grep '~$')       2>  /dev/null

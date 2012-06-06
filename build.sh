@@ -1,3 +1,5 @@
+#!/bin/sh
+
 ## completion
 . run.sh --completion--
 

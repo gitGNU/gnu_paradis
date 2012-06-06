@@ -1,3 +1,5 @@
+#!/bin/sh
+
 ## java executer if default is for Java 7
 [[ $(echo `java -version 2>&1 | cut -d . -f 2` | cut -d ' ' -f 1) = '7' ]] &&
     function javaSeven()
