@@ -60,7 +60,7 @@ public class Program
     /**
      * This is the main entry point of the program
      * 
-     * @param  args  Startip arguments, unused
+     * @param  args  Startup arguments, unused
      */
     public static void main(final String... args)
     {
