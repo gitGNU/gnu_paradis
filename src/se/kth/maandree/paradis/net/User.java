@@ -16,6 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.io.*;
+
+import java.io.IOException;
 
 
 /**
@@ -23,8 +26,50 @@ package se.kth.maandree.paradis.net;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class User
+public class User implements Comparable<User>
 {
+    /**
+     * Constructor
+     * 
+     * @param  uuid              {@link #uuid}
+     * @param  name              {@link #name}
+     * @param  localIP           {@link #localIP}
+     * @param  publicIP          {@link #publicIP}
+     * @param  port              {@link #port}
+     * @param  dnsNames          {@link #dnsNames}
+     * @param  connectedTo       {@link #connectedTo}
+     * @param  signature         {@link #signature}
+     * @param  friendUUIDs       {@link #friendUUIDs}
+     * @param  friendUpdates     {@link #friendUpdates}
+     * @param  friendLocalIPs    {@link #friendLocalIPs}
+     * @param  friendPublicIPs   {@link #friendPublicIPs}
+     * @param  friendPorts       {@link #friendPorts}
+     * @param  friendDNSNames    {@link #friendDNSNames}
+     * @param  friendSignatures  {@link #friendSignatures}
+     */
+    public User(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[] dnsNames, final UUID connectedTo,
+		final byte[] signature, final UUID[] friendUUIDs, final long[] friendUpdates, final String[] friendLocalIPs, final String[] friendPublicIPs,
+		final int[] friendPorts, final String[][] friendDNSNames, final byte[][] friendSignatures)
+    {
+	this.uuid             = uuid;
+	this.name             = name;
+	this.localIP          = localIP;
+	this.publicIP         = publicIP;
+	this.port             = port;
+	this.dnsNames         = dnsNames;
+	this.connectedTo      = connectedTo;
+	this.signature        = signature;
+	this.friendUUIDs      = friendUUIDs;
+	this.friendUpdates    = friendUpdates;
+	this.friendLocalIPs   = friendLocalIPs;
+	this.friendPublicIPs  = friendPublicIPs;
+	this.friendPorts      = friendPorts;
+	this.friendDNSNames   = friendDNSNames;
+	this.friendSignatures = friendSignatures;
+    }
+    
+    
+    
     /**
      * Unique identifier of the user
      */
@@ -101,5 +146,105 @@ public class User
      */
     public byte[][] friendSignatures;
     
+    
+    
+    /**
+     * Protocol for transfering {@link User}s
+     * 
+     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+     */
+    public static class UserTransferProtocol implements TransferProtocol<User>
+    {
+	//Has default constructor
+	
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public User read(final TransferInputStream stream) throws IOException
+	{
+	    return new User(stream.readObject(UUID.class),
+			    stream.readObject(String.class),
+			    stream.readObject(String.class),
+			    stream.readObject(String.class),
+			    stream.readInt(),
+			    stream.readObject(String[].class),
+			    stream.readObject(UUID.class),
+			    stream.readObject(byte[].class),
+			    stream.readObject(UUID[].class),
+			    stream.readObject(long[].class),
+			    stream.readObject(String[].class),
+			    stream.readObject(String[].class),
+			    stream.readObject(int[].class),
+			    stream.readObject(String[][].class),
+			    stream.readObject(byte[][].class));
+	}
+    
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public void write(final User data, final TransferOutputStream stream) throws IOException
+	{
+	    stream.writeObject(data.uuid);
+	    stream.writeObject(data.name);
+	    stream.writeObject(data.localIP);
+	    stream.writeObject(data.publicIP);
+	    stream.writeInt(data.port);
+	    stream.writeObject(data.dnsNames);
+	    stream.writeObject(data.connectedTo);
+	    stream.writeObject(data.signature);
+	    stream.writeObject(data.friendUUIDs);
+	    stream.writeObject(data.friendUpdates);
+	    stream.writeObject(data.friendLocalIPs);
+	    stream.writeObject(data.friendPublicIPs);
+	    stream.writeObject(data.friendPorts);
+	    stream.writeObject(data.friendDNSNames);
+	    stream.writeObject(data.friendSignatures);
+	}
+    
+    }
+    
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(final Object other)
+    {
+	if ((other == null) || (other instanceof User == false))
+	    return false;
+	
+	if (other == this)
+	    return true;
+	
+	return this.uuid.equals(((User)other).uuid);
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode()
+    {   return this.uuid.hashCode();
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final User other)
+    {   return this.uuid.compareTo(other.uuid);
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString()
+    {   return (this.name + " (") + (this.uuid.toString() + ")");
+    }
+
 }
 
