@@ -21,28 +21,26 @@ import java.io.*;
 
 
 /**
- * Buffered object output stream with cross-platform transfer protocol
+ * Output stream used for calculating the size of an object
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class TransferOutputStream extends FilterOutputStream
+class LengthCalculatingStream extends TransferOutputStream
 {
     /**
      * Constructor
-     * 
-     * @param  next  The next stream in the chain
      */
-    public TransferOutputStream(final OutputStream next)
+    public LengthCalculatingStream()
     {
-	super(new BufferedOutputStream(next));
+	super(null);
     }
     
     
     
     /**
-     * Helper buffer for {@link #writeWChar(int)}
+     * The length of the write data
      */
-    private final int[] wcharbuf = new int[6];
+    public int length = 0;
     
     
     
@@ -54,8 +52,7 @@ public class TransferOutputStream extends FilterOutputStream
      * @throws  IOException  Inherited from {@link #write(int)}
      */
     public synchronized void writeBoolean(final boolean data) throws IOException
-    {
-	this.write(data ? 1 : 0);
+    {   this.length++;
     }
     
     
@@ -67,8 +64,7 @@ public class TransferOutputStream extends FilterOutputStream
      * @throws  IOException  Inherited from {@link #write(int)}
      */
     public synchronized void writeByte(final byte data) throws IOException
-    {
-	this.write((int)data & 255);
+    {   this.length++;
     }
     
     
@@ -80,9 +76,7 @@ public class TransferOutputStream extends FilterOutputStream
      * @throws  IOException  Inherited from {@link #write(int)}
      */
     public synchronized void writeShort(final short data) throws IOException
-    {
-	this.write((data >>> 8) & 255);
-	this.write(data & 255);
+    {   this.length += 2;
     }
     
     
@@ -94,8 +88,7 @@ public class TransferOutputStream extends FilterOutputStream
      * @throws  IOException  Inherited from {@link #write(int)}
      */
     public synchronized void writeChar(final char data) throws IOException
-    {
-	writeWChar((int)data);
+    {   writeWChar((int)data);
     }
     
     
@@ -109,30 +102,30 @@ public class TransferOutputStream extends FilterOutputStream
     public synchronized void writeWChar(final int data) throws IOException
     {
 	if (data < 0x80)
-            this.write(data);
+            this.length++;
         else
 	{
 	    int m = 0x100;
 	    int d = data;
 	    int ptr = 0;
+	    int buf = 0;
 	    for (;;)
 	    {
 		m |= m >> 1;
-		this.wcharbuf[ptr++] = d & 63;
+		buf = d & 63;
+		ptr++;
 		d >>>= 6;
 		if (d == 0)
 		{
 		    m >>= 1;
-		    if ((m & this.wcharbuf[ptr - 1]) == 0)
-			this.wcharbuf[ptr - 1] |= (m << 1) & 0xFF;
-		    else
-			this.wcharbuf[ptr++] = m;
+		    if ((m & buf) != 0)
+			ptr++;
 		    break;
 		}
 	    }
 	    
 	    while (ptr > 0)
-		this.write(this.wcharbuf[--ptr]);
+		this.length++;
 	}
     }
     
@@ -145,11 +138,7 @@ public class TransferOutputStream extends FilterOutputStream
      * @throws  IOException  Inherited from {@link #write(int)}
      */
     public synchronized void writeInt(final int data) throws IOException
-    {
-	this.write((data >>> 24) & 255);
-	this.write((data >>> 16) & 255);
-	this.write((data >>> 8) & 255);
-	this.write(data & 255);
+    {   this.length += 4;
     }
     
     
@@ -177,15 +166,7 @@ public class TransferOutputStream extends FilterOutputStream
      * @throws  IOException  Inherited from {@link #write(int)}
      */
     public synchronized void writeLong(final long data) throws IOException
-    {
-	this.write((int)((data >>> 56) & 255));
-	this.write((int)((data >>> 48) & 255));
-	this.write((int)((data >>> 40) & 255));
-	this.write((int)((data >>> 32) & 255));
-	this.write((int)((data >>> 24) & 255));
-	this.write((int)((data >>> 16) & 255));
-	this.write((int)((data >>> 8) & 255));
-	this.write((int)(data & 255));
+    {   this.length += 8;
     }
     
     
@@ -201,9 +182,9 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeLenOf(final Object data) throws IOException
     {
-	final LengthCalculatingStream lcs = new LengthCalculatingStream();
-	lcs.writeObject(data);
-	writeLen(lcs.length);
+	final int cur = this.length;
+	writeObject(data);
+	writeLen(this.length - cur);
     }
     
     
