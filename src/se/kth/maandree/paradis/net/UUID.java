@@ -149,5 +149,23 @@ public class UUID implements Comparable<UUID>
 	return this.high < other.high ? -1 : this.high > other.high ? 1 : 0;
     }
     
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString()
+    {
+	String rc0 = "0000000" + Long.toString(this.high >> 32L, 16);
+	String rc1 = "0000000" + Long.toString(this.high, 16);
+	String rc2 = "0000000" + Long.toString(this.low >> 32L, 16);
+	String rc3 = "0000000" + Long.toString(this.low, 16);
+	rc0 = rc0.substring(rc0.length() - 8);
+	rc1 = rc1.substring(rc1.length() - 8);
+	rc2 = rc2.substring(rc2.length() - 8);
+	rc3 = rc3.substring(rc3.length() - 8);
+	
+	return rc0 + "-" + rc1.substring(0, 4) + "-" + rc1.substring(4) + "-" + rc2.substring(0, 4) + "-" + rc2.substring(4) + rc3;
+    }
+    
 }
 
