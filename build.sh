@@ -8,6 +8,10 @@
 mkdir bin 2>/dev/null
 
 
+## in with resources to bin/
+cp -r res bin
+
+
 ## java compiler if default is for Java 7
 [[ $(javac -version 2>&1 | cut -d . -f 2) = '7' ]] &&
     function javacSeven()
