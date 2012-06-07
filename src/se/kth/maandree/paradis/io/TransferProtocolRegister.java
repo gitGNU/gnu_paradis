@@ -16,9 +16,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.io;
+import se.kth.maandree.paradis.net.*;
 
-import java.util.*;
-import java.io.*;
+import java.util.HashMap;
+import java.io.IOException;
 
 
 /**
@@ -67,6 +68,8 @@ public class TransferProtocolRegister
 	register(  short[].class, new   ShortArrayTransferProtocol());
 	register(   long[].class, new    LongArrayTransferProtocol());
 	register(   char[].class, new    CharArrayTransferProtocol());
+	
+	register(UUID.class, new UUID.UUIDTransferProtocol());
     }
     
     
