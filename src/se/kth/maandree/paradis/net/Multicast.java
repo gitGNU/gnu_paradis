@@ -16,6 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.io.*;
+
+import java.io.IOException;
 
 
 /**
@@ -25,8 +28,81 @@ package se.kth.maandree.paradis.net;
  */
 public class Multicast implements Cast
 {
-    //From UUID
-    //To UUID[]
-    //Already received UUID[]
+    /**
+     * Constructor
+     * 
+     * @param  sender     The sender of the packet
+     * @param  receivers  The desired receivers of the packet
+     */
+    public Multicast(final UUID sender, final UUID[] receivers)
+    {
+	this.sender = sender;
+	this.receivers = receivers;
+	this.received = new UUID[] { sender };
+    }
+    
+    /**
+     * Constructor
+     * 
+     * @param  sender     The sender of the packet
+     * @param  receivers  The desired receivers of the packet
+     * @param  received   Clients known to have, or currenty is receiving, a copy of the packet
+     */
+    protected Multicast(final UUID sender, final UUID[] receivers, final UUID[] received)
+    {
+	this.sender = sender;
+	this.receivers = receivers;
+	this.received = received;
+    }
+    
+    
+    
+    /**
+     * The sender of the packet
+     */
+    public final UUID sender;
+    
+    /**
+     * The desired receivers of the packet
+     */
+    public final UUID[] receivers;
+    
+    /**
+     * Clients known to have, or currenty is receiving, a copy of the packet
+     */
+    public UUID[] received;
+    
+    
+    
+    /**
+     * Protocol for transfering {@link Multicast}s
+     * 
+     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+     */
+    public static class MulticastTransferProtocol implements TransferProtocol<Multicast>
+    {
+	//Has default constructor
+	
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Multicast read(final TransferInputStream stream) throws IOException
+	{   return new Multicast(stream.readObject(UUID.class), stream.readObject(UUID[].class), stream.readObject(UUID[].class));
+	}
+    
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public void write(final Multicast data, final TransferOutputStream stream) throws IOException
+	{   stream.writeObject(data.sender);
+	    stream.writeObject(data.receivers);
+	    stream.writeObject(data.received);
+	}
+    
+    }
+    
 }
 

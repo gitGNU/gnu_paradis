@@ -16,6 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.io.*;
+
+import java.io.IOException;
 
 
 /**
@@ -25,7 +28,60 @@ package se.kth.maandree.paradis.net;
  */
 public class Unicast implements Cast
 {
-    //From UUID
-    //To UUID
+    /**
+     * Constructor
+     * 
+     * @param  sender    The sender of the packet
+     * @param  receiver  The desired receiver of the packet
+     */
+    public Unicast(final UUID sender, final UUID receiver)
+    {
+	this.sender = sender;
+	this.receiver = receiver;
+    }
+    
+    
+    
+    /**
+     * The sender of the packet
+     */
+    public final UUID sender;
+    
+    /**
+     * The desired receiver of the packet
+     */
+    public final UUID receiver;
+    
+    
+    
+    /**
+     * Protocol for transfering {@link Unicast}s
+     * 
+     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+     */
+    public static class UnicastTransferProtocol implements TransferProtocol<Unicast>
+    {
+	//Has default constructor
+	
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Unicast read(final TransferInputStream stream) throws IOException
+	{   return new Unicast(stream.readObject(UUID.class), stream.readObject(UUID.class));
+	}
+    
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public void write(final Unicast data, final TransferOutputStream stream) throws IOException
+	{   stream.writeObject(data.sender);
+	    stream.writeObject(data.receiver);
+	}
+    
+    }
+    
 }
 

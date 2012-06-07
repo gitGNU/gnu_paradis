@@ -69,7 +69,11 @@ public class TransferProtocolRegister
 	register(   long[].class, new    LongArrayTransferProtocol());
 	register(   char[].class, new    CharArrayTransferProtocol());
 	
-	register(UUID.class, new UUID.UUIDTransferProtocol());
+	register(     UUID.class, new      UUID.     UUIDTransferProtocol());
+	register(  Anycast.class, new   Anycast.  AnycastTransferProtocol());
+	register(  Unicast.class, new   Unicast.  UnicastTransferProtocol());
+	register(Multicast.class, new Multicast.MulticastTransferProtocol());
+	register(Broadcast.class, new Broadcast.BroadcastTransferProtocol());
     }
     
     

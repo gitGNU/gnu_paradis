@@ -16,6 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.io.*;
+
+import java.io.IOException;
 
 
 /**
@@ -25,6 +28,52 @@ package se.kth.maandree.paradis.net;
  */
 public class Anycast implements Cast
 {
-    //From UUID
+    /**
+     * Constructor
+     * 
+     * @param  sender  The sender of the packet
+     */
+    public Anycast(final UUID sender)
+    {
+	this.sender = sender;
+    }
+    
+    
+    
+    /**
+     * The sender of the packet
+     */
+    public final UUID sender;
+    
+    
+    
+    /**
+     * Protocol for transfering {@link Anycast}s
+     * 
+     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+     */
+    public static class AnycastTransferProtocol implements TransferProtocol<Anycast>
+    {
+	//Has default constructor
+	
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Anycast read(final TransferInputStream stream) throws IOException
+	{   return new Anycast(stream.readObject(UUID.class));
+	}
+    
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public void write(final Anycast data, final TransferOutputStream stream) throws IOException
+	{   stream.writeObject(data.sender);
+	}
+    
+    }
+    
 }
 

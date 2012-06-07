@@ -16,6 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.io.*;
+
+import java.io.IOException;
 
 
 /**
@@ -25,7 +28,71 @@ package se.kth.maandree.paradis.net;
  */
 public class Broadcast implements Cast
 {
-    //From UUID
-    //Already received UUID[]
+    /**
+     * Constructor
+     * 
+     * @param  sender  The sender of the packet
+     */
+    public Broadcast(final UUID sender)
+    {
+	this.sender = sender;
+	this.received = new UUID[] { sender };
+    }
+    
+    /**
+     * Constructor
+     * 
+     * @param  sender    The sender of the packet
+     * @param  received  Clients known to have, or currenty is receiving, a copy of the packet
+     */
+    protected Broadcast(final UUID sender, final UUID[] received)
+    {
+	this.sender = sender;
+	this.received = received;
+    }
+    
+    
+    
+    /**
+     * The sender of the packet
+     */
+    public final UUID sender;
+    
+    /**
+     * Clients known to have, or currenty is receiving, a copy of the packet
+     */
+    public UUID[] received;
+    
+    
+    
+    /**
+     * Protocol for transfering {@link Broadcast}s
+     * 
+     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+     */
+    public static class BroadcastTransferProtocol implements TransferProtocol<Broadcast>
+    {
+	//Has default constructor
+	
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Broadcast read(final TransferInputStream stream) throws IOException
+	{   return new Broadcast(stream.readObject(UUID.class), stream.readObject(UUID[].class));
+	}
+    
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public void write(final Broadcast data, final TransferOutputStream stream) throws IOException
+	{   stream.writeObject(data.sender);
+	    stream.writeObject(data.received);
+	}
+    
+    }
+    
 }
 
