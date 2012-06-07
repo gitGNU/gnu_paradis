@@ -195,7 +195,7 @@ public class Toolkit
      * 
      * @throws  IOException  If a port cannot be choosen
      */
-    public static int getRandomPortUCP() throws IOException
+    public static int getRandomPortUDP() throws IOException
     {
 	final DatagramSocket socket = new DatagramSocket(0);
 	final int port = socket.getLocalPort();
