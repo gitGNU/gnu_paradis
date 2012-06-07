@@ -25,13 +25,81 @@ package se.kth.maandree.paradis.net;
  */
 public class User
 {
-    // UUID
-    // Name
-    // Local IP
-    // Public IP
-    // Used network port
-    // DNS names
-    // Connected to UUID
-    // Friends : {User + Last information update time}[]
+    /**
+     * Unique identifier of the user
+     */
+    public final UUID uuid;
+    
+    /**
+     * The display name of the user, does not need to be unique
+     */
+    public final String name;
+    
+    /**
+     * The LAN private IP address of the user
+     */
+    public final String localIP;
+    
+    /**
+     * The WAN public IP address of the user
+     */
+    public final String publicIP;
+    
+    /**
+     * The port the user uses for communications
+     */
+    public final int port;
+    
+    /**
+     * The DNS names of the user
+     */
+    public String[] dnsNames;
+    
+    /**
+     * The UUID of the user this user is connected to
+     */
+    public UUID connectedTo;
+    
+    /**
+     * Digital signature, may be used to prove identify among friends
+     */
+    public byte[] signature;
+    
+    
+    /**
+     * {@link #uuid} of friends
+     */
+    public UUID[] friendUUIDs;
+    
+    /**
+     * The list update time of friend information, in milliseconds since 1970-(01)jan-01 00:00:00.000
+     */
+    public long[] friendUpdates;
+    
+    /**
+     * {@link #localIP} of friends
+     */
+    public String[] friendLocalIPs;
+    
+    /**
+     * {@link #publicIP} of friends
+     */
+    public String[] friendPublicIPs;
+    
+    /**
+     * {@link #port} of friends
+     */
+    public int[] friendPorts;
+    
+    /**
+     * {@link #dnsNames} of friends
+     */
+    public String[][] friendDNSNames;
+    
+    /**
+     * {@link #signature} of friends
+     */
+    public byte[][] friendSignatures;
+    
 }
 
