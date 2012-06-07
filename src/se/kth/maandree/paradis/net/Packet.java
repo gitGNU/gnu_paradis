@@ -126,7 +126,8 @@ public class Packet implements Comparable<Packet>
 	    final Cast cast = stream.readObject(castClass);
 	    final String msgType = stream.readObject(String.class);
 	    
-	    final Object msg = stream.readObject(byte[].class);
+	    final Class<?> msgClass = TransferProtocolRegister.getClassByID(msgType);
+	    final Object msg = stream.readObject(msgClass == null ? byte[].class : msgClass);
 	    
 	    return new Packet(uuid, alsoSendToSelf, urgent, ttl, age, cast, msg, msgType);
 	}

@@ -80,6 +80,30 @@ public class TransferProtocolRegister
     
     
     /**
+     * Maps an class ID to an actual class
+     * 
+     * @param  objectClass  The data type class
+     * @param  classID      The data type class ID
+     */
+    public static void register(final Class<?> objectClass, final String classID)
+    {   synchronized (monitor)
+	{   classes.put(classID, objectClass);
+    }   }
+    
+    
+    /**
+     * Gets a class from an ID
+     * 
+     * @param   classID  The data type class ID
+     * @return           The data type class, {@code null} if not mapped
+     */
+    public static Class<?> getClassByID(final String classID)
+    {   synchronized (monitor)
+	{   return classes.get(classID);
+    }   }
+    
+    
+    /**
      * Registers a data type transfer protocol
      * 
      * @param  objectClass  The data type
