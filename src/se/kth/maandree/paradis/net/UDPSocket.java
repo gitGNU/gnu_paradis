@@ -43,14 +43,21 @@ public class UDPSocket
 	this.remoteAddress = remoteAddress;
 	this.remotePort = remotePort;
 	
-	final PipedInputStream _inputStream = new PipedInputStream();
-	final PipedOutputStream _outputStream = new PipedOutputStream();
-	
-	this.outputStreamReader = new BufferedInputStream(new PipedInputStream(_outputStream));
-	this.inputStreamFeeder = new BufferedOutputStream(new PipedOutputStream(_inputStream));
-	
-	this.inputStream = new BufferedInputStream(_inputStream);
-	this.outputStream = new BufferedOutputStream(_outputStream);
+	try
+	{
+	    final PipedInputStream _inputStream = new PipedInputStream();
+	    final PipedOutputStream _outputStream = new PipedOutputStream();
+	    
+	    this.outputStreamReader = new BufferedInputStream(new PipedInputStream(_outputStream));
+	    this.inputStreamFeeder = new BufferedOutputStream(new PipedOutputStream(_inputStream));
+	    
+	    this.inputStream = new BufferedInputStream(_inputStream);
+	    this.outputStream = new BufferedOutputStream(_outputStream);
+	}
+	catch (final IOException err)
+	{
+	    throw new IOError(err);
+	}
     }
     
     
