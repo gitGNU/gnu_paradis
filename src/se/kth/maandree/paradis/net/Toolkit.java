@@ -137,8 +137,12 @@ public class Toolkit
 	{   return 0;
 	}
 	
-	final boolean level1 = isReachable("192.168.0.1") || isReachable("192.168.1.1");	
+	final boolean level1 = isReachable("192.168.0.1") || isReachable("192.168.1.1");
+	System.err.println("Level 1: " + (level1 ? "yes" : "no"));
+	
 	final boolean level2 = isReachable("83.255.245.11") || isReachable("193.150.193.150");
+	System.err.println("Level 2: " + (level2 ? "yes" : "no"));
+	
 	boolean level3 = level2;
 	if (level3)
 	    try
@@ -147,6 +151,7 @@ public class Toolkit
 	    catch (final Throwable err)
 	    {   level3 = false;
 	    }
+	System.err.println("Level 3: " + (level3 ? "yes" : "no"));
 	
 	if (level3)  return 3;
 	if (level2)  return 2;
@@ -159,15 +164,45 @@ public class Toolkit
      * Tests whether a host is reachable, with test timeout at 4 seconds
      * 
      * @param   host  The remote host's address, IP or DNS
-     * @return        Whether the host is reachable
+     * @return        Whether the remote host is reachable
      */
     public static boolean isReachable(final String host)
     {
 	try
-	{   return InetAddress.getByName(host).isReachable(4_000);
+	{
+	    byte[] buf = new byte[256];
+	    int ptr = 0;
+            
+	    final ProcessBuilder procBuilder = new ProcessBuilder("ping", host, "-c", "1", "-q", "-w", "4");
+	    final Process process = procBuilder.start();
+	    final InputStream stream = process.getInputStream();
+            
+	    for (int d; (d = stream.read()) != -1; )
+	    {
+		if (ptr == buf.length)
+		{
+		    final byte[] nbuf = new byte[ptr + 128];
+		    System.arraycopy(buf, 0, nbuf, 0, ptr);
+		    buf = nbuf;
+		}
+		buf[ptr++] = (byte)d;
+	    }
+            
+	    process.waitFor();
+	    if (process.exitValue() != 0)
+		return false;
+            
+	    String data = new String(buf, 0, ptr, "UTF-8");
+	    data = data.substring(data.indexOf("\n---") + 1);
+	    data = data.substring(data.indexOf('\n') + 1);
+	    data = data.split("\n")[0].replace(", ", ",");
+	    data = data.split(",")[1].split(" ")[0];
+	    
+	    return data.equals("1");
 	}
-	catch (final Exception err)
-        {   return false;
+	catch (final Throwable err)
+	{
+	    return false;
 	}
     }
     

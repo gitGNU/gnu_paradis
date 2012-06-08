@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis;
+import se.kth.maandree.paradis.net.*;
 
 
 /**
@@ -62,9 +63,13 @@ public class Program
      * 
      * @param  args  Startup arguments, unused
      */
-    public static void main(final String... args)
+    public static void main(final String... args) throws java.io.IOException
     {
-	// Start program here
+	System.out.println("Alive status: " + Toolkit.getAliveStatus());
+	System.out.println("Local IP: " + Toolkit.getLocalIP());
+	System.out.println("Public IP: " + Toolkit.getPublicIP());
+	System.out.println("Random TCP port: " + Toolkit.getRandomPortTCP());
+	System.out.println("Random UDP port: " + Toolkit.getRandomPortUDP());
     }
     
 }
