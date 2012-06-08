@@ -160,7 +160,7 @@ public class UDPServer implements Runnable
      */
     private void bind(final UDPSocket sock)
     {
-	final Thread thread = new Thread()
+	final Thread thread = new Thread("UDP socket binding")
 	        {
 		    /**
 		     * {@inheritDoc}

@@ -73,23 +73,23 @@ public class MultiChat
 				{   sockcolour = Integer.toString(colour[0]++);
 				    sockets.add(socket);
 				}
-			    
+				
 				final Thread thread = new Thread()
-				{   public void run()
-				    {   try
-					{   final byte[] buf = new byte[1024];
-					    for (;;)
-					    {   final int len = socket.inputStream.read(buf);
-						synchronized (System.out)
-						{   System.out.print("\033[" + sockcolour + "m");
-						    System.out.write(buf, 0, len);
-						    System.out.print("\033[39m\n");
-						    System.out.flush();
-					}   }   }
-					catch (final Throwable err)
-					{   err.printStackTrace(System.err);
-				}   }   };
-			    
+				        {   public void run()
+					    {   try
+						{   final byte[] buf = new byte[1024];
+						    for (;;)
+						    {   final int len = socket.inputStream.read(buf);
+							synchronized (System.out)
+							{   System.out.print("\033[" + sockcolour + "m");
+							    System.out.write(buf, 0, len);
+							    System.out.print("\033[39m\n");
+							    System.out.flush();
+						 }   }   }
+						catch (final Throwable err)
+						{   err.printStackTrace(System.err);
+					}   }   };
+				
 				thread.setDaemon(true);
 				thread.start();
 			    }
