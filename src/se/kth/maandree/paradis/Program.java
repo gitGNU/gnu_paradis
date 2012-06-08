@@ -102,7 +102,7 @@ public class Program
 			    for (;;)
 			    {
 				final int len = socket.inputStream.read(buf);
-				System.out.print("\033[31m");
+				System.out.print("\033[33m");
 				System.out.write(buf, 0, len);
 				System.out.print("\033[39m\n");
 				System.out.flush();
@@ -115,16 +115,19 @@ public class Program
 	thread.setDaemon(true);
 	thread.start();
 	
-	for (;;)
-	{
-	    final String line = sc.nextLine();
-	    if (line.isEmpty())
+	
+	for (String line;;)
+	    if ((line = sc.nextLine()).isEmpty())
 	    {   server.close();
 		return;
 	    }
-	    socket.outputStream.write(line.getBytes("UTF-8"));
-	    socket.outputStream.flush();
-	}
+	    else if (line.equals("?"))
+	    {   System.out.println("\033[34m" + (socket.isAlive() ? "alive" : "dead") + "\033[39m");
+	    }
+	    else
+	    {   socket.outputStream.write(line.getBytes("UTF-8"));
+		socket.outputStream.flush();
+	    }
     }
     
 }

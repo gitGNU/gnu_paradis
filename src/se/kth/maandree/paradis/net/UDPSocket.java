@@ -234,7 +234,7 @@ public class UDPSocket
 	if (signal == START_OF_TEXT)
 	{
 	    synchronized (this.server.outMonitor)
-	    {   send(new DatagramPacket(new byte[] { END_OF_TEXT }, 0, 1, this.remoteAddress, this.remotePort));
+	    {   this.server.socket.send(new DatagramPacket(new byte[] { END_OF_TEXT }, 0, 1, this.remoteAddress, this.remotePort));
 	    }
 	    this.inputStreamFeeder.write(packet.getData(), packet.getOffset() + 1, packet.getLength() - 1);
 	    this.inputStreamFeeder.flush();
@@ -259,7 +259,7 @@ public class UDPSocket
 	    }
 	    
 	    synchronized (this.server.outMonitor)
-	    {   send(new DatagramPacket(new byte[] { ok ? ACKNOWLEDGE : NEGATIVE_ACKNOWLEDGE }, 0, 1, this.remoteAddress, this.remotePort));
+	    {   this.server.socket.send(new DatagramPacket(new byte[] { ok ? ACKNOWLEDGE : NEGATIVE_ACKNOWLEDGE }, 0, 1, this.remoteAddress, this.remotePort));
 	    }
 	}
 	
@@ -284,7 +284,7 @@ public class UDPSocket
 	ackWaiting = true;
 	synchronized (this.server.outMonitor)
 	{   final byte[] data = (ENQUIRY + Program.PACKAGE + END_OF_TRANSMISSION).getBytes("UTF-8");
-	    send(new DatagramPacket(data, 0, data.length, this.remoteAddress, this.remotePort));
+	    this.server.socket.send(new DatagramPacket(data, 0, data.length, this.remoteAddress, this.remotePort));
 	}
 	
 	synchronized (this.enquiryMonitor)
