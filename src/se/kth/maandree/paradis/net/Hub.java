@@ -128,6 +128,15 @@ public class Hub
     
     
     /**
+     * Closes the hub
+     */
+    public void close() throws IOException
+    {
+	this.server.close();
+    }
+    
+    
+    /**
      * Connectes the hub to a remote machine
      * 
      * @param  remoteAddress  The remote machine's address

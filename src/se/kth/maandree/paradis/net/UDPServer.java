@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
-import se.kth.maandree.paradis.io.PipedInputStream;
-import se.kth.maandree.paradis.io.PipedOutputStream;
+import se.kth.maandree.paradis.io.PipedInputStream; //Explicit
+import se.kth.maandree.paradis.io.PipedOutputStream; //Explicit
 
 import java.io.*;
 import java.net.*;
