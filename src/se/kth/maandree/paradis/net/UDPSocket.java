@@ -22,6 +22,7 @@ import se.kth.maandree.paradis.*;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 
 /**
@@ -175,6 +176,13 @@ public class UDPSocket
     private boolean ackWaiting = false;
     
     
+    /**
+     * Errors throws by sending mechanism, use this with synchronisation on itself.
+     * You can get check if it is empty or wait for notifications can poll errors from it.
+     */
+    public final ArrayDeque<Throwable> errors = new ArrayDeque<>();
+    
+    
     
     /**
      * Invoke to send a datagram packet
@@ -210,7 +218,10 @@ public class UDPSocket
 	    {   this.transmissionMonitor.wait(TIME_OUT);
 		if (this.waiting)
 		{   this.waiting = false;
-		    throw new ConnectException("Timed out, receiver is probabily dead.");
+		    synchronized (this.errors)
+		    {   this.errors.offerLast(new ConnectException("Timed out, receiver is probabily dead."));
+			this.errors.notifyAll();
+		    }
 		}
 	    }
 	    catch (final InterruptedException ignore)
