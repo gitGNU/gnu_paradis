@@ -51,7 +51,7 @@ public class UDPServer implements Runnable
     /**
      * The native UDP socket
      */
-    private final DatagramSocket socket;
+    protected final DatagramSocket socket;
     
     /**
      * The local port
@@ -144,7 +144,7 @@ public class UDPServer implements Runnable
 	synchronized (this.sockets)
 	{   UDPSocket sock = this.sockets.get(address);
 	    if (sock == null)
-	    {   sock = new UDPSocket(this.localPort, remoteAddress, remotePort);
+	    {   sock = new UDPSocket(this.localPort, remoteAddress, remotePort, this);
 		this.sockets.put(address, sock);
 		bind(sock);
 	    }
@@ -182,7 +182,7 @@ public class UDPServer implements Runnable
 				    continue;
 				synchronized (UDPServer.this.outMonitor)
 				{   packet.setLength(len);
-				    UDPServer.this.socket.send(packet);
+				    sock.send(packet);
 			    }   }
 			}
 			catch (final Throwable err)
@@ -219,7 +219,7 @@ public class UDPServer implements Runnable
 		
 		synchronized (this.sockets)
 		{   if ((sock = this.sockets.get(address)) == null)
-		    {   sock = new UDPSocket(this.localPort, packet.getAddress(), packet.getPort());
+		    {   sock = new UDPSocket(this.localPort, packet.getAddress(), packet.getPort(), this);
 			this.sockets.put(address, sock);
 			bind(sock);
 			synchronized (this.newSockets)
@@ -227,8 +227,7 @@ public class UDPServer implements Runnable
 			    this.newSockets.notifyAll();
 		}   }   }
 		
-		sock.inputStreamFeeder.write(packet.getData(), packet.getOffset(), packet.getLength());
-		sock.inputStreamFeeder.flush();
+		sock.receive(packet);
 	    }
 	}
 	catch (final Throwable err)

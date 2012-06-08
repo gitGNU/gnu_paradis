@@ -24,24 +24,29 @@ import java.net.*;
 
 
 /**
- * UDP socket
+ * UDP socket created by {@link UDPServer}
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
 public class UDPSocket
 {
     /**
-     * Constructor
+     * <p>Constructor</p>
+     * <p>
+     *   Note that the socket must be binded by the {@link UDPServer}
+     * </p>
      * 
      * @param  localPort      The local port
      * @param  remoteAddress  The remote machine's address
      * @param  remotePort     The remote machine's port
+     * @param  server         The {@link UDPServer}
      */
-    protected UDPSocket(final int localPort, final InetAddress remoteAddress, final int remotePort)
+    protected UDPSocket(final int localPort, final InetAddress remoteAddress, final int remotePort, final UDPServer server)
     {
 	this.localPort = localPort;
 	this.remoteAddress = remoteAddress;
 	this.remotePort = remotePort;
+	this.server = server;
 	
 	try
 	{
@@ -79,6 +84,12 @@ public class UDPSocket
     
     
     /**
+     * The {@link UDPServer}
+     */
+    private final UDPServer server;
+    
+    
+    /**
      * Input stream for the socket
      */
     public final InputStream inputStream;
@@ -98,6 +109,34 @@ public class UDPSocket
      * Input stream for {@link #outputStream}
      */
     protected final InputStream outputStreamReader;
+    
+    
+    
+    /**
+     * Invoke to send a datagram packet
+     * 
+     * @param  packet  The datagram packet to send
+     * 
+     * @throws  IOException  On I/O error
+     */
+    protected void send(final DatagramPacket packet) throws IOException
+    {
+	this.server.socket.send(packet);
+    }
+    
+    
+    /**
+     * Invoke when a datagram packet is received
+     * 
+     * @param  packet  The received datagram packet
+     * 
+     * @throws  IOException  On I/O error
+     */
+    protected void receive(final DatagramPacket packet) throws IOException
+    {
+	this.inputStreamFeeder.write(packet.getData(), packet.getOffset(), packet.getLength());
+	this.inputStreamFeeder.flush();
+    }
     
     
 }
