@@ -78,6 +78,11 @@ public class UDPServer implements Runnable
      */
     private final ArrayDeque<UDPSocket> newSockets = new ArrayDeque<>();
     
+    /**
+     * Output synchronisation monitor
+     */
+    protected final Object outMonitor = new Object();
+    
     
     
     /**
@@ -116,6 +121,11 @@ public class UDPServer implements Runnable
 	synchronized (this.newSockets)
 	{   this.newSockets.notifyAll();
 	}
+	synchronized (this.sockets)
+	{   for (final UDPSocket sock : this.sockets.values())
+	    {   sock.outputStream.flush();
+		sock.outputStreamReader.notifyAll();
+	}   }
 	this.socket.close();
     }
     
@@ -143,13 +153,43 @@ public class UDPServer implements Runnable
     
     
     /**
-     * Binds a UDP socket's output to tthe server socket
+     * Binds a UDP socket's output to the server socket
      * 
      * @parma  sock  The UDP socket
      */
     private void bind(final UDPSocket sock)
     {
-	//
+	final Thread thread = new Thread()
+	        {
+		    /**
+		     * {@inheritDoc}
+		     */
+		    @Override
+		    public void run()
+		    {
+			try
+			{
+			    final InputStream in = sock.outputStreamReader;
+			    final byte[] buf = new byte[0xC000];
+			    final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, sock.remoteAddress, sock.remotePort);
+			    for (;;)
+			    {   final int len = in.read(buf);
+				if (UDPServer.this.closing)
+				{   break;
+				}
+				synchronized (UDPServer.this.outMonitor)
+				{   packet.setLength(len);
+				    UDPServer.this.socket.send(packet);
+			    }   }
+			}
+			catch (final Throwable err)
+			{   err.printStackTrace(System.err);
+			}
+		    }
+	        };
+	
+	thread.setDaemon(true);
+	thread.start();
     }
     
     
