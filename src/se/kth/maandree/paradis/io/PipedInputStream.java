@@ -36,6 +36,8 @@ obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
 
 package se.kth.maandree.paradis.io;
+import se.kth.maandree.paradis.io.PipedOutputStream;
+import java.io.*;
 
 // NOTE: This implementation is very similar to that of PipedReader.  If you 
 // fix a bug in here, chances are you should make a similar change to the 

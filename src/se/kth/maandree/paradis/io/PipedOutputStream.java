@@ -37,6 +37,8 @@ exception statement from your version. */
 
 
 package se.kth.maandree.paradis.io;
+import se.kth.maandree.paradis.io.PipedInputStream;
+import java.io.*;
 
 // NOTE: This implementation is very similar to that of PipedWriter.  If you 
 // fix a bug in here, chances are you should make a similar change to the 
