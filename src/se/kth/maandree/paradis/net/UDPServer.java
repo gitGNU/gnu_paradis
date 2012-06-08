@@ -171,7 +171,7 @@ public class UDPServer implements Runnable
 			try
 			{
 			    final InputStream in = sock.outputStreamReader;
-			    final byte[] buf = new byte[0x8800];
+			    final byte[] buf = new byte[0x8400];
 			    final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, sock.remoteAddress, sock.remotePort);
 			    for (;;)
 			    {   final int len = in.read(buf);
@@ -207,7 +207,7 @@ public class UDPServer implements Runnable
 	
 	try
 	{
-	    final byte[] bytes = new byte[0x8800];
+	    final byte[] bytes = new byte[0x8400];
 	    final DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length);
 	    
 	    for (;;)
