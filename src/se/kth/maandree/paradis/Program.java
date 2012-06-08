@@ -18,6 +18,8 @@
 package se.kth.maandree.paradis;
 import se.kth.maandree.paradis.net.*;
 
+import java.util.Scanner;
+
 
 /**
  * The is the main class of the program
@@ -65,11 +67,24 @@ public class Program
      */
     public static void main(final String... args) throws java.io.IOException
     {
+	final int port = Toolkit.getRandomPortUDP();
 	System.out.println("Alive status: " + Toolkit.getAliveStatus());
 	System.out.println("Local IP: " + Toolkit.getLocalIP());
 	System.out.println("Public IP: " + Toolkit.getPublicIP());
 	System.out.println("Random TCP port: " + Toolkit.getRandomPortTCP());
-	System.out.println("Random UDP port: " + Toolkit.getRandomPortUDP());
+	System.out.println("Random UDP port: " + port);
+	
+	final ChatUDP chat = new ChatUDP(port);
+	final Scanner sc = new Scanner(System.in);
+	for (;;)
+	{
+	    final String line = sc.nextLine();
+	    final String host = line.substring(0, line.indexOf(' '));
+	    final String rptz = line.substring(host.length() + 1, line.indexOf(' ', host.length() + 1));
+	    final String msg = line.substring(host.length() + rptz.length() + 2);
+	    
+	    chat.send(host, Integer.parseInt(rptz), msg);
+	}
     }
     
 }
