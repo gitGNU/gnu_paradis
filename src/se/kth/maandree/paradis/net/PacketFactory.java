@@ -1,0 +1,189 @@
+/**
+ *  Paradis — Ever growing network for parallell and distributed computing.
+ *  Copyright © 2012  Mattias Andrée
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package se.kth.maandree.paradis.net;
+
+
+/**
+ * Network information packet factory
+ * 
+ * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ */
+public class PacketFactory
+{
+    /**
+     * Constructor
+     * 
+     * @param  localUser       The local user
+     * @param  alsoSendToSelf  Whether to do a loop back send as well
+     * @param  urgent          Whether the assemblied packets are urgent
+     * @param  timeToLive      The time to live for the assemblied packets, in units of clients
+     */
+    public PacketFactory(final User localUser, final boolean alsoSendToSelf, final boolean urgent, final short timeToLive)
+    {
+	this.localUser      = localUser;
+	this.alsoSendToSelf = alsoSendToSelf;
+	this.urgent         = urgent;
+	this.timeToLive     = timeToLive;
+    }
+    
+    
+    
+    /**
+     * The local user
+     */
+    private final User localUser;
+    
+    /**
+     * Whether to do a loop back send as well
+     */
+    private final boolean alsoSendToSelf;
+    
+    /**
+     * Whether the assemblied packets are urgent
+     */
+    private final boolean urgent;
+    
+    /**
+     * The time to live for the assemblied packets, in units of clients
+     */
+    private final short timeToLive;
+    
+    
+    
+    /**
+     * Creates an anycast packet
+     * 
+     * @param  message      The message transmitted in the packet (payload)
+     * @param  messageType  The type identifer for the message
+     */
+    public Packet createAnycast(final Object message, final String messageType)
+    {
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Anycast(this.localUser.uuid), message, messageType);
+    }
+    
+    /**
+     * Creates an unicast packet
+     * 
+     * @param  message      The message transmitted in the packet (payload)
+     * @param  messageType  The type identifer for the message
+     */
+    public Packet createUnicast(final Object message, final String messageType, final UUID receiver)
+    {
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Unicast(this.localUser.uuid, receiver), message, messageType);
+    }
+    
+    /**
+     * Creates an multicast packet
+     * 
+     * @param  message      The message transmitted in the packet (payload)
+     * @param  messageType  The type identifer for the message
+     */
+    public Packet createMulticast(final Object message, final String messageType, final UUID... receivers)
+    {
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Multicast(this.localUser.uuid, receivers), message, messageType);
+    }
+    
+    /**
+     * Creates an broadcast packet
+     * 
+     * @param  message      The message transmitted in the packet (payload)
+     * @param  messageType  The type identifer for the message
+     */
+    public Packet createBroadcast(final Object message, final String messageType)
+    {
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Broadcast(this.localUser.uuid), message, messageType);
+    }
+    
+    
+    /**
+     * Forks the factory
+     * 
+     * @param   timeToLive  The time to live for the assemblied packets, in units of clients
+     * @return              A new packet factory
+     */
+    public PacketFactory fork(final short timeToLive)
+    {   return new PacketFactory(this.localUser, this.alsoSendToSelf, this.urgent, timeToLive);
+    }
+    
+    /**
+     * Forks the factory
+     * 
+     * @param   alsoSendToSelf  Whether to do a loop back send as well
+     * @param   urgent          Whether the assemblied packets are urgent
+     * @return                  A new packet factory
+     */
+    public PacketFactory fork(final boolean alsoSendToSelf, final boolean urgent)
+    {   return new PacketFactory(this.localUser, alsoSendToSelf, urgent, this.timeToLive);
+    }
+    
+    /**
+     * Forks the factory
+     * 
+     * @param   alsoSendToSelf  Whether to do a loop back send as well
+     * @param   urgent          Whether the assemblied packets are urgent
+     * @param   timeToLive      The time to live for the assemblied packets, in units of clients
+     * @return                  A new packet factory
+     */
+    public PacketFactory fork(final boolean alsoSendToSelf, final boolean urgent, final short timeToLive)
+    {   return new PacketFactory(this.localUser, alsoSendToSelf, urgent, timeToLive);
+    }
+    
+    /**
+     * Forks the factory
+     * 
+     * @param   alsoSendToSelf  Whether to do a loop back send as well
+     * @return                  A new packet factory
+     */
+    public PacketFactory forkLoopback(final boolean alsoSendToSelf)
+    {   return new PacketFactory(this.localUser, alsoSendToSelf, this.urgent, this.timeToLive);
+    }
+    
+    /**
+     * Forks the factory
+     * 
+     * @param   alsoSendToSelf  Whether to do a loop back send as well
+     * @param   timeToLive      The time to live for the assemblied packets, in units of clients
+     * @return                  A new packet factory
+     */
+    public PacketFactory forkLoopback(final boolean alsoSendToSelf, final short timeToLive)
+    {   return new PacketFactory(this.localUser, alsoSendToSelf, this.urgent, timeToLive);
+    }
+    
+    /**
+     * Forks the factory
+     * 
+     * @param   urgent  Whether the assemblied packets are urgent
+     * @return          A new packet factory
+     */
+    public PacketFactory forkUrgent(final boolean urgent)
+    {   return new PacketFactory(this.localUser, this.alsoSendToSelf, urgent, this.timeToLive);
+    }
+    
+    /**
+     * Forks the factory
+     * 
+     * @param   urgent      Whether the assemblied packets are urgent
+     * @param   timeToLive  The time to live for the assemblied packets, in units of clients
+     * @return              A new packet factory
+     */
+    public PacketFactory forkUrgent(final boolean urgent, final short timeToLive)
+    {   return new PacketFactory(this.localUser, this.alsoSendToSelf, urgent, timeToLive);
+    }
+    
+}
+

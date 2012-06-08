@@ -40,7 +40,7 @@ public class Packet implements Comparable<Packet>
      * @param  message         The message transmitted in the packet
      * @param  messageType     The type identifer for the message
      */
-    public Packet(final UUID uuid, final boolean alsoSendToSelf, final boolean urgent, short timeToLive, short packetAge, final Cast cast, final Object message, final String messageType)
+    public Packet(final UUID uuid, final boolean alsoSendToSelf, final boolean urgent, final short timeToLive, final short packetAge, final Cast cast, final Object message, final String messageType)
     {
 	this.uuid           = uuid;
 	this.alsoSendToSelf = alsoSendToSelf;
