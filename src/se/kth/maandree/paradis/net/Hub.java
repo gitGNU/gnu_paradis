@@ -112,7 +112,18 @@ public class Hub
      *   Synchronise with {@link #sockets} instead of the object.
      * </p>
      */
-    protected final HashMap<UUID, UDPSocket> uuidSockets = new HashMap<>();
+    public final HashMap<UUID, UDPSocket> uuidSockets = new HashMap<>();
+    
+    /**
+     * Set of dead sockets
+     */
+    protected final HashSet<UDPSocket> deadSockets = new HashSet<>();
+    
+    /**
+     * Errors throws by sending mechanism, use this with synchronisation on itself.
+     * You can get check if it is empty or wait for notifications can poll errors from it.
+     */
+    public final ArrayDeque<Throwable> errors = new ArrayDeque<>();
     
     
     
@@ -267,81 +278,178 @@ public class Hub
      */
     protected void route(final Packet packet) throws IOException
     {
-	if (packet.cast instanceof Anycast)
-	{
-	}
-	else if (packet.cast instanceof Unicast)
-	{
-	}
-	else if (packet.cast instanceof Multicast)
-	{
-	    final UDPSocket[] sendTo;
-	    int ptr = 0;
-	    
-	    synchronized (this.sockets)
-	    {
-		sendTo = new UDPSocket[this.sockets.size()];
-		int direct = 0;
-		final HashSet<UDPSocket> alreadyListed = new HashSet<>();
-		
-		final UUID[] receivers = ((Multicast)(packet.cast)).receivers;
-		for (final UUID receiver : receivers)
-		{
-		    if (packet.cast.hasReceived(receiver))
-			direct++;
-		    else
-		    {   final UDPSocket socket = uuidSockets.get(receiver);
-			if (socket != null)
-			{   alreadyListed.add(sendTo[ptr++] = socket);
-			    direct++;
-		    }   }
-		}
-		
-		if (direct < receivers.length)
-		    for (final UDPSocket socket : this.sockets)
-			if (alreadyListed.contains(socket) == false)
-			{
-			    final UUID uuid = socketUUIDs.get(socket);
-			    if (uuid == null)
-				sendTo[ptr++] = socket;
-			    else if (packet.cast.hasReceived(uuid) == false)
-			    {
-				packet.cast.addReceived(uuid);
-				sendTo[ptr++] = socket;
-			    }
-			}
-	    }
-	    
-	    for (int i = 0; i < ptr; i++)
-	    {   final UDPSocket socket = sendTo[i];
-		socket.outputStream.writeObject(packet);
-		socket.outputStream.flush();
-	    }
-	}
-	else if (packet.cast instanceof Broadcast)
-	{
-	    final UDPSocket[] sendTo;
-	    int ptr = 0;
-	    
-	    synchronized (this.sockets)
-	    {   sendTo = new UDPSocket[this.sockets.size()];
-		for (final UDPSocket socket : this.sockets)
-		{   final UUID uuid = socketUUIDs.get(socket);
-		    if (uuid == null)
-			sendTo[ptr++] = socket;
-		    else if (packet.cast.hasReceived(uuid) == false)
-		    {   packet.cast.addReceived(uuid);
-			sendTo[ptr++] = socket;
-	    }   }   }
-	    
-	    for (int i = 0; i < ptr; i++)
-	    {   final UDPSocket socket = sendTo[i];
-		socket.outputStream.writeObject(packet);
-		socket.outputStream.flush();
-	    }
-	}
+	if      (packet.cast instanceof   Anycast)  anycast  (packet);
+	else if (packet.cast instanceof   Unicast)  unicast  (packet);
+	else if (packet.cast instanceof Multicast)  multicast(packet);
+	else if (packet.cast instanceof Broadcast)  broadcast(packet);
 	else
 	    throw new Error("Update cast list in ~.net.Hub");
+    }
+    
+    
+    /**
+     * Sends a packet to everyone else that should have a copy, using anycast mechanism
+     * 
+     * @param  packet  The packet to send
+     * 
+     * @throws  IOException  On I/O error
+     */
+    protected void anycast(final Packet packet) throws IOException
+    {
+	synchronized (this.sockets)
+	{   for (final UDPSocket socket : this.sockets)
+	    {
+		synchronized (this.deadSockets)
+		{   if (this.deadSockets.contains(socket))
+			continue;
+		}
+		socket.outputStream.writeObject(packet);
+		socket.outputStream.flush();
+		synchronized (socket.errors)
+		{   if (socket.errors.pollFirst() != null)
+			synchronized (this.deadSockets)
+			{
+			    this.deadSockets.add(socket);
+			    continue;
+		}       }
+		return;
+	    }
+	    for (final UDPSocket socket : this.sockets)
+	    {
+		synchronized (this.deadSockets)
+		{   if (this.deadSockets.contains(socket))
+			this.deadSockets.remove(socket);
+		}
+		socket.outputStream.writeObject(packet);
+		socket.outputStream.flush();
+		synchronized (socket.errors)
+	        {   if (socket.errors.pollFirst() != null)
+			synchronized (this.deadSockets)
+			{
+			    this.deadSockets.add(socket);
+			    continue;
+		}       }
+		return;
+	    }
+	    synchronized (this.errors)
+	    {
+		this.errors.offerLast(new IOException("No alive peers to anycast to."));
+	}   }
+    }
+    
+    
+    /**
+     * Sends a packet to everyone else that should have a copy, using unicast mechanism
+     * 
+     * @param  packet  The packet to send
+     * 
+     * @throws  IOException  On I/O error
+     */
+    protected void unicast(final Packet packet) throws IOException
+    {
+    }
+    
+    
+    /**
+     * Sends a packet to everyone else that should have a copy, using multicast mechanism
+     * 
+     * @param  packet  The packet to send
+     * 
+     * @throws  IOException  On I/O error
+     */
+    protected void multicast(final Packet packet) throws IOException
+    {
+	final UDPSocket[] sendTo;
+	int ptr = 0;
+	    
+	synchronized (this.sockets)
+	{
+	    sendTo = new UDPSocket[this.sockets.size()];
+	    int direct = 0;
+	    final HashSet<UDPSocket> alreadyListed = new HashSet<>();
+		
+	    final UUID[] receivers = ((Multicast)(packet.cast)).receivers;
+	    for (final UUID receiver : receivers)
+	    {
+		if (packet.cast.hasReceived(receiver))
+		    direct++;
+		else
+		{   final UDPSocket socket = uuidSockets.get(receiver);
+		    if (socket != null)
+		    {   alreadyListed.add(sendTo[ptr++] = socket);
+			direct++;
+		}   }
+	    }
+	    
+	    if (direct < receivers.length)
+		for (final UDPSocket socket : this.sockets)
+		    if (alreadyListed.contains(socket) == false)
+		    {
+			final UUID uuid = socketUUIDs.get(socket);
+			if (uuid == null)
+			    sendTo[ptr++] = socket;
+			else if (packet.cast.hasReceived(uuid) == false)
+			{
+			    packet.cast.addReceived(uuid);
+			    sendTo[ptr++] = socket;
+			}
+		    }
+	}
+	
+	for (int i = 0; i < ptr; i++)
+	{   final UDPSocket socket = sendTo[i];
+	    synchronized (this.deadSockets)
+	    {   if (this.deadSockets.contains(socket))
+		    continue;
+	    }
+	    socket.outputStream.writeObject(packet);
+	    socket.outputStream.flush();
+	    synchronized (socket.errors)
+	    {   if (socket.errors.pollFirst() != null)
+		    synchronized (this.deadSockets)
+		    {   this.deadSockets.add(socket);
+	    }       }
+	}
+    }
+    
+    
+    /**
+     * Sends a packet to everyone else that should have a copy, using broadcast mechanism
+     * 
+     * @param  packet  The packet to send
+     * 
+     * @throws  IOException  On I/O error
+     */
+    protected void broadcast(final Packet packet) throws IOException
+    {
+	final UDPSocket[] sendTo;
+	int ptr = 0;
+	
+	synchronized (this.sockets)
+	{   sendTo = new UDPSocket[this.sockets.size()];
+	    for (final UDPSocket socket : this.sockets)
+	    {   final UUID uuid = socketUUIDs.get(socket);
+		if (uuid == null)
+		    sendTo[ptr++] = socket;
+		else if (packet.cast.hasReceived(uuid) == false)
+	        {   packet.cast.addReceived(uuid);
+		    sendTo[ptr++] = socket;
+	}   }   }
+	
+	for (int i = 0; i < ptr; i++)
+        {   final UDPSocket socket = sendTo[i];
+	    synchronized (this.deadSockets)
+	    {   if (this.deadSockets.contains(socket))
+		    continue;
+	    }
+	    socket.outputStream.writeObject(packet);
+	    socket.outputStream.flush();
+	    synchronized (socket.errors)
+	    {   if (socket.errors.pollFirst() != null)
+		    synchronized (this.deadSockets)
+		    {   this.deadSockets.add(socket);
+	    }       }
+	}
     }
     
 }
