@@ -16,12 +16,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
-import se.kth.maandree.paradis.io.PipedInputStream;
-import se.kth.maandree.paradis.io.PipedOutputStream;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+//TODO:  Support for reconnecting to dead clients is needed
+//TODO:  Support for unkilling reconnecting clients is needed
+//TODO:  Routing information and UUID address lookup is needed
+//TODO:  Detailed exceptions is needed
+//TODO:  A router, that extends this class, would be nice
 
 
 /**
@@ -347,6 +351,25 @@ public class Hub
      */
     protected void unicast(final Packet packet) throws IOException
     {
+	final UUID receiver = ((Unicast)(packet.cast)).receiver;
+	final UDPSocket socket;
+	synchronized (this.sockets)
+	{   socket = this.uuidSockets.get(receiver);
+	}
+	if (socket == null)
+	    synchronized (this.errors)
+	    {   this.errors.offerLast(new IOException("Don't know how to reach peer."));
+		return;
+	    }
+	socket.outputStream.writeObject(packet);
+	socket.outputStream.flush();
+	synchronized (socket.errors)
+	{   if (socket.errors.pollFirst() != null)
+		synchronized (this.deadSockets)
+		{   this.deadSockets.add(socket);
+		    synchronized (this.errors)
+		    {   this.errors.offerLast(new IOException("Peer is dead."));
+	}       }   }
     }
     
     
