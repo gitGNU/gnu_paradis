@@ -38,7 +38,7 @@ public class UDPServer implements Runnable
      * 
      * @throws  IOException  On I/O error
      */
-    protected UDPServer(final int localPort) throws IOException
+    public UDPServer(final int localPort) throws IOException
     {
 	this.socket = new DatagramSocket(localPort);
 	this.localPort = socket.getLocalPort();
@@ -124,8 +124,9 @@ public class UDPServer implements Runnable
 	synchronized (this.sockets)
 	{   for (final UDPSocket sock : this.sockets.values())
 	    {   sock.outputStream.flush();
-		sock.outputStreamReader.notifyAll();
-	}   }
+		//synchronized (sock.outputStreamReader) //nope, enters blocking state
+		//{   sock.outputStreamReader.notifyAll();
+	}   }   //}
 	this.socket.close();
     }
     
@@ -177,6 +178,8 @@ public class UDPServer implements Runnable
 				if (UDPServer.this.closing)
 				{   break;
 				}
+				if (len == 0)
+				    continue;
 				synchronized (UDPServer.this.outMonitor)
 				{   packet.setLength(len);
 				    UDPServer.this.socket.send(packet);
@@ -225,6 +228,7 @@ public class UDPServer implements Runnable
 		}   }   }
 		
 		sock.inputStreamFeeder.write(packet.getData(), packet.getOffset(), packet.getLength());
+		sock.inputStreamFeeder.flush();
 	    }
 	}
 	catch (final Throwable err)

@@ -19,6 +19,7 @@ package se.kth.maandree.paradis;
 import se.kth.maandree.paradis.net.*;
 
 import java.util.Scanner;
+import java.net.InetAddress;
 
 
 /**
@@ -75,9 +76,55 @@ public class Program
 	System.out.println("Random UDP port: " + port);
 	
 	final Scanner sc = new Scanner(System.in);
-	final ChatUDP chat = new ChatUDP(port, sc.nextLine());
+	final String remote = sc.nextLine();
+	final InetAddress remoteAddress;
+	final int remotePort;
+	
+	if (remote.startsWith("[") && remote.contains("]:"))
+	{
+	    remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
+	    remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
+	}
+	else
+	{
+	    remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
+	    remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
+	}
+	
+	final UDPServer server = new UDPServer(port);
+	final UDPSocket socket = server.connect(remoteAddress, remotePort);
+	
+	final Thread thread = new Thread()
+	        {   public void run()
+		    {   try
+			{
+			    final byte[] buf = new byte[1024];
+			    for (;;)
+			    {
+				final int len = socket.inputStream.read(buf);
+				System.out.print("\033[31m");
+				System.out.write(buf, 0, len);
+				System.out.print("\033[39m\n");
+				System.out.flush();
+			    }
+			}
+			catch (final Throwable err)
+			{   err.printStackTrace(System.err);
+	        }   }   };
+	
+	thread.setDaemon(true);
+	thread.start();
+	
 	for (;;)
-	    chat.send(sc.nextLine());
+	{
+	    final String line = sc.nextLine();
+	    if (line.isEmpty())
+	    {   server.close();
+		return;
+	    }
+	    socket.outputStream.write(line.getBytes("UTF-8"));
+	    socket.outputStream.flush();
+	}
     }
     
 }
