@@ -43,6 +43,9 @@ elif [[ $1 = "falsehome" ]]; then
 elif [[ $1 = "chat" ]]; then
     javaSeven -ea -cp bin$jars se.kth.maandree.paradis.demo.Chat
 
+elif [[ $1 = "multichat" ]]; then
+    javaSeven -ea -cp bin$jars se.kth.maandree.paradis.demo.MultiChat
+
 
 ## completion
 elif [[ $1 = "--completion--" ]]; then
@@ -52,7 +55,7 @@ elif [[ $1 = "--completion--" ]]; then
 	_init_completion -n = || return
 	
 	COMPREPLY=( $( compgen -W 'main main-da falsehome' -- "$cur" ) \
-	            $( compgen -W 'chat' -- "$cur" ))
+	            $( compgen -W 'chat multichat' -- "$cur" ))
     }
     
     complete -o default -F _run run
