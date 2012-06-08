@@ -32,6 +32,7 @@ public class ChatUDP implements Runnable
     public ChatUDP(final int port, final String remote) throws IOException
     {
 	socket = new DatagramSocket(port);
+	this.localPort = socket.getLocalPort();
 	
 	if (remote.startsWith("[") && remote.contains("]:"))
 	{
@@ -54,6 +55,8 @@ public class ChatUDP implements Runnable
     private final InetAddress remoteAddress;
     
     private final int remotePort;
+    
+    private final int localPort;
     
     protected boolean closing = false;
     
