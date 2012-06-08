@@ -69,8 +69,8 @@ public class HubChat
 	    }
 	    else
 	    {
-		final byte[] data = line.getBytes("UTF-8");
-		hub.send(data);
+		//final byte[] data = line.getBytes("UTF-8");
+		//hub.send(data);
 	    }
     }
     

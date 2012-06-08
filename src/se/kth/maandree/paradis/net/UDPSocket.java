@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.io.PipedInputStream; //Explicit
 import se.kth.maandree.paradis.io.PipedOutputStream; //Explicit
 import se.kth.maandree.paradis.*;
@@ -96,11 +97,11 @@ public class UDPSocket
 	    final PipedInputStream _inputStream = new PipedInputStream();
 	    final PipedOutputStream _outputStream = new PipedOutputStream();
 	    
-	    this.outputStreamReader = new BufferedInputStream(new PipedInputStream(_outputStream));
-	    this.inputStreamFeeder = new BufferedOutputStream(new PipedOutputStream(_inputStream));
+	    this.outputStreamReader = new TransferInputStream(new PipedInputStream(_outputStream));
+	    this.inputStreamFeeder = new TransferOutputStream(new PipedOutputStream(_inputStream));
 	    
-	    this.inputStream = new BufferedInputStream(_inputStream);
-	    this.outputStream = new BufferedOutputStream(_outputStream);
+	    this.inputStream = new TransferInputStream(_inputStream);
+	    this.outputStream = new TransferOutputStream(_outputStream);
 	}
 	catch (final IOException err)
 	{
@@ -135,23 +136,23 @@ public class UDPSocket
     /**
      * Input stream for the socket
      */
-    public final InputStream inputStream;
+    public final TransferInputStream inputStream;
     
     /**
      * Output stream for the socket
      */
-    public final OutputStream outputStream;
+    public final TransferOutputStream outputStream;
     
     
     /**
      * Output stream for {@link #inputStream}
      */
-    protected final OutputStream inputStreamFeeder;
+    protected final TransferOutputStream inputStreamFeeder;
     
     /**
      * Input stream for {@link #outputStream}
      */
-    protected final InputStream outputStreamReader;
+    protected final TransferInputStream outputStreamReader;
     
     
     /**

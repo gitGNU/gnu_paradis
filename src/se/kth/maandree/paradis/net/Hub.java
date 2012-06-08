@@ -117,13 +117,24 @@ public class Hub
     }
     
     
-    public void send(final byte[] data) throws IOException
+    /**
+     * Sends a packet
+     * 
+     * @param  packet  The packet to send
+     * 
+     * @throws  IOException  On I/O error
+     */
+    public void send(final Packet packet) throws IOException
     {
-	synchronized (this.sockets)
-	{   for (final UDPSocket socket : this.sockets)
-	    {   socket.outputStream.write(data);
-		socket.outputStream.flush();
-	}   }
+	if (packet.alsoSendToSelf)
+	    synchronized (Hub.this.inbox)
+	    {
+		if (packet.urgent)  Hub.this.inbox.offerFirst(packet);
+		else                Hub.this.inbox.offerLast(packet);
+	    }
+	
+	if ((packet.packetAge = 0) < packet.timeToLive)
+	    route(packet);
     }
     
     
@@ -161,22 +172,64 @@ public class Hub
 	
 	final Thread thread = new Thread("Hub connection")
 	        {   public void run()
-		    {   try
-			{   final byte[] buf = new byte[1024];
-			    for (;;)
-			    {   final int len = socket.inputStream.read(buf);
-				synchronized (System.out)
+		    {   for (;;)
+			{   try
+			    {
+				final Packet packet = socket.inputStream.readObject(Packet.class);
+				packet.packetAge++;
+				boolean route = false;
+				boolean mine = false;
+				
+				if (packet.cast instanceof Anycast)
 				{
-				    System.out.write(buf, 0, len);
-				    System.out.flush();
+				    mine = true;
 				}
-			}   }
-			catch (final Throwable err)
-		        {   err.printStackTrace(System.err);
-		}   }   };
+				else if (packet.cast instanceof Unicast)
+				{
+				    route = !(mine == ((Unicast)(packet.cast)).receiver.equals(localUser.uuid));
+				}
+				else if (packet.cast instanceof Multicast)
+				{
+				    mine = Arrays.binarySearch(((Multicast)(packet.cast)).receivers, localUser.uuid) >= 0;
+				    route = (((Multicast)(packet.cast)).receivers.length - (mine ? 1 : 0)) > 0;
+				}
+				else if (packet.cast instanceof Broadcast)
+				{
+				    mine = route = true;
+				}
+				
+				if (mine)
+				    synchronized (Hub.this.inbox)
+				    {   if (packet.urgent)  Hub.this.inbox.offerFirst(packet);
+					else                Hub.this.inbox.offerLast(packet);
+				    }
+				
+				if (route)
+				    if (packet.packetAge < packet.timeToLive)
+					Hub.this.route(packet);
+			    }
+			    catch (final Throwable err)
+			    {   err.printStackTrace(System.err);
+				try
+				{   Thread.sleep(500);
+				}
+				catch (final InterruptedException ierr)
+				{   return;
+		}   }   }   }   };
 	
 	thread.setDaemon(true);
 	thread.start();
+    }
+    
+    
+    /**
+     * Sends a packet to everyone else that should have a copy
+     * 
+     * @param  packet  The packet to send
+     */
+    protected void route(final Packet packet)
+    {
+	
     }
     
 }
