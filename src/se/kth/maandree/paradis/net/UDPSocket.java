@@ -252,12 +252,11 @@ public class UDPSocket
 	    boolean ok = false;
 	    try
 	    {   final String remote = new String(packet.getData(), packet.getOffset() + 1, packet.getLength() - 1, "UTF-8");
-		ok = remote.equals(Program.PACKAGE + END_OF_TRANSMISSION);
+		ok = remote.equals(Program.PACKAGE + (char)END_OF_TRANSMISSION);
 	    }
 	    catch (final Throwable err)
 	    {   ok = false;
 	    }
-	    
 	    synchronized (this.server.outMonitor)
 	    {   this.server.socket.send(new DatagramPacket(new byte[] { ok ? ACKNOWLEDGE : NEGATIVE_ACKNOWLEDGE }, 0, 1, this.remoteAddress, this.remotePort));
 	    }
@@ -283,7 +282,7 @@ public class UDPSocket
     {
 	ackWaiting = true;
 	synchronized (this.server.outMonitor)
-	{   final byte[] data = (ENQUIRY + Program.PACKAGE + END_OF_TRANSMISSION).getBytes("UTF-8");
+	{   final byte[] data = ((char)ENQUIRY + Program.PACKAGE + (char)END_OF_TRANSMISSION).getBytes("UTF-8");
 	    this.server.socket.send(new DatagramPacket(data, 0, data.length, this.remoteAddress, this.remotePort));
 	}
 	
