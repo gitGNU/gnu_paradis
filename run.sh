@@ -38,6 +38,12 @@ elif [[ $1 = "falsehome" ]]; then
     HOME=$__myhome
 
 
+## demo runs
+
+elif [[ $1 = "chat" ]]; then
+    javaSeven -ea -cp bin$jars se.kth.maandree.paradis.demo.Chat
+
+
 ## completion
 elif [[ $1 = "--completion--" ]]; then
     _run()
@@ -45,7 +51,8 @@ elif [[ $1 = "--completion--" ]]; then
 	local cur prev words cword
 	_init_completion -n = || return
 	
-	COMPREPLY=( $( compgen -W 'main main-da falsehome' -- "$cur" ) )
+	COMPREPLY=( $( compgen -W 'main main-da falsehome' -- "$cur" ) \
+	            $( compgen -W 'chat' -- "$cur" ))
     }
     
     complete -o default -F _run run
