@@ -19,6 +19,7 @@ package se.kth.maandree.paradis.net;
 import se.kth.maandree.paradis.io.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 /**
@@ -37,6 +38,7 @@ public class Broadcast implements Cast
     {
 	this.sender = sender;
 	this.received = new UUID[] { sender };
+	this.receivedCount = 1;
     }
     
     /**
@@ -49,6 +51,7 @@ public class Broadcast implements Cast
     {
 	this.sender = sender;
 	this.received = received;
+	this.receivedCount = received.length;
     }
     
     
@@ -62,6 +65,11 @@ public class Broadcast implements Cast
      * Clients known to have, or currenty is receiving, a copy of the packet
      */
     public UUID[] received;
+    
+    /**
+     * The logial length of {@link #received}
+     */
+    public int receivedCount;
     
     
     
@@ -88,10 +96,48 @@ public class Broadcast implements Cast
 	 * {@inheritDoc}
 	 */
 	public void write(final Broadcast data, final TransferOutputStream stream) throws IOException
-	{   stream.writeObject(data.sender);
+	{
+	    if (data.receivedCount != data.received.length)
+	    {
+		final UUID[] tmp = new UUID[data.receivedCount];
+		System.arraycopy(data.received, 0, tmp, 0, data.receivedCount);
+		data.received = tmp;
+	    }
+	    stream.writeObject(data.sender);
 	    stream.writeObject(data.received);
 	}
     
+    }
+    
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void addReceived(final UUID uuid)
+    {
+	int pos = Arrays.binarySearch(this.received, 0, this.receivedCount, uuid);
+	if (pos >= 0)
+	    return;
+	pos = ~pos;
+	
+	if (this.receivedCount == this.received.length)
+	{
+	    final UUID[] tmp = new UUID[this.receivedCount << 1];
+	    System.arraycopy(this.received, 0, tmp, 0, this.received.length);
+	    this.received = tmp;
+	}
+	
+	System.arraycopy(this.received, pos, this.received, pos + 1, this.receivedCount - pos);
+	this.received[pos] = uuid;
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasReceived(final UUID uuid)
+    {   return Arrays.binarySearch(this.received, 0, this.receivedCount, uuid) >= 0;
     }
     
 }

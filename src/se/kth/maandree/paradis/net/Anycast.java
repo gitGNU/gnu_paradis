@@ -75,5 +75,21 @@ public class Anycast implements Cast
     
     }
     
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void addReceived(final UUID uuid)
+    {   //Do nothing
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasReceived(final UUID uuid)
+    {   return false;
+    }
+    
 }
 

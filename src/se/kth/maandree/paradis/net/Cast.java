@@ -25,6 +25,20 @@ package se.kth.maandree.paradis.net;
  */
 public interface Cast
 {
-    //Marker interface
+    /**
+     * Lists an {@link UUID} to have received, is is currently getting, a copy of the packet
+     * 
+     * @param  uuid  The {@link UUID}
+     */
+    public void addReceived(final UUID uuid);
+    
+    /**
+     * Gets whether an {@link UUID} is known to already have copy or currently gettign a copy
+     * 
+     * @param   uuid  The {@link UUID}
+     * @return        Whether the {@link UUID} is known to already have copy or currently gettign a copy
+     */
+    public boolean hasReceived(final UUID uuid);
+    
 }
 

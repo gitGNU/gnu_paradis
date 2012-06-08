@@ -93,6 +93,27 @@ public class Hub
      */
     protected final Vector<UDPSocket> sockets = new Vector<>();
     
+    /**
+     * Set of UUID:s for already received packets
+     */
+    protected final HashSet<UUID> receivedPackets = new HashSet<>(); //TODO: we need a mechanism that purges very old elements (stronger than soft references)
+    
+    /**
+     * <p>Remote user lookup map.</p>
+     * <p>
+     *   Synchronise with {@link #sockets} instead of the object.
+     * </p>
+     */
+    protected final HashMap<UDPSocket, UUID> socketUUIDs = new HashMap<>();
+    
+    /**
+     * <p>Reverse {@link #socketUUIDs}.</p>
+     * <p>
+     *   Synchronise with {@link #sockets} instead of the object.
+     * </p>
+     */
+    protected final HashMap<UUID, UDPSocket> uuidSockets = new HashMap<>();
+    
     
     
     /**
@@ -126,8 +147,14 @@ public class Hub
      */
     public void send(final Packet packet) throws IOException
     {
+	synchronized (receivedPackets)
+	{   receivedPackets.add(packet.uuid);
+	}
+	
+	packet.cast.addReceived(this.localUser.uuid);
+	
 	if (packet.alsoSendToSelf)
-	    synchronized (Hub.this.inbox)
+	    synchronized (this.inbox)
 	    {
 		if (packet.urgent)  Hub.this.inbox.offerFirst(packet);
 		else                Hub.this.inbox.offerLast(packet);
@@ -177,16 +204,23 @@ public class Hub
 			    {
 				final Packet packet = socket.inputStream.readObject(Packet.class);
 				packet.packetAge++;
-				boolean route = false;
-				boolean mine = false;
+				boolean route;
+				boolean mine;
+				
+				synchronized (receivedPackets)
+				{   if (receivedPackets.contains(packet.uuid))
+					continue;
+				    receivedPackets.add(packet.uuid);
+				}
 				
 				if (packet.cast instanceof Anycast)
 				{
 				    mine = true;
+				    route = false;
 				}
 				else if (packet.cast instanceof Unicast)
 				{
-				    route = !(mine == ((Unicast)(packet.cast)).receiver.equals(localUser.uuid));
+				    route = !(mine = ((Unicast)(packet.cast)).receiver.equals(localUser.uuid));
 				}
 				else if (packet.cast instanceof Multicast)
 				{
@@ -197,6 +231,8 @@ public class Hub
 				{
 				    mine = route = true;
 				}
+				else
+				    throw new Error("Update cast list in ~.net.Hub");
 				
 				if (mine)
 				    synchronized (Hub.this.inbox)
@@ -226,10 +262,86 @@ public class Hub
      * Sends a packet to everyone else that should have a copy
      * 
      * @param  packet  The packet to send
+     * 
+     * @throws  IOException  On I/O error
      */
-    protected void route(final Packet packet)
+    protected void route(final Packet packet) throws IOException
     {
-	
+	if (packet.cast instanceof Anycast)
+	{
+	}
+	else if (packet.cast instanceof Unicast)
+	{
+	}
+	else if (packet.cast instanceof Multicast)
+	{
+	    final UDPSocket[] sendTo;
+	    int ptr = 0;
+	    
+	    synchronized (this.sockets)
+	    {
+		sendTo = new UDPSocket[this.sockets.size()];
+		int direct = 0;
+		final HashSet<UDPSocket> alreadyListed = new HashSet<>();
+		
+		final UUID[] receivers = ((Multicast)(packet.cast)).receivers;
+		for (final UUID receiver : receivers)
+		{
+		    if (packet.cast.hasReceived(receiver))
+			direct++;
+		    else
+		    {   final UDPSocket socket = uuidSockets.get(receiver);
+			if (socket != null)
+			{   alreadyListed.add(sendTo[ptr++] = socket);
+			    direct++;
+		    }   }
+		}
+		
+		if (direct < receivers.length)
+		    for (final UDPSocket socket : this.sockets)
+			if (alreadyListed.contains(socket) == false)
+			{
+			    final UUID uuid = socketUUIDs.get(socket);
+			    if (uuid == null)
+				sendTo[ptr++] = socket;
+			    else if (packet.cast.hasReceived(uuid) == false)
+			    {
+				packet.cast.addReceived(uuid);
+				sendTo[ptr++] = socket;
+			    }
+			}
+	    }
+	    
+	    for (int i = 0; i < ptr; i++)
+	    {   final UDPSocket socket = sendTo[i];
+		socket.outputStream.writeObject(packet);
+		socket.outputStream.flush();
+	    }
+	}
+	else if (packet.cast instanceof Broadcast)
+	{
+	    final UDPSocket[] sendTo;
+	    int ptr = 0;
+	    
+	    synchronized (this.sockets)
+	    {   sendTo = new UDPSocket[this.sockets.size()];
+		for (final UDPSocket socket : this.sockets)
+		{   final UUID uuid = socketUUIDs.get(socket);
+		    if (uuid == null)
+			sendTo[ptr++] = socket;
+		    else if (packet.cast.hasReceived(uuid) == false)
+		    {   packet.cast.addReceived(uuid);
+			sendTo[ptr++] = socket;
+	    }   }   }
+	    
+	    for (int i = 0; i < ptr; i++)
+	    {   final UDPSocket socket = sendTo[i];
+		socket.outputStream.writeObject(packet);
+		socket.outputStream.flush();
+	    }
+	}
+	else
+	    throw new Error("Update cast list in ~.net.Hub");
     }
     
 }
