@@ -59,8 +59,8 @@ Object arrays:
 
 
 
-Message in packets must be have their size written in the beginning of marshalling
-using the method TransferOutputStream#writeLenOf(Object) iff the object is not
-an array.  This is important that relay clients that does have the unmarshalling
-mechanism can unmarshall it to a byte array instread (skipping unmarshalling).
+Message in packets have their size written in the beginning of marshalling using
+the method TransferOutputStream#writeLenOf(Object) iff the object is not an array.
+This is important that relay clients that does have the unmarshalling mechanism
+can unmarshall it to a byte array instread (skipping unmarshalling).
 
