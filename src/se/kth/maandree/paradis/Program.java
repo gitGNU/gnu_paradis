@@ -74,17 +74,10 @@ public class Program
 	System.out.println("Random TCP port: " + Toolkit.getRandomPortTCP());
 	System.out.println("Random UDP port: " + port);
 	
-	final ChatUDP chat = new ChatUDP(port);
 	final Scanner sc = new Scanner(System.in);
+	final ChatUDP chat = new ChatUDP(port, sc.nextLine());
 	for (;;)
-	{
-	    final String line = sc.nextLine();
-	    final String host = line.substring(0, line.indexOf(' '));
-	    final String rptz = line.substring(host.length() + 1, line.indexOf(' ', host.length() + 1));
-	    final String msg = line.substring(host.length() + rptz.length() + 2);
-	    
-	    chat.send(host, Integer.parseInt(rptz), msg);
-	}
+	    chat.send(sc.nextLine());
     }
     
 }

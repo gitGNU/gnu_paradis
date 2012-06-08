@@ -29,28 +29,41 @@ import java.net.*;
  */
 public class ChatUDP implements Runnable
 {
-    public ChatUDP(final int port) throws IOException
+    public ChatUDP(final int port, final String remote) throws IOException
     {
 	socket = new DatagramSocket(port);
-	this.port = socket.getLocalPort();
+	
+	if (remote.startsWith("[") && remote.contains("]:"))
+	{
+	    this.remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
+	    this.remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
+	}
+	else
+	{
+	    this.remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
+	    this.remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
+	}
 	
 	(new Thread(this)).start();
     }
     
     
+    
     private final DatagramSocket socket;
     
-    public final int port;
+    private final InetAddress remoteAddress;
+    
+    private final int remotePort;
     
     protected boolean closing = false;
     
     
-    public synchronized void send(final String host, final int port, final String data) throws IOException
+    
+    public synchronized void send(final String data) throws IOException
     {
-	final InetAddress address = InetAddress.getByName(host);
 	final byte[] bytes = data.getBytes("UTF-8");
 	
-	final DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length, address, port);
+	final DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length, this.remoteAddress, this.remotePort);
 	
 	this.socket.send(packet);
     }
@@ -73,7 +86,10 @@ public class ChatUDP implements Runnable
 		this.socket.receive(packet);
 		
 		final String msg = new String(packet.getData(), packet.getOffset(), packet.getLength(), "UTF-8");
-		System.out.println("\033[34m[" + packet.getAddress().getHostAddress() + "]:" + packet.getPort() + ":\033[39m " + msg);
+		String address = packet.getAddress().getHostAddress();
+		if (address.contains(":"))
+		    address = "[" + address + "]";
+		System.out.println("\033[34m" + address + ":" + packet.getPort() + " >\033[39m " + msg);
 	    }
 	}
 	catch (final Throwable err)
