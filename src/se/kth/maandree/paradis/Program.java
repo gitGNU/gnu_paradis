@@ -30,12 +30,12 @@ import java.net.InetAddress;
 public class Program
 {
     /**
-     * The name of the package, this should never be modified
+     * The name of the package, this should never be modified unleash you make a totally new program
      */
     public static final String PACKAGE = "paradis";
     
     /**
-     * The fork path of the package
+     * The fork path of the package, place ready documentation before changing this to ensure uniqueness
      */
     public static final String FORK = "maandree";
     

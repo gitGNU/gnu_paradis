@@ -180,10 +180,9 @@ public class UDPServer implements Runnable
 				}
 				if (len == 0)
 				    continue;
-				synchronized (UDPServer.this.outMonitor)
-				{   packet.setLength(len);
-				    sock.send(packet);
-			    }   }
+				packet.setLength(len);
+				sock.send(packet);
+			    }
 			}
 			catch (final Throwable err)
 			{   err.printStackTrace(System.err);
