@@ -67,6 +67,7 @@ public class HubChat
 					new long[0],
 					new String[0],
 					new String[0],
+					new String[0],
 					new int[0],
 					new String[0][],
 					new byte[0][]);

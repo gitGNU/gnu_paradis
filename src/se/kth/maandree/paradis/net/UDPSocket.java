@@ -186,6 +186,16 @@ public class UDPSocket
     
     
     /**
+     * Toll the bell to inform that you are alive or connects
+     * 
+     * @throws  IOException  On I/O error
+     */
+    protected void toll() throws IOException
+    {   this.server.socket.send(new DatagramPacket(new byte[] { BELL }, 0, 1, this.remoteAddress, this.remotePort));
+    }
+    
+    
+    /**
      * Invoke to send a datagram packet
      * 
      * @param  packet  The datagram packet to send
@@ -273,6 +283,8 @@ public class UDPSocket
 	    {   this.server.socket.send(new DatagramPacket(new byte[] { ok ? ACKNOWLEDGE : NEGATIVE_ACKNOWLEDGE }, 0, 1, this.remoteAddress, this.remotePort));
 	    }
 	}
+	else if (signal == BELL)
+	    return;
 	
 	if (this.ackWaiting)
 	    synchronized (this.enquiryMonitor)

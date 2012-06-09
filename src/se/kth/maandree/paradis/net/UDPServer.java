@@ -147,6 +147,12 @@ public class UDPServer implements Runnable
 	    {   sock = new UDPSocket(this.localPort, remoteAddress, remotePort, this);
 		this.sockets.put(address, sock);
 		bind(sock);
+		try
+		{   sock.toll();
+		}
+		catch (final IOException ignore)
+		{   // Ignore
+		}
 	    }
 	    return sock;
 	}

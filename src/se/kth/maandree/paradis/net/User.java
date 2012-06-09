@@ -41,6 +41,7 @@ public class User implements Comparable<User>
      * @param  signature         {@link #signature}
      * @param  friendUUIDs       {@link #friendUUIDs}
      * @param  friendUpdates     {@link #friendUpdates}
+     * @param  friendNames       {@link #friendNames}
      * @param  friendLocalIPs    {@link #friendLocalIPs}
      * @param  friendPublicIPs   {@link #friendPublicIPs}
      * @param  friendPorts       {@link #friendPorts}
@@ -48,8 +49,8 @@ public class User implements Comparable<User>
      * @param  friendSignatures  {@link #friendSignatures}
      */
     public User(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[] dnsNames, final UUID connectedTo,
-		final byte[] signature, final UUID[] friendUUIDs, final long[] friendUpdates, final String[] friendLocalIPs, final String[] friendPublicIPs,
-		final int[] friendPorts, final String[][] friendDNSNames, final byte[][] friendSignatures)
+		final byte[] signature, final UUID[] friendUUIDs, final long[] friendUpdates, final String[] friendNames, final String[] friendLocalIPs,
+		final String[] friendPublicIPs, final int[] friendPorts, final String[][] friendDNSNames, final byte[][] friendSignatures)
     {
 	this.uuid             = uuid;
 	this.name             = name;
@@ -61,6 +62,7 @@ public class User implements Comparable<User>
 	this.signature        = signature;
 	this.friendUUIDs      = friendUUIDs;
 	this.friendUpdates    = friendUpdates;
+	this.friendNames      = friendNames;
 	this.friendLocalIPs   = friendLocalIPs;
 	this.friendPublicIPs  = friendPublicIPs;
 	this.friendPorts      = friendPorts;
