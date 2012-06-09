@@ -338,7 +338,7 @@ public class Hub
 	    }
 	    synchronized (this.errors)
 	    {
-		this.errors.offerLast(new IOException("No alive peers to anycast to."));
+		this.errors.offerLast(new NoneAliveException("No alive peers to anycast to."));
 	}   }
     }
     
@@ -359,7 +359,7 @@ public class Hub
 	}
 	if (socket == null)
 	    synchronized (this.errors)
-	    {   this.errors.offerLast(new IOException("Don't know how to reach peer."));
+	    {   this.errors.offerLast(new UnknownPathException("Don't know how to reach peer."));
 		return;
 	    }
 	socket.outputStream.writeObject(packet);
@@ -369,7 +369,7 @@ public class Hub
 		synchronized (this.deadSockets)
 		{   this.deadSockets.add(socket);
 		    synchronized (this.errors)
-		    {   this.errors.offerLast(new IOException("Peer is dead."));
+		    {   this.errors.offerLast(new PeerIsDeadException("Peer is dead."));
 	}       }   }
     }
     

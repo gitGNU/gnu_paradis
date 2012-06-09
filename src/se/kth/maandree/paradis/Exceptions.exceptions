@@ -1,6 +1,8 @@
-java.io.IOException >
-    se.kth.maandree.paradis.net.NetworkException  String message .  >
-        se.kth.maandree.paradis.net.TestException  ! String a  !!  UUID uuid UUID  String message .
-        <
-    <
+java.net.SocketException
+>   se.kth.maandree.paradis.net.NetworkException              String message  .
+    >   se.kth.maandree.paradis.net.RoutingException          String message  .
+	>   se.kth.maandree.paradis.net.NoneAliveException    String message  .
+	    se.kth.maandree.paradis.net.UnknownPathException  String message  .
+	    se.kth.maandree.paradis.net.PeerIsDeadException   String message  .
+<   <   <
 

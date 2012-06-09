@@ -45,6 +45,7 @@ public class ExceptionGenerator
 	    final Scanner sc = new Scanner(stream);
 	    final String[] stack = new String[1024];
 	    int level = 0;
+	    boolean kill = false;
 	    
 	    final ArrayDeque<String> words = new ArrayDeque<String>();
 	    
@@ -64,16 +65,24 @@ public class ExceptionGenerator
 		
 		for (final String word : line.split(" "))
 		    if (word.equals(">"))
+		    {
+			kill = false;
 			level++;
+		    }
 		    else if (word.equals("<"))
 			stack[level--] = null;
 		    else if (word.equals("."))
 		    {
 			if (level > 0)
-			    generate(stack[level], stack[level - 1], words);
+			{   generate(stack[level], stack[level - 1], words);
+			    kill = true;
+			}
 		    }
-		    else if (stack[level] == null)
+		    else if (kill || (stack[level] == null))
+		    {
+			kill = false;
 			stack[level] = word;
+		    }
 		    else
 			words.add(word);
 	    }
