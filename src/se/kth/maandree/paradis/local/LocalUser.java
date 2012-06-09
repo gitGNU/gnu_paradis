@@ -87,15 +87,63 @@ public class LocalUser
     }
     
     
+    public static boolean addFriend(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[][] dnsNames, final byte[] signature)
+    {   return false;
+    }
     
-    //UUID[] friendUUIDs           get add remove
-    //long[] friendUpdates         get set add remove
-    //String[] friendNames         get set add remove
-    //String[] friendLocalIPs      get set add remove
-    //String[] friendPublicIPs     get set add remove
-    //int[] friendPorts;           get set add remove
-    //String[][] friendDNSNames    get set add remove
-    //byte[][] friendSignatures    get set add remove
+    public static boolean removeFriend(final UUID uuid)
+    {   return false;
+    }
+    
+    public static UUID[] getFriendUUIDs()
+    {   //UUID[] friendUUIDs           full access
+	return null;
+    }
+    
+    public static long[] getFriendUpdates()
+    {   //long[] friendUpdates         full access
+	return null;
+    }
+    
+    public static String[] getFriendNames()
+    {   //String[] friendNames         full access
+	return null;
+    }
+    
+    public static String[] getFriendLocalIPs()
+    {   //String[] friendLocalIPs      full access
+	return null;
+    }
+    
+    public static String[] getFriendPublicIPs()
+    {   //String[] friendPublicIPs     full access
+	return null;
+    }
+    
+    public static int[] getFriendPorts()
+    {   //int[] friendPorts;           full access
+	return null;
+    }
+    
+    public static byte[] getFriendSignatures()
+    {   //byte[][] friendSignatures    full access
+	return null;
+    }
+    
+    public static String[] getFriendDNSNames()
+    {   //String[][] friendDNSNames    get set add remove
+	return null;
+    }
+    
+    public static String[] addFriendDNSName(final String value)
+    {   //String[][] friendDNSNames    get set add remove
+	return null;
+    }
+    
+    public static String[] removeFriendDNSName(final String value)
+    {   //String[][] friendDNSNames    get set add remove
+	return null;
+    }
     
 }
 
