@@ -21,10 +21,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-//TODO:  Support for reconnecting to dead clients is needed
-//TODO:  Support for unkilling reconnecting clients is needed
 //TODO:  Routing information and UUID address lookup is needed
-//TODO:  Detailed exceptions is needed
 //TODO:  A router, that extends this class, would be nice
 //TODO:  Multicast UUIDs needed
 
@@ -130,6 +127,8 @@ public class Hub
      */
     public final ArrayDeque<Throwable> errors = new ArrayDeque<>();
     
+    public final HashMap<InetAddress, HashMap<Integer, UDPSocket>> connections = new HashMap<>();
+    
     
     
     /**
@@ -198,7 +197,25 @@ public class Hub
      */
     public void connect(final InetAddress remoteAddress, final int remotePort)
     {
-	hostSocket(this.server.connect(remoteAddress, remotePort));
+	UDPSocket socket = null;
+	synchronized (this.connections)
+	{
+	    final HashMap<Integer, UDPSocket> map = this.connections.get(remoteAddress);
+	    if (map != null)
+		socket = map.get(Integer.valueOf(remotePort));
+	}
+	
+	if (socket == null)
+	    hostSocket(this.server.connect(remoteAddress, remotePort));
+	else
+	    try
+	    {   if (socket.isAlive())
+		    synchronized (this.deadSockets)
+		    {   this.deadSockets.remove(socket);
+	    }       }
+	    catch (final Exception ignore)
+	    {   // ignore
+	    }
     }
     
     
@@ -222,6 +239,10 @@ public class Hub
 				packet.packetAge++;
 				boolean route;
 				boolean mine;
+				
+				synchronized (Hub.this.deadSockets)
+				{   Hub.this.deadSockets.remove(socket);
+				}
 				
 				synchronized (receivedPackets)
 				{   if (receivedPackets.contains(packet.uuid))

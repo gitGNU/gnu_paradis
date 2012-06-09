@@ -301,6 +301,8 @@ public class UDPSocket
      * </p>
      * 
      * @return  Whether this remote client is alive
+     * 
+     * @throws  IOException  On failure on your part
      */
     public boolean isAlive() throws IOException
     {
