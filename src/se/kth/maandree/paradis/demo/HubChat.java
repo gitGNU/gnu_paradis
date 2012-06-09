@@ -56,7 +56,7 @@ public class HubChat
 	System.out.println("UDP port: " + port);
 	
 	final User localUser = new User(new UUID(),
-					"nobody",
+					"nopony",
 					"127.0.0.1",
 					"127.0.0.1",
 					port,

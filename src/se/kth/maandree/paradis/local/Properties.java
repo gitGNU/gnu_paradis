@@ -47,6 +47,29 @@ public class Properties
 	    return System.getProperty("user.home");
 	return home;
     }
+    
+    
+    /**
+     * Gets the name of the user
+     * 
+     * @return  The name of the user
+     */
+    public static String getUser()
+    {
+	return System.getProperty("user.name");
+    }
+    
+    
+    /**
+     * Gets the system file separator ("/" on UNIX)
+     * 
+     * @return  The system file separator ("/" on UNIX)
+     */
+    public static String getFileSeparator()
+    {
+	String rc = System.getProperty("file.separator");
+	return rc == null ? "/" : rc;
+    }
 
 }
 

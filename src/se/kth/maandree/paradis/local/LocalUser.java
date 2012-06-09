@@ -17,7 +17,10 @@
  */
 package se.kth.maandree.paradis.local;
 import se.kth.maandree.paradis.net.*;
+import se.kth.maandree.paradis.io.*;
+import se.kth.maandree.paradis.*;
 
+import java.io.*;
 import java.util.Arrays;
 
 
@@ -28,6 +31,16 @@ import java.util.Arrays;
  */
 public class LocalUser
 {
+    /**
+     * Type initialiser
+     */
+    static
+    {
+	load();
+    }
+    
+    
+    
     /**
      * Non-constructor
      */
@@ -41,7 +54,7 @@ public class LocalUser
     /**
      * The unique identifier of the local user
      */
-    private static final UUID uuid = null;
+    private static UUID uuid;
     
     /**
      * The display name of the local user
@@ -119,6 +132,124 @@ public class LocalUser
      * Whether {@link #signature} has been modified
      */
     private static boolean signatureChanged = false;
+    
+    
+    
+    /**
+     * Save the local user data
+     * 
+     * @throws  IOException  On failure
+     */
+    public static void save() throws IOException
+    {
+	TransferOutputStream out = null;
+	try
+	{
+	    final String sep = Properties.getFileSeparator();
+	    String file = Properties.getHome();
+	    if (file.endsWith(sep))
+		file += sep;
+	    (new File(file += "." + Program.PACKAGE)).mkdirs();
+	    file += sep + "localuser";
+	    out = new TransferOutputStream(new FileOutputStream(new File(file)));
+	    
+	    out.writeObject(uuid);
+	    out.writeObject(name);
+	    out.writeInt(port);
+	    out.writeObject(dnsNames);
+	    out.writeObject(signature);
+	    out.writeObject(friendUUIDs);
+	    out.writeObject(friendUpdates);
+	    out.writeObject(friendNames);
+	    out.writeObject(friendLocalIPs);
+	    out.writeObject(friendPublicIPs);
+	    out.writeObject(friendPorts);
+	    out.writeObject(friendDNSNames);
+	    out.writeObject(friendSignatures);
+	    
+	    out.flush();
+	}
+	finally
+	{   if (out != null)
+		try
+		{    out.close();
+		}
+		catch (final Throwable ignore)
+		{    // ignore
+	}       }
+    }
+    
+    /**
+     * Load the local user data, and generates and saves if missing or corrupt
+     */
+    private static void load()
+    {
+	boolean gen = true;
+	TransferInputStream in = null;
+	try
+	{
+	    final String sep = Properties.getFileSeparator();
+	    String file = Properties.getHome();
+	    if (file.endsWith(sep))
+		file += sep;
+	    (new File(file += "." + Program.PACKAGE)).mkdirs();
+	    file += sep + "localuser";
+	    in = new TransferInputStream(new FileInputStream(new File(file)));
+	    
+	    uuid             = in.readObject(    UUID  .class);
+	    name             = in.readObject(  String  .class);
+	    port             = in.readInt();
+	    dnsNames         = in.readObject(String[]  .class);
+	    signature        = in.readObject(  byte[]  .class);
+	    friendUUIDs      = in.readObject(  UUID[]  .class);
+	    friendUpdates    = in.readObject(  long[]  .class);
+	    friendNames      = in.readObject(String[]  .class);
+	    friendLocalIPs   = in.readObject(String[]  .class);
+	    friendPublicIPs  = in.readObject(String[]  .class);
+	    friendPorts      = in.readObject(   int[]  .class);
+	    friendDNSNames   = in.readObject(String[][].class);
+	    friendSignatures = in.readObject(  byte[][].class);
+	    
+	    gen = false;
+	}
+	catch (final Throwable err)
+	{   System.err.println("Failed to load local user data, generates instead, and saves");
+	}
+	finally
+	{   if (in != null)
+		try
+		{    in.close();
+		}
+		catch (final Throwable ignore)
+		{    // ignore
+	}       }
+	
+	if (gen)
+	{   uuid             = new UUID();
+	    name             = Properties.getUser();
+	    if (name == null)
+		name = "nopony";
+	    port             = 0;
+	    dnsNames         = new String[0];
+	    signature        = new byte[0];
+	    friendUUIDs      = new UUID[0];
+	    friendUpdates    = new long[0];
+	    friendNames      = new String[0];
+	    friendLocalIPs   = new String[0];
+	    friendPublicIPs  = new String[0];
+	    friendPorts      = new int[0];
+	    friendDNSNames   = new String[0][];
+	    friendSignatures = new byte[0][];
+	}
+	
+	if (gen)
+	    try
+	    {   save();
+	    }
+	    catch (final Throwable err)
+	    {   System.err.println("Failed to save generated local user data");
+	    }
+    }
     
     
     
