@@ -114,7 +114,7 @@ public class User implements Comparable<User>
     
     
     /**
-     * {@link #uuid} of friends
+     * {@link #uuid} for friends
      */
     public UUID[] friendUUIDs;
     
@@ -124,32 +124,32 @@ public class User implements Comparable<User>
     public long[] friendUpdates;
     
     /**
-     * {@link #name} of friends
+     * {@link #name} for friends
      */
     public String[] friendNames;
     
     /**
-     * {@link #localIP} of friends
+     * {@link #localIP} for friends
      */
     public String[] friendLocalIPs;
     
     /**
-     * {@link #publicIP} of friends
+     * {@link #publicIP} for friends
      */
     public String[] friendPublicIPs;
     
     /**
-     * {@link #port} of friends
+     * {@link #port} for friends
      */
     public int[] friendPorts;
     
     /**
-     * {@link #dnsNames} of friends
+     * {@link #dnsNames} for friends
      */
     public String[][] friendDNSNames;
     
     /**
-     * {@link #signature} of friends
+     * {@link #signature} for friends
      */
     public byte[][] friendSignatures;
     
@@ -200,18 +200,19 @@ public class User implements Comparable<User>
 	    stream.writeObject(data.localIP);
 	    stream.writeObject(data.publicIP);
 	    stream.writeInt(data.port);
-	    stream.writeObject(data.dnsNames);
-	    stream.writeObject(data.connectedTo);
-	    stream.writeObject(data.signature);
-	    stream.writeObject(data.friendUUIDs);
-	    stream.writeObject(data.friendUpdates);
-	    stream.writeObject(data.friendNames);
-	    stream.writeObject(data.friendLocalIPs);
-	    stream.writeObject(data.friendPublicIPs);
-	    stream.writeObject(data.friendPorts);
-	    stream.writeObject(data.friendDNSNames);
-	    stream.writeObject(data.friendSignatures);
-	}
+	    synchronized (data)
+	    {   stream.writeObject(data.dnsNames);
+		stream.writeObject(data.connectedTo);
+		stream.writeObject(data.signature);
+		stream.writeObject(data.friendUUIDs);
+		stream.writeObject(data.friendUpdates);
+		stream.writeObject(data.friendNames);
+		stream.writeObject(data.friendLocalIPs);
+		stream.writeObject(data.friendPublicIPs);
+		stream.writeObject(data.friendPorts);
+		stream.writeObject(data.friendDNSNames);
+		stream.writeObject(data.friendSignatures);
+	}   }
     
     }
     
@@ -254,6 +255,274 @@ public class User implements Comparable<User>
     public String toString()
     {   return (this.name + " (") + (this.uuid.toString() + ")");
     }
+    
+    
+    
+    /**
+     * Gets the unique identifier of the user
+     * 
+     * @return  The descripted data
+     */
+    public UUID getUUID()
+    {   return this.uuid;
+    }
+    
+    /**
+     * Gets the display name of the user, does not need to be unique
+     * 
+     * @return  The descripted data
+     */
+    public String getName()
+    {   return this.name;
+    }
+    
+    /**
+     * Gets the LAN private IP address of the user
+     * 
+     * @return  The descripted data
+     */
+    public String getLocalIP()
+    {   return this.localIP;
+    }
+    
+    /**
+     * Gets the WAN public IP address of the user
+     * 
+     * @return  The descripted data
+     */
+    public String getPublicIP()
+    {   return this.publicIP;
+    }
+    
+    /**
+     * Gets the port the user uses for communications
+     * 
+     * @return  The descripted data
+     */
+    public int getPort()
+    {   return this.port;
+    }
+    
+    /**
+     * Gets the DNS names of the user
+     * 
+     * @return  The descripted data
+     */
+    public String[] getDNSNames()
+    {   synchronized (this)
+	{   return this.dnsNames;
+    }   }
+    
+    /**
+     * Setter for {@link #getDNSNames()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setDNSNames(final String[] value)
+    {   synchronized (this)
+	{   this.dnsNames = value;
+    }   }
+    
+    /**
+     * Gets the UUID of the user this user is connected to
+     * 
+     * @return  The descripted data
+     */
+    public UUID getConnectedTo()
+    {   synchronized (this)
+	{   return this.connectedTo;
+    }   }
+    
+    /**
+     * Setter for {@link #getConnectedTo()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setConnectedTo(final UUID value)
+    {   synchronized (this)
+	{   this.connectedTo = value;
+    }   }
+    
+    /**
+     * Gets the digital signature, may be used to prove identify among friends
+     * 
+     * @return  The descripted data
+     */
+    public byte[] getSignature()
+    {   synchronized (this)
+	{   return this.signature;
+    }   }
+    
+    /**
+     * Setter for {@link #getSignature()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setSignature(final byte[] value)
+    {   synchronized (this)
+	{   this.signature = value;
+    }   }
+    
+    
+    /**
+     * {@link #getUUID()} for friends
+     * 
+     * @return  The descripted data
+     */
+    public UUID[] getFriendUUIDs()
+    {   synchronized (this)
+	{   return this.friendUUIDs;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendUUIDs()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendUUIDs(final UUID[] value)
+    {   synchronized (this)
+	{   this.friendUUIDs = value;
+    }   }
+    
+    /**
+     * The list update time of friend information, in milliseconds since 1970-(01)jan-01 00:00:00.000
+     * 
+     * @return  The descripted data
+     */
+    public long[] getFriendUpdates()
+    {   synchronized (this)
+	{   return this.friendUpdates;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendUpdates()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendUpdates(final long[] value)
+    {   synchronized (this)
+	{   this.friendUpdates = value;
+    }   }
+    
+    /**
+     * {@link #getName()} for friends
+     * 
+     * @return  The descripted data
+     */
+    public String[] getFriendNames()
+    {   synchronized (this)
+	{   return this.friendNames;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendNames()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendNames(final String[] value)
+    {   synchronized (this)
+	{   this.friendNames = value;
+    }   }
+    
+    /**
+     * {@link #getLocalIP()} for friends
+     * 
+     * @return  The descripted data
+     */
+    public String[] getFriendLocalIPs()
+    {   synchronized (this)
+	{   return this.friendLocalIPs;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendLocalIPs()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendLocalIPs(final String[] value)
+    {   synchronized (this)
+	{   this.friendLocalIPs = value;
+    }   }
+    
+    /**
+     * {@link #getPublicIP()} for friends
+     * 
+     * @return  The descripted data
+     */
+    public String[] getFriendPublicIPs()
+    {   synchronized (this)
+	{   return this.friendPublicIPs;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendPublicIPs()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendPublicIPs(final String[] value)
+    {   synchronized (this)
+	{   this.friendPublicIPs = value;
+    }   }
+    
+    /**
+     * {@link #getPort()} for friends
+     * 
+     * @return  The descripted data
+     */
+    public int[] getFriendPorts()
+    {   synchronized (this)
+	{   return this.friendPorts;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendPorts()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendPorts(final int[] value)
+    {   synchronized (this)
+	{   this.friendPorts = value;
+    }   }
+    
+    /**
+     * {@link #getDNSNames()} for friends
+     * 
+     * @return  The descripted data
+     */
+    public String[][] getFriendDNSNames()
+    {   synchronized (this)
+	{   return this.friendDNSNames;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendDNSNames()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendDNSNames(final String[][] value)
+    {   synchronized (this)
+	{   this.friendDNSNames = value;
+    }   }
+    
+    /**
+     * {@link #getSignature()} for friends
+     * 
+     * @return  The descripted data
+     */
+    public byte[][] getFriendSignatures()
+    {   synchronized (this)
+	{   return this.friendSignatures;
+    }   }
+    
+    /**
+     * Setter for {@link #getFriendSignatures()}
+     * 
+     * @param  value  The descripted data
+     */
+    public void setFriendSignatures(final byte[][] value)
+    {   synchronized (this)
+	{   this.friendSignatures = value;
+    }   }
 
 }
 
