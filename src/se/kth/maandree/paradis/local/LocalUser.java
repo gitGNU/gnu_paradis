@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.local;
+import se.kth.maandree.paradis.net.*;
 
 
 /**
@@ -35,16 +36,58 @@ public class LocalUser
     
     
     
-    // DATA IN USER OBJECT
+    public static UUID getUUID()
+    {   //final UUID uuid              get
+	return null;
+    }
     
-    //final UUID uuid              get
-    //final String name            get set(once)
-    //final String localIP         not here
-    //final String publicIP        not here
-    //final int port               get set(once)
-    //String[] dnsNames            get set add remove
-    //UUID connectedTo             not here
-    //byte[] signature             get set(once)
+    public static String getName()
+    {   //final String name            get set(once)
+	return null;
+    }
+    
+    public static boolean setName(final String value)
+    {   //final String name            get set(once)
+	return false;
+    }
+    
+    public static int getPort()
+    {   //final int port               get set(once)
+	return 0;
+    }
+    
+    public static boolean setPort(final int value)
+    {   //final int port               get set(once)
+	return false;
+    }
+    
+    public static byte[] getSignature()
+    {   //byte[] signature             get set(once)
+	return null;
+    }
+    
+    public static boolean setSignature(final byte[] value)
+    {   //byte[] signature             get set(once)
+	return false;
+    }
+    
+    public static String[] getDNSNames()
+    {   //String[] dnsNames            get add remove
+	return null;
+    }
+    
+    public static String[] addDNSName(final String value)
+    {   //String[] dnsNames            get add remove
+	return null;
+    }
+    
+    public static String[] removeDNSName(final String value)
+    {   //String[] dnsNames            get add remove
+	return null;
+    }
+    
+    
+    
     //UUID[] friendUUIDs           get add remove
     //long[] friendUpdates         get set add remove
     //String[] friendNames         get set add remove
@@ -54,6 +97,5 @@ public class LocalUser
     //String[][] friendDNSNames    get set add remove
     //byte[][] friendSignatures    get set add remove
     
-
 }
 
