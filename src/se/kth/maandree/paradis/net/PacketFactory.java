@@ -73,7 +73,7 @@ public class PacketFactory
      */
     public Packet createAnycast(final Object message, final String messageType)
     {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Anycast(this.localUser.uuid), message, messageType);
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Anycast(this.localUser.getUUID()), message, messageType);
     }
     
     /**
@@ -84,7 +84,7 @@ public class PacketFactory
      */
     public Packet createUnicast(final Object message, final String messageType, final UUID receiver)
     {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Unicast(this.localUser.uuid, receiver), message, messageType);
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Unicast(this.localUser.getUUID(), receiver), message, messageType);
     }
     
     /**
@@ -95,7 +95,7 @@ public class PacketFactory
      */
     public Packet createMulticast(final Object message, final String messageType, final UUID... receivers)
     {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Multicast(this.localUser.uuid, receivers), message, messageType);
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Multicast(this.localUser.getUUID(), receivers), message, messageType);
     }
     
     /**
@@ -106,7 +106,7 @@ public class PacketFactory
      */
     public Packet createBroadcast(final Object message, final String messageType)
     {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Broadcast(this.localUser.uuid), message, messageType);
+	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Broadcast(this.localUser.getUUID()), message, messageType);
     }
     
     

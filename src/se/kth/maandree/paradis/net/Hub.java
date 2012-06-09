@@ -166,7 +166,7 @@ public class Hub
 	{   receivedPackets.add(packet.uuid);
 	}
 	
-	packet.cast.addReceived(this.localUser.uuid);
+	packet.cast.addReceived(this.localUser.getUUID());
 	
 	if (packet.alsoSendToSelf)
 	    synchronized (this.inbox)
@@ -235,11 +235,11 @@ public class Hub
 				}
 				else if (packet.cast instanceof Unicast)
 				{
-				    route = !(mine = ((Unicast)(packet.cast)).receiver.equals(localUser.uuid));
+				    route = !(mine = ((Unicast)(packet.cast)).receiver.equals(localUser.getUUID()));
 				}
 				else if (packet.cast instanceof Multicast)
 				{
-				    mine = Arrays.binarySearch(((Multicast)(packet.cast)).receivers, localUser.uuid) >= 0;
+				    mine = Arrays.binarySearch(((Multicast)(packet.cast)).receivers, localUser.getUUID()) >= 0;
 				    route = (((Multicast)(packet.cast)).receivers.length - (mine ? 1 : 0)) > 0;
 				}
 				else if (packet.cast instanceof Broadcast)

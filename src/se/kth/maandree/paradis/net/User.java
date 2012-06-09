@@ -75,83 +75,83 @@ public class User implements Comparable<User>
     /**
      * Unique identifier of the user
      */
-    public final UUID uuid;
+    private final UUID uuid;
     
     /**
      * The display name of the user, does not need to be unique
      */
-    public final String name;
+    private final String name;
     
     /**
      * The LAN private IP address of the user
      */
-    public final String localIP;
+    private final String localIP;
     
     /**
      * The WAN public IP address of the user
      */
-    public final String publicIP;
+    private final String publicIP;
     
     /**
      * The port the user uses for communications
      */
-    public final int port;
+    private final int port;
     
     /**
      * The DNS names of the user
      */
-    public String[] dnsNames;
+    private String[] dnsNames;
     
     /**
      * The UUID of the user this user is connected to
      */
-    public UUID connectedTo;
+    private UUID connectedTo;
     
     /**
      * Digital signature, may be used to prove identify among friends
      */
-    public byte[] signature;
+    private byte[] signature;
     
     
     /**
      * {@link #uuid} for friends
      */
-    public UUID[] friendUUIDs;
+    private UUID[] friendUUIDs;
     
     /**
      * The list update time of friend information, in milliseconds since 1970-(01)jan-01 00:00:00.000
      */
-    public long[] friendUpdates;
+    private long[] friendUpdates;
     
     /**
      * {@link #name} for friends
      */
-    public String[] friendNames;
+    private String[] friendNames;
     
     /**
      * {@link #localIP} for friends
      */
-    public String[] friendLocalIPs;
+    private String[] friendLocalIPs;
     
     /**
      * {@link #publicIP} for friends
      */
-    public String[] friendPublicIPs;
+    private String[] friendPublicIPs;
     
     /**
      * {@link #port} for friends
      */
-    public int[] friendPorts;
+    private int[] friendPorts;
     
     /**
      * {@link #dnsNames} for friends
      */
-    public String[][] friendDNSNames;
+    private String[][] friendDNSNames;
     
     /**
      * {@link #signature} for friends
      */
-    public byte[][] friendSignatures;
+    private byte[][] friendSignatures;
     
     
     
@@ -195,23 +195,23 @@ public class User implements Comparable<User>
 	 */
 	public void write(final User data, final TransferOutputStream stream) throws IOException
 	{
-	    stream.writeObject(data.uuid);
-	    stream.writeObject(data.name);
-	    stream.writeObject(data.localIP);
-	    stream.writeObject(data.publicIP);
-	    stream.writeInt(data.port);
+	    stream.writeObject(data.getUUID());
+	    stream.writeObject(data.getName());
+	    stream.writeObject(data.getLocalIP());
+	    stream.writeObject(data.getPublicIP());
+	    stream.writeInt(data.getPort());
 	    synchronized (data)
-	    {   stream.writeObject(data.dnsNames);
-		stream.writeObject(data.connectedTo);
-		stream.writeObject(data.signature);
-		stream.writeObject(data.friendUUIDs);
-		stream.writeObject(data.friendUpdates);
-		stream.writeObject(data.friendNames);
-		stream.writeObject(data.friendLocalIPs);
-		stream.writeObject(data.friendPublicIPs);
-		stream.writeObject(data.friendPorts);
-		stream.writeObject(data.friendDNSNames);
-		stream.writeObject(data.friendSignatures);
+	    {   stream.writeObject(data.getDNSNames());
+		stream.writeObject(data.getConnectedTo());
+		stream.writeObject(data.getSignature());
+		stream.writeObject(data.getFriendUUIDs());
+		stream.writeObject(data.getFriendUpdates());
+		stream.writeObject(data.getFriendNames());
+		stream.writeObject(data.getFriendLocalIPs());
+		stream.writeObject(data.getFriendPublicIPs());
+		stream.writeObject(data.getFriendPorts());
+		stream.writeObject(data.getFriendDNSNames());
+		stream.writeObject(data.getFriendSignatures());
 	}   }
     
     }
