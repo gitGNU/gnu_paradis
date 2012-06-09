@@ -18,6 +18,7 @@
 package se.kth.maandree.paradis.io;
 
 import java.io.*;
+import java.lang.reflect.*;
 
 
 /**
@@ -193,13 +194,13 @@ public class TransferInputStream extends FilterInputStream
      * 
      * @throws  IOException             Inherited from {@link #read()}
      */
+    @SuppressWarnings("unchecked")
     public synchronized <T> T readObject(final Class<T> type) throws IOException
     {
 	if (Object[].class.isAssignableFrom(type))
 	{
-	    String elementTypeString = type.getName().substring(1);
-	    if (elementTypeString.startsWith("[") == false)
-		elementTypeString.substring(1);
+	    String elementTypeString = type.getCanonicalName();
+	    elementTypeString = elementTypeString.substring(0, elementTypeString.length() - 2);
 	    
 	    Class<?> elementType;
 	    try
@@ -210,9 +211,11 @@ public class TransferInputStream extends FilterInputStream
 	    }
 	    
 	    int len;
-	    Object[] array = new Object[len = readLen()];
+	    Object[] array = (Object[])(Array.newInstance(elementType, len = readLen()));
 	    for (int i = 0; i < len; i++)
 		array[i] = readObject(elementType);
+	    
+	    return (T)array;
 	}
 	
 	return TransferProtocolRegister.read(type, this);

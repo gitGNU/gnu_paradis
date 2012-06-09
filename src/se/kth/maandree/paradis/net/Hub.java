@@ -253,6 +253,7 @@ public class Hub
 				    synchronized (Hub.this.inbox)
 				    {   if (packet.urgent)  Hub.this.inbox.offerFirst(packet);
 					else                Hub.this.inbox.offerLast(packet);
+					Hub.this.inbox.notifyAll();
 				    }
 				
 				if (route)

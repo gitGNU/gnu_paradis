@@ -74,6 +74,7 @@ public class TransferProtocolRegister
 	register(  Unicast.class, new   Unicast.  UnicastTransferProtocol());
 	register(Multicast.class, new Multicast.MulticastTransferProtocol());
 	register(Broadcast.class, new Broadcast.BroadcastTransferProtocol());
+	register(   Packet.class, new    Packet.   PacketTransferProtocol());
 	register(     User.class, new      User.     UserTransferProtocol());
     }
     
