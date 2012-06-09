@@ -196,7 +196,7 @@ public class UDPServer implements Runnable
     
     
     /**
-     * Socket listener rutine
+     * Socket listener routine
      */
     public void run()
     {

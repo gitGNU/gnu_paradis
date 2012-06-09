@@ -122,6 +122,11 @@ public class User implements Comparable<User>
     public long[] friendUpdates;
     
     /**
+     * {@link #name} of friends
+     */
+    public String[] friendNames;
+    
+    /**
      * {@link #localIP} of friends
      */
     public String[] friendLocalIPs;
@@ -176,6 +181,7 @@ public class User implements Comparable<User>
 			    stream.readObject(long[].class),
 			    stream.readObject(String[].class),
 			    stream.readObject(String[].class),
+			    stream.readObject(String[].class),
 			    stream.readObject(int[].class),
 			    stream.readObject(String[][].class),
 			    stream.readObject(byte[][].class));
@@ -197,6 +203,7 @@ public class User implements Comparable<User>
 	    stream.writeObject(data.signature);
 	    stream.writeObject(data.friendUUIDs);
 	    stream.writeObject(data.friendUpdates);
+	    stream.writeObject(data.friendNames);
 	    stream.writeObject(data.friendLocalIPs);
 	    stream.writeObject(data.friendPublicIPs);
 	    stream.writeObject(data.friendPorts);
