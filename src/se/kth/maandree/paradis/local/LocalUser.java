@@ -18,6 +18,8 @@
 package se.kth.maandree.paradis.local;
 import se.kth.maandree.paradis.net.*;
 
+import java.util.Arrays;
+
 
 /**
  * Local user data
@@ -36,113 +38,448 @@ public class LocalUser
     
     
     
+    /**
+     * The unique identifier of the local user
+     */
+    private static final UUID uuid = null;
+    
+    /**
+     * The display name of the local user
+     */
+    private static String name;
+    
+    /**
+     * The port the local user uses for communications
+     */
+    private static int port;
+    
+    /**
+     * The DNS names of the local user
+     */
+    private static String[] dnsNames;
+    
+    /**
+     * The local user's digital signature
+     */
+    private static byte[] signature;
+    
+    
+    /**
+     * The unique identifieres for friends of the local user
+     */
+    private static UUID[] friendUUIDs;
+    
+    /**
+     * The list update time of friend information of the local user, in milliseconds since 1970-(01)jan-01 00:00:00.000
+     */
+    private static long[] friendUpdates;
+    
+    /**
+     * The display names for friends of the local user
+     */
+    private static String[] friendNames;
+    
+    /**
+     * The LAN local IP addresses for friends of the local user
+     */
+    private static String[] friendLocalIPs;
+    
+    /**
+     * The WAN public IP addresses for friends of the local user
+     */
+    private static String[] friendPublicIPs;
+    
+    /**
+     * The ports the friends of the local user uses for communications
+     */
+    private static int[] friendPorts;
+    
+    /**
+     * The DNS names of the friends of the local user
+     */
+    private static String[][] friendDNSNames;
+    
+    /**
+     * The digital signatures of the friends of the local user
+     */
+    private static byte[][] friendSignatures;
+    
+    
+    /**
+     * Whether {@link #name} has been modified
+     */
+    private static boolean nameChanged = false;
+    
+    /**
+     * Whether {@link #port} has been modified
+     */
+    private static boolean portChanged = false;
+    
+    /**
+     * Whether {@link #signature} has been modified
+     */
+    private static boolean signatureChanged = false;
+    
+    
+    
+    /**
+     * Gets the unique identifier of the local user
+     * 
+     * @return  The unique identifier of the local user
+     */
     public static UUID getUUID()
-    {   //final UUID uuid              get
-	return null;
+    {   return uuid;
     }
     
+    /**
+     * Gets the display name of the local user
+     * 
+     * @return  The display name of the local user
+     */
     public static String getName()
-    {   //final String name            get set(once)
-	return null;
+    {   return name;
     }
     
+    /**
+     * Sets the display name of the local user
+     * 
+     * @param   value  The new display name of the local user
+     * @return         {@code false} if already modified, and thus cannot be modified
+     */
     public static boolean setName(final String value)
-    {   //final String name            get set(once)
-	return false;
+    {   if (nameChanged)
+	    return false;
+	nameChanged = true;
+	name = value;
+	return true;
     }
     
+    /**
+     * Gets the port the local user uses for communications
+     * 
+     * @return  The port the local user uses for communications
+     */
     public static int getPort()
-    {   //final int port               get set(once)
-	return 0;
+    {   return port;
     }
     
+    /**
+     * Sets the port the local user uses for communications
+     * 
+     * @param   value  The new port the local user uses for communications
+     * @return         {@code false} if already modified, and thus cannot be modified
+     */
     public static boolean setPort(final int value)
-    {   //final int port               get set(once)
-	return false;
+    {   if (portChanged)
+	    return false;
+	portChanged = true;
+	port = value;
+	return true;
     }
     
+    /**
+     * Gets the local user's digital signature
+     * 
+     * @return  The local user's digital signature
+     */
     public static byte[] getSignature()
-    {   //byte[] signature             get set(once)
-	return null;
+    {   return signature;
     }
     
+    /**
+     * Sets the local user's digital signature
+     * 
+     * @param   value  The new local user's digital signature
+     * @return         {@code false} if already modified, and thus cannot be modified
+     */
     public static boolean setSignature(final byte[] value)
-    {   //byte[] signature             get set(once)
-	return false;
+    {   if (signatureChanged)
+	    return false;
+	signatureChanged = true;
+	signature = value;
+	return true;
     }
     
+    /**
+     * Gets the DNS names of the local user
+     * 
+     * @return  The DNS names of the local user
+     */
     public static String[] getDNSNames()
-    {   //String[] dnsNames            get add remove
-	return null;
+    {   return dnsNames;
     }
     
+    /**
+     * Adds a DNS name for the local user
+     * 
+     * @param   value  The new DNS name
+     * @return         The DNS names of the local user
+     */
     public static String[] addDNSName(final String value)
-    {   //String[] dnsNames            get add remove
-	return null;
+    {   int pos = Arrays.binarySearch(dnsNames, value);
+	if (pos >= 0)
+	    return dnsNames;
+	pos = ~pos;
+	final String[] tmp = new String[dnsNames.length + 1];
+	System.arraycopy(dnsNames, 0, tmp, 0, pos);
+	System.arraycopy(dnsNames, pos, tmp, pos + 1, dnsNames.length - pos);
+	tmp[pos] = value;
+	return dnsNames = tmp;
     }
     
+    /**
+     * Removes a DNS name for the local user
+     * 
+     * @param   value  The DNS name to remove
+     * @return         The DNS names of the local user
+     */
     public static String[] removeDNSName(final String value)
-    {   //String[] dnsNames            get add remove
-	return null;
+    {   int pos = Arrays.binarySearch(dnsNames, value);
+	if (pos < 0)
+	    return dnsNames;
+	final String[] tmp = new String[dnsNames.length - 1];
+	System.arraycopy(dnsNames, 0, tmp, 0, pos);
+	if (pos < dnsNames.length)
+	    System.arraycopy(dnsNames, pos + 1, tmp, pos, tmp.length - pos);
+	return dnsNames = tmp;
     }
     
     
-    public static boolean addFriend(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[][] dnsNames, final byte[] signature)
-    {   return false;
+    /**
+     * Removes a add
+     * 
+     * @param   uuid       The unique identifier if the friend
+     * @param   name       The display name of the friend
+     * @param   localIP    The LAN local IP address of the friend
+     * @param   publicIP   The WAN public IP address of the friend
+     * @param   port       The port the friend uses for communication
+     * @param   dnsNames   The DNS names of the friend
+     * @param   signature  The digital signature of the friend
+     * @return             {@code false} iff their was nothing to be done
+     */
+    public static boolean addFriend(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[] dnsNames, final byte[] signature)
+    {   int pos = Arrays.binarySearch(friendUUIDs, uuid);
+	if (pos >= 0)
+	    return false;
+	pos = ~pos;
+	
+        {   final UUID[] x = friendUUIDs, tmp = new UUID[x.length + 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendUUIDs = tmp)[pos] = uuid;
+	}
+        {   final long[] x = friendUpdates, tmp = new long[x.length + 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendUpdates = tmp)[pos] = System.currentTimeMillis();
+	}
+        {   final String[] x = friendNames, tmp = new String[x.length + 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendNames = tmp)[pos] = name;
+	}
+        {   final String[] x = friendLocalIPs, tmp = new String[x.length + 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendLocalIPs = tmp)[pos] = localIP;
+	}
+        {   final String[] x = friendPublicIPs, tmp = new String[x.length + 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendPublicIPs = tmp)[pos] = publicIP;
+	}
+        {   final int[] x = friendPorts, tmp = new int[x.length + 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendPorts = tmp)[pos] = port;
+	}
+        {   final String[][] x = friendDNSNames, tmp = new String[x.length + 1][];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendDNSNames = tmp)[pos] = dnsNames;
+	}
+        {   final byte[][] x = friendSignatures, tmp = new byte[x.length + 1][];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+	    (friendSignatures = tmp)[pos] = signature;
+	}
+	
+	return true;
     }
     
+    /**
+     * Removes a friend
+     * 
+     * @param   uuid  The unique identifier if the friend
+     * @return        {@code false} iff their was nothing to be done
+     */
     public static boolean removeFriend(final UUID uuid)
-    {   return false;
+    {   int pos = Arrays.binarySearch(friendUUIDs, uuid);
+	if (pos < 0)
+	    return false;
+	
+	{   final UUID[] x = friendUUIDs, tmp = new UUID[x.length - 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendUUIDs = tmp;
+	}
+	{   final long[] x = friendUpdates, tmp = new long[x.length - 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendUpdates = tmp;
+	}
+	{   final String[] x = friendNames, tmp = new String[x.length - 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendNames = tmp;
+	}
+	{   final String[] x = friendLocalIPs, tmp = new String[x.length - 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendLocalIPs = tmp;
+	}
+	{   final String[] x = friendPublicIPs, tmp = new String[x.length - 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendPublicIPs = tmp;
+	}
+	{   final int[] x = friendPorts, tmp = new int[x.length - 1];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendPorts = tmp;
+	}
+	{   final String[][] x = friendDNSNames, tmp = new String[x.length - 1][];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendDNSNames = tmp;
+	}
+	{   final byte[][] x = friendSignatures, tmp = new byte[x.length - 1][];
+	    System.arraycopy(x, 0, tmp, 0, pos);
+	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+	    friendSignatures = tmp;
+	}
+	
+	return true;
     }
-    
+
+    /**
+     * Gets the unique identifieres for friends of the local user
+     * 
+     * @return  The unique identifieres for friends of the local user
+     */
     public static UUID[] getFriendUUIDs()
-    {   //UUID[] friendUUIDs           full access
-	return null;
+    {   return friendUUIDs;
     }
     
+    /**
+     * Gets the list update time of friend information of the local user, in milliseconds since 1970-(01)jan-01 00:00:00.000
+     * 
+     * @return  The list update time of friend information of the local user, in milliseconds since 1970-(01)jan-01 00:00:00.000
+     */
     public static long[] getFriendUpdates()
-    {   //long[] friendUpdates         full access
-	return null;
+    {   return friendUpdates;
     }
     
+    /**
+     * Gets the display names for friends of the local user
+     * 
+     * @return  The display names for friends of the local user
+     */
     public static String[] getFriendNames()
-    {   //String[] friendNames         full access
-	return null;
+    {   return friendNames;
     }
     
+    /**
+     * Gets the LAN local IP addresses for friends of the local user
+     * 
+     * @return  The LAN local IP addresses for friends of the local user
+     */
     public static String[] getFriendLocalIPs()
-    {   //String[] friendLocalIPs      full access
-	return null;
+    {   return friendLocalIPs;
     }
     
+    /**
+     * Gets the WAN public IP addresses for friends of the local user
+     * 
+     * @return  The WAN public IP addresses for friends of the local user
+     */
     public static String[] getFriendPublicIPs()
-    {   //String[] friendPublicIPs     full access
-	return null;
+    {   return friendPublicIPs;
     }
     
+    /**
+     * Gets the ports the friends of the local user uses for communications
+     * 
+     * @return  The ports the friends of the local user uses for communications
+     */
     public static int[] getFriendPorts()
-    {   //int[] friendPorts;           full access
-	return null;
+    {   return friendPorts;
     }
     
-    public static byte[] getFriendSignatures()
-    {   //byte[][] friendSignatures    full access
-	return null;
+    /**
+     * Gets the digital signatures of the friends of the local user
+     * 
+     * @return  The digital signatures of the friends of the local user
+     */
+    public static byte[][] getFriendSignatures()
+    {   return friendSignatures;
     }
     
-    public static String[] getFriendDNSNames()
-    {   //String[][] friendDNSNames    get set add remove
-	return null;
+    /**
+     * Gets the DNS names of the friends of the local user
+     * 
+     * @return  The DNS names of the friends of the local user
+     */
+    public static String[][] getFriendDNSNames()
+    {   return friendDNSNames;
     }
     
-    public static String[] addFriendDNSName(final String value)
-    {   //String[][] friendDNSNames    get set add remove
-	return null;
+    /**
+     * Gets the DNS names of a friend of the local user
+     * 
+     * @param   index  The index of the friend, as returned by {@link #getFriendUUIDs()}
+     * @return         The DNS names of a friend of the local user
+     */
+    public static String[] getFriendDNSNames(final int index)
+    {   return friendDNSNames[index];
     }
     
-    public static String[] removeFriendDNSName(final String value)
-    {   //String[][] friendDNSNames    get set add remove
-	return null;
+    /**
+     * Adds a DNS name of a friend of the local user
+     * 
+     * @param   index  The index of the friend, as returned by {@link #getFriendUUIDs()}
+     * @param   value  The new DNS name
+     * @return         The DNS names of a friend of the local user
+     */
+    public static String[] addFriendDNSName(final int index, final String value)
+    {   int pos = Arrays.binarySearch(friendDNSNames[index], value);
+	if (pos >= 0)
+	    return friendDNSNames[index];
+	pos = ~pos;
+	final String[] tmp = new String[friendDNSNames[index].length + 1];
+	System.arraycopy(friendDNSNames[index], 0, tmp, 0, pos);
+	System.arraycopy(friendDNSNames[index], pos, tmp, pos + 1, friendDNSNames[index].length - pos);
+	tmp[pos] = value;
+	return friendDNSNames[index] = tmp;
+    }
+    
+    /**
+     * Removes a DNS name of a friend of the local user
+     * 
+     * @param   index  The index of the friend, as returned by {@link #getFriendUUIDs()}
+     * @param   value  The DNS name to remove
+     * @return         The DNS names of a friend of the local user
+     */
+    public static String[] removeFriendDNSName(final int index, final String value)
+    {   int pos = Arrays.binarySearch(friendDNSNames[index], value);
+	if (pos < 0)
+	    return friendDNSNames[index];
+	pos = ~pos;
+	final String[] tmp = new String[friendDNSNames[index].length - 1];
+	System.arraycopy(friendDNSNames[index], 0, tmp, 0, pos);
+	if (pos < friendDNSNames[index].length)
+	    System.arraycopy(friendDNSNames[index], pos + 1, tmp, pos, tmp.length - pos);
+	return friendDNSNames[index] = tmp;
     }
     
 }

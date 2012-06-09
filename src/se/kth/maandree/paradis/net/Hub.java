@@ -26,6 +26,7 @@ import java.util.*;
 //TODO:  Routing information and UUID address lookup is needed
 //TODO:  Detailed exceptions is needed
 //TODO:  A router, that extends this class, would be nice
+//TODO:  Multicast UUIDs needed
 
 
 /**
