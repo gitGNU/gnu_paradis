@@ -1,0 +1,6 @@
+java.io.IOException >
+    se.kth.maandree.paradis.net.NetworkException  String message .  >
+        se.kth.maandree.paradis.net.TestException  ! String a  !!  UUID uuid UUID  String message .
+        <
+    <
+

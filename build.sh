@@ -27,11 +27,25 @@ cp -r res bin
     }
 
 
+## java executer if default is for Java 7
+[[ $(echo `java -version 2>&1 | cut -d . -f 2` | cut -d ' ' -f 1) = '7' ]] &&
+    function javaSeven()
+    {
+	java "$@"
+    }
+
+## java executer if default is not for Java 7
+[[ $(echo `java -version 2>&1 | cut -d . -f 2` | cut -d ' ' -f 1) = '7' ]] ||
+    function javaSeven() {
+	java7 "$@"
+    }
+
+
 ## warnings
-warns='-Xlint:all'
+warns="-Xlint:all"
 
 ## standard parameters
-params='-source 7 -target 7 -s src -d bin'
+params="-source 7 -target 7 -s src -d bin"
 
 
 ## libraries
@@ -56,6 +70,15 @@ for opt in "$@"; do
 done
 
 
+## compile exception generator
+javacSeven $warns -cp . $params 'src/se/kth/maandree/ExceptionGenerator.java'  2>&1  &&
+
+## generate exceptions code
+javaSeven -ea -cp bin$jars "se.kth.maandree.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
+
+## generate exceptions binaries
+javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1  &&
+
 ## compile paradis
-javacSeven $warns -cp .$jars $params $(find src | grep '.java$') 2>&1
+javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
 
