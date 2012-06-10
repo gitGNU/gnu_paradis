@@ -19,6 +19,8 @@ package se.kth.maandree.paradis;
 
 import java.util.*;
 
+//TODO:  Order priorities: 0 as default
+
 
 /**
  * Client local message broadcasting blackboard
