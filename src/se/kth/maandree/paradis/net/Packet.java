@@ -37,10 +37,12 @@ public class Packet implements Comparable<Packet>
      * @param  timeToLive      The time to live for the packet, in units of clients
      * @param  packetAge       The age of the packet, in units of clients
      * @param  cast            The cast information for the packet, either {@link Anycast}, {@link Unicast}, {@link Multicast} or {@link Broadcast}
+     * @param  checksum        Packet checksum
+     * @param  signature       Digital signature
      * @param  message         The message transmitted in the packet
      * @param  messageType     The type identifer for the message
      */
-    public Packet(final UUID uuid, final boolean alsoSendToSelf, final boolean urgent, final short timeToLive, final short packetAge, final Cast cast, final Object message, final String messageType)
+    public Packet(final UUID uuid, final boolean alsoSendToSelf, final boolean urgent, final short timeToLive, final short packetAge, final Cast cast, final byte[] checksum, final byte[] signature, final Object message, final String messageType)
     {
 	this.uuid           = uuid;
 	this.alsoSendToSelf = alsoSendToSelf;
@@ -48,6 +50,8 @@ public class Packet implements Comparable<Packet>
 	this.timeToLive     = timeToLive;
 	this.packetAge      = packetAge;
 	this.cast           = cast;
+	this.checksum       = checksum;
+	this.signature      = signature;
 	this.message        = message;
 	this.messageType    = messageType;
     }
@@ -83,6 +87,16 @@ public class Packet implements Comparable<Packet>
      * The cast information for the packet, either {@link Anycast}, {@link Unicast}, {@link Multicast} or {@link Broadcast}
      */
     public final Cast cast;
+    
+    /**
+     * Packet checksum
+     */
+    public final byte[] checksum;
+    
+    /**
+     * Digital signature
+     */
+    public final byte[] signature;
     
     /**
      * The message transmitted in the packet
@@ -124,6 +138,8 @@ public class Packet implements Comparable<Packet>
 	    else if ((bools & 12) == 8)  castClass = Multicast.class;
 	    else                         castClass = Broadcast.class;
 	    final Cast cast = stream.readObject(castClass);
+	    final byte[] checksum = stream.readObject(byte[].class);
+	    final byte[] signature = stream.readObject(byte[].class);
 	    final String msgType = stream.readObject(String.class);
 	    
 	    final Class<?> msgClass = TransferProtocolRegister.getClassByID(msgType);
@@ -131,7 +147,7 @@ public class Packet implements Comparable<Packet>
 		stream.readLen(); //skipping
 	    final Object msg = stream.readObject(msgClass == null ? byte[].class : msgClass);
 	    
-	    return new Packet(uuid, alsoSendToSelf, urgent, ttl, age, cast, msg, msgType);
+	    return new Packet(uuid, alsoSendToSelf, urgent, ttl, age, cast, checksum, signature, msg, msgType);
 	}
     
     
@@ -151,6 +167,8 @@ public class Packet implements Comparable<Packet>
 	    bools |= (data.cast instanceof Broadcast) ? 12 : 0;
 	    stream.writeByte(bools);
 	    stream.writeObject(data.cast);
+	    stream.writeObject(data.checksum);
+	    stream.writeObject(data.signature);
 	    stream.writeObject(data.messageType);
 	    if (data.message.getClass().isArray() == false)
 		stream.writeLenOf(data.message);
