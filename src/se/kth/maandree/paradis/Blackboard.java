@@ -19,8 +19,6 @@ package se.kth.maandree.paradis;
 
 import java.util.*;
 
-//TODO:  Order priorities: 0 as default
-
 
 /**
  * Client local message broadcasting blackboard
@@ -153,6 +151,11 @@ public class Blackboard
     private HashMap<BlackboardObserver, HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy>> observationThreading = new HashMap<>();
     
     /**
+     * In which order should observers be notified
+     */
+    private HashMap<BlackboardObserver, HashMap<Class<? extends BlackboardMessage>, Integer>> observationPriorities = new HashMap<>();
+    
+    /**
      * Concurrency monitor
      */
     private Object monitor = new Object();
@@ -264,7 +267,7 @@ public class Blackboard
      */
     public void registerObserver(final BlackboardObserver observer)
     {
-	synchronized (monitor)
+	synchronized (this.monitor)
 	{
 	    System.err.println("BLACKBOARD.registerObserver(" + observer + ")");
 	    this.observers.add(observer);
@@ -280,11 +283,12 @@ public class Blackboard
      */
     public void unregisterObserver(final BlackboardObserver observer)
     {
-	synchronized (monitor)
+	synchronized (this.monitor)
 	{
 	    System.err.println("BLACKBOARD.unregisterObserver(" + observer + ")");
 	    this.observers.remove(observer);
 	    this.observationThreading.remove(observer);
+	    this.observationPriorities.remove(observer);
 	    this.broadcastMessage(new ObserverRegisterMessage(observer, false));
 	}
     }
@@ -318,9 +322,9 @@ public class Blackboard
     @SuppressWarnings("unchecked")
     public void registerThreadingPolicy(final BlackboardObserver observer, final ThreadingPolicy policy, final Class... messageTypes)
     {
-	synchronized (monitor)
+	synchronized (this.monitor)
 	{
-	    HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = observationThreading.get(observer);
+	    HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = this.observationThreading.get(observer);
 	    if (map == null)
 	    {
 		map = new HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy>();
@@ -333,46 +337,85 @@ public class Blackboard
     
     
     /**
+     * Registers a priority for an observer and some message types
+     * 
+     * @param  observer      The observer
+     * @param  nice          The priority, zero is default, and negive is low priority (that is, executed later that positive)
+     * @param  messageTypes  The message types, must be <code>Class<? extends BlackboardMessage></code>,
+     *                       you can used <code>null</code> to set a default for the observer
+     */
+    @SuppressWarnings("unchecked")
+    public void registerPriority(final BlackboardObserver observer, final int nice, final Class... messageTypes)
+    {
+	synchronized (this.monitor)
+	{
+	    HashMap<Class<? extends BlackboardMessage>, Integer> map = this.observationPriorities.get(observer);
+	    if (map == null)
+	    {
+		map = new HashMap<Class<? extends BlackboardMessage>, Integer>();
+		this.observationPriorities.put(observer, map);
+	    }
+	    for (final Class<? extends BlackboardMessage> messageType : messageTypes)
+		map.put(messageType, Integer.valueOf(nice));
+	}
+    }
+    
+    
+    /**
      * Broadcasts a message to all observers
      * 
      * @param  message  The message to broadcast
      */
     public void broadcastMessage(final BlackboardMessage message)
     {
-	synchronized (monitor)
+	synchronized (this.monitor)
 	{
 	    System.err.println("BLACKBOARD.broadcastMessage(" + message.toString() + ")");
 	    final ArrayList<Thread> threads = new ArrayList<Thread>();
+	    final PriorityQueue<Integer> priorities = new PriorityQueue<Integer>();
+	    final HashMap<Integer, Vector<BlackboardObserver>> prioObservers = new HashMap<>();
 	    
-	    for (final BlackboardObserver observer : observers)
+	    for (final BlackboardObserver observer : this.observers)
 	    {
-		System.err.println("BLACKBOARD.broadcastMessage() ==> " + observer.toString());
-		final ThreadingPolicy policy;
-		final Runnable runnable = new Runnable()
-		        {
-			    /**
-			     * {@inheritDoc}
-			     */
-			    public void run()
-			    {   observer.messageBroadcasted(message);
-			    }
-		    };
+		HashMap<Class<? extends BlackboardMessage>, Integer> map = observationPriorities.get(observer);
+		int priority = 0;
+		if (map != null)
+		{
+		    Integer tmp;
+		    if      ((tmp = map.get(message.getClass())) != null)  priority = tmp.intValue();
+		    else if ((tmp = map.get(null)) != null)                priority = tmp.intValue();
+		}
+		priorities.add(priority);
 		
-		final HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = observationThreading.get(observer);
-		
-		if (map == null)
-		    policy = null;
-		else if (map.containsKey(message.getClass()))
-		    policy = map.get(message.getClass());
-		else
-		    continue;
-		
-		if (policy == null)  runnable.run();
-		else                 threads.add(policy.createThread(runnable));
 	    }
 	    
-	    for (final Thread thread : threads)
-		thread.start();
+	    for (Integer priority; (priority = priorities.poll()) != null;) // iterator messes up order
+		for (final BlackboardObserver observer : prioObservers.get(priority))
+		{
+		    System.err.println("BLACKBOARD.broadcastMessage() ==> " + observer.toString());
+		    final ThreadingPolicy policy;
+		    final Runnable runnable = new Runnable()
+			    {
+				/**
+				 * {@inheritDoc}
+				 */
+				public void run()
+				{   observer.messageBroadcasted(message);
+				}
+			    };
+		
+		    final HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = observationThreading.get(observer);
+		
+		    if (map == null)
+			policy = null;
+		    else if (map.containsKey(message.getClass()))
+			policy = map.get(message.getClass());
+		    else
+			continue;
+		
+		    if (policy == null)  runnable.run();
+		    else                 (new Thread(runnable)).start();
+		}
 	    
 	    System.err.println("BLACKBOARD.broadcastMessage() <<<<");
 	}

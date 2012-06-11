@@ -71,15 +71,17 @@ done
 
 
 ## compile exception generator
-javacSeven $warns -cp . $params 'src/se/kth/maandree/ExceptionGenerator.java'  2>&1  &&
+( javacSeven $warns -cp . $params 'src/se/kth/maandree/ExceptionGenerator.java'  2>&1
+) | javaSeven -jar colourpipe.javac.jar  &&
 
 ## generate exceptions code
 javaSeven -ea -cp bin$jars "se.kth.maandree.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
 echo -e '\n\n\n'  &&
 
 ## generate exceptions binaries
-javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1  &&
+( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1
+) | javaSeven -jar colourpipe.javac.jar  &&
 
 ## compile paradis
-javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
-
+( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
+) | javaSeven -jar colourpipe.javac.jar
