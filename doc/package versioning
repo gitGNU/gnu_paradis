@@ -9,6 +9,11 @@ The package is identified by three parameters:
 		  name can be used instead of your e-mail (the shorter the path is, the better.)
 		  This is important because all version of all implementions should be
 		  uniquely identifyable.
+		  After your e-mail (or github account) you may add a plus (+) to indicate
+		  fork details; for example if I, the original author, the fork path
+		  ‘maandree’ and a port it to C, the fork may have to fork path
+		  ‘maandree/maandree+c’, and if rewrite if from scratch in C and can use
+		  the fork path ‘maandree+c’.
 
     version	  This insisted for four (decimal) numerical parts, separated by dots (a.b.c.d):
     		  
