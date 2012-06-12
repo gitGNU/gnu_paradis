@@ -23,7 +23,6 @@ import java.util.*;
 
 //TODO:  Routing information and UUID address lookup is needed
 //TODO:  A router, that extends this class, would be nice
-//TODO:  Multicast UUIDs needed
 
 
 /**
@@ -127,7 +126,15 @@ public class Hub
      */
     public final ArrayDeque<Throwable> errors = new ArrayDeque<>();
     
+    /**
+     * Mapping form address:port to socket
+     */
     public final HashMap<InetAddress, HashMap<Integer, UDPSocket>> connections = new HashMap<>();
+    
+    /**
+     * Multicast groups the user has joined
+     */
+    protected final HashSet<UUID> multicastGroups = new HashSet<>();
     
     
     
@@ -171,13 +178,35 @@ public class Hub
 	if (packet.alsoSendToSelf)
 	    synchronized (this.inbox)
 	    {
-		if (packet.urgent)  Hub.this.inbox.offerFirst(packet);
-		else                Hub.this.inbox.offerLast(packet);
+		if (packet.urgent)  this.inbox.offerFirst(packet);
+		else                this.inbox.offerLast(packet);
 	    }
 	
 	if ((packet.packetAge = 0) < packet.timeToLive)
 	    route(packet);
     }
+    
+    
+    /**
+     * Joined a multicast group
+     * 
+     * @param  group  The group to join
+     */
+    public void joinGroup(final UUID group)
+    {   synchronized (this.multicastGroups)
+	{   this.multicastGroups.add(group);
+    }   }
+    
+    
+    /**
+     * Leaves a multicast group
+     * 
+     * @param  group  The group to leave
+     */
+    public void leaveGroup(final UUID group)
+    {   synchronized (this.multicastGroups)
+	{   this.multicastGroups.remove(group);
+    }   }
     
     
     /**
@@ -263,6 +292,15 @@ public class Hub
 				{
 				    mine = Arrays.binarySearch(((Multicast)(packet.cast)).receivers, localUser.getUUID()) >= 0;
 				    route = (((Multicast)(packet.cast)).receivers.length - (mine ? 1 : 0)) > 0;
+				    
+				    synchronized (Hub.this.multicastGroups)
+				    {   if (Hub.this.multicastGroups.isEmpty() == false)
+					    for (final UUID group : ((Multicast)(packet.cast)).receivers)
+						if (Hub.this.multicastGroups.contains(group))
+						{   mine = true;
+						    break;
+						}
+				    }
 				}
 				else if (packet.cast instanceof Broadcast)
 				{
