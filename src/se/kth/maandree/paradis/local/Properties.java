@@ -36,6 +36,34 @@ public class Properties
     
     
     /**
+     * Rules on how to parse line breaks
+     */
+    public static enum LineRule
+    {
+        /**
+         * Ignore all line breaks
+         */
+        IGNORE,
+	
+	/**
+	 * Stop parsing at first line break
+	 */
+	BREAK,
+	
+	/**
+	 * Parse line breaks as any other character
+	 */
+	READ,
+	
+	/**
+	 * Convert line breaks to blank spaces
+	 */
+	SPACE,
+    }
+    
+    
+    
+    /**
      * Gets the home of the user, but allowes false home given by the shell
      * 
      * @return  The home of the user
@@ -69,6 +97,187 @@ public class Properties
     {
 	String rc = System.getProperty("file.separator");
 	return rc == null ? "/" : rc;
+    }
+    
+    
+    /**
+     * Gets the system path separator (":" on UNIX)
+     * 
+     * @return  The system path separator (":" on UNIX)
+     */
+    public static String getPathSeparator()
+    {
+	String rc = System.getProperty("path.separator");
+	return rc == null ? ":" : rc;
+    }
+    
+    
+    /**
+     * Gets the user's standard text editor
+     * 
+     * @return  The user's standard text editor, {@code null} if not defined
+     */
+    public static String getEditor()
+    {
+	return getEnvironmentVariable("EDITOR");
+    }
+    
+    
+    /**
+     * Gets the user's standard text pager
+     * 
+     * @return  The user's standard text pager, {@code null} if not defined
+     */
+    public static String getPager()
+    {
+	return getEnvironmentVariable("PAGER");
+    }
+    
+    
+    /**
+     * Gets all directories where executables are localeted
+     * 
+     * @return  All directories where executables are localeted
+     */
+    public static String[] getBinaryPaths()
+    {
+	return getEnvironmentVariable("PATH").split(getPathSeparator());
+    }
+    
+    
+    /**
+     * Gets a custom environment variable
+     * 
+     * @param   variable  The name of the environment variable
+     * @return            The value of the environment variable
+     */
+    public static String getEnvironmentVariable(final String variable)
+    {
+	return System.getenv().get(variable);
+    }
+    
+    
+    /**
+     * Gets the program class paths
+     * 
+     * @return  The program class paths
+     */
+    public static String[] getClassPaths()
+    {
+	return System.getProperty("java.class.path").split(getPathSeparator());
+    }
+    
+    
+    /**
+     * Gets the current working directory
+     * 
+     * @return  The current working directory
+     */
+    public static String getCurrentWorkingDirectory()
+    {
+	return System.getProperty("user.dir");
+    }
+    
+    
+    /**
+     * Gets the terminal on which the program is runningmmaccording to the terminal itself and maybe even the user
+     * 
+     * @return  The terminal on which the program is runningmm
+     */
+    public static String getTerminal()
+    {
+	return getEnvironmentVariable("TERM");
+    }
+    
+    
+    /**
+     * Returns the number of columns in the terminal according to the kernel,
+     * {@link NullPointerException} can be throws if you do
+     * not have coreutils or `stty` is otherwise not invokable.
+     * 
+     * @param  The number of columns in the terminal
+     */
+    public static int getTerminalWidth()
+    {
+	return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
+    }
+    
+    
+    /**
+     * Returns the number of lines in the terminal according to the kernel,
+     * {@link NullPointerException} can be throws if you do
+     * not have coreutils or `stty` is otherwise not invokable.
+     * 
+     * @param  The number of lines in the terminal
+     */
+    public static int getTerminalHeight()
+    {
+	return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
+    }
+    
+    
+    /**
+     * Returns the current STTY settings that you may modify,
+     * {@link NullPointerException} can be throws if you do
+     * not have coreutils or `stty` is otherwise not invokable.
+     * 
+     * @param  The current STTY settings that you may modify
+     */
+    public static String getSTTYSettings()
+    {
+	String[] data = execSystemProperty(LineRule.SPACE, "stty", "-a").split(";");
+	String rc = data[data.length - 1];
+	while (rc.startsWith(" "))  rc = rc.substring(1);
+	while (rc  .endsWith(" "))  rc = rc.substring(0, rc.length() - 1);
+	while (rc.contains("  "))   rc = rc.replace("  ", " ");
+	return rc;
+    }
+    
+    
+    /**
+     * Gets or sets system properties by invoking another program
+     * 
+     * @param  lineRule  What to do with line breaks
+     * @param  cmd       The command to run, {@code null} on error
+     */
+    public static String execSystemProperty(final LineRule lineRule, final String... cmd)
+    {
+        try
+	{
+	    byte[] buf = new byte[64];
+	    int ptr = 0;
+            
+	    final ProcessBuilder procBuilder = new ProcessBuilder(cmd);
+	    procBuilder.redirectInput(ProcessBuilder.Redirect.from(new File(stdout)));
+	    final Process process = procBuilder.start();
+	    final InputStream stream = process.getInputStream();
+            
+	    for (int d; (d = stream.read()) != -1; )
+	    {
+		if (d == '\n')
+		    if      (lineRule == LineRule.BREAK)   break;
+		    else if (lineRule == LineRule.IGNORE)  continue;
+		    else if (lineRule == LineRule.SPACE)   d = ' ';
+                
+		if (ptr == buf.length)
+		{
+		    final byte[] nbuf = new byte[ptr + 64];
+		    System.arraycopy(buf, 0, nbuf, 0, ptr);
+		    buf = nbuf;
+		}
+		buf[ptr++] = (byte)d;
+	    }
+            
+	    process.waitFor();
+	    if (process.exitValue() != 0)
+		return null;
+            
+	    return new String(buf, 0, ptr, "UTF-8");
+	}
+        catch (final Throwable err)
+	{
+	    return null;
+	}
     }
 
 }
