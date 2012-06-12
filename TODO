@@ -6,3 +6,4 @@ package management
 tcp + upnp port forwarding
 uuid resolver
 distributed hash table (¿ do we need this ?)
+encryption

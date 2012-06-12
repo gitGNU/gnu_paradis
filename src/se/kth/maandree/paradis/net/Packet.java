@@ -17,6 +17,7 @@
  */
 package se.kth.maandree.paradis.net;
 import se.kth.maandree.paradis.io.*;
+import se.kth.maandree.paradis.*;
 
 import java.io.IOException;
 
@@ -26,7 +27,7 @@ import java.io.IOException;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class Packet implements Comparable<Packet>
+public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
 {
     /**
      * Constructor
