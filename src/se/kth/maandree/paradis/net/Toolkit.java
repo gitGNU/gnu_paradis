@@ -102,7 +102,7 @@ public class Toolkit
 		{
 		    System.err.println("Possible Address: " + eth.getAddress().getHostAddress());
 		    
-		    // We don't want loopback or IPv6. TODO: better way of sorting out IPv6
+		    // We don't want loopback or IPv6.
 		    if ((eth.getAddress().isLoopbackAddress() == false) && (eth.getAddress().getHostAddress().contains(":") == false))
 		    {
 			System.err.println("Choosen Address: " + eth.getAddress().getHostAddress());
