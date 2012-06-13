@@ -97,9 +97,9 @@ public class Pager
      */
     private static void page(final String pager, final String text)
     {
-	try //TODO: This is the Java 6 way.
+	try
 	{
-	    String cmd = pager + " -r > " + (new File("/dev/stdout")).getCanonicalPath();
+	    String cmd = pager + " > " + (new File("/dev/stdout")).getCanonicalPath();
 	    
 	    final Process process = (new ProcessBuilder("/bin/sh", "-c", cmd)).start();
 	    final InputStream stream = process.getErrorStream();
