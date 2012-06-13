@@ -36,6 +36,7 @@ public class TimeQueue<E>
 	this(10 * 60_000);
     }
     
+    
     /**
      * Contructor
      * 
@@ -111,7 +112,7 @@ public class TimeQueue<E>
     /**
      * Cleaning thread
      */
-    private Thread thread;
+    protected Thread thread;
     
     
     
@@ -127,6 +128,7 @@ public class TimeQueue<E>
 	    this.notifyAll();
 	}
     }
+    
     
     /**
      * Stops the automated cleaning

@@ -103,7 +103,7 @@ public class Hub
     /**
      * Time queue of UUID:s for already received packets
      */
-    protected final TimeQueue<UUID> receivedPacketsQueue = new TimeQueue<>();
+    protected final LimitedTimeQueue<UUID> receivedPacketsQueue = new LimitedTimeQueue<>();
     
     /**
      * <p>Remote user lookup map.</p>
