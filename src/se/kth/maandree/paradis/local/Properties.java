@@ -17,6 +17,8 @@
  */
 package se.kth.maandree.paradis.local;
 
+import java.io.*;
+
 
 /**
  * System properties
@@ -248,7 +250,7 @@ public class Properties
 	    int ptr = 0;
             
 	    final ProcessBuilder procBuilder = new ProcessBuilder(cmd);
-	    procBuilder.redirectInput(ProcessBuilder.Redirect.from(new File(stdout)));
+	    procBuilder.redirectInput(ProcessBuilder.Redirect.from((new File("/dev/stdout")).getCanonicalFile()));
 	    final Process process = procBuilder.start();
 	    final InputStream stream = process.getInputStream();
             

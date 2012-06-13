@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.util.*;
 
 import java.io.*;
 import java.net.*;
@@ -97,7 +98,12 @@ public class Hub
     /**
      * Set of UUID:s for already received packets
      */
-    protected final HashSet<UUID> receivedPackets = new HashSet<>(); //TODO: we need a mechanism that purges very old elements (stronger than soft references)
+    protected final WeakHashMap<UUID, Void> receivedPacketsSet = new WeakHashMap<>();
+    
+    /**
+     * Time queue of UUID:s for already received packets
+     */
+    protected final TimeQueue<UUID> receivedPacketsQueue = new TimeQueue<>();
     
     /**
      * <p>Remote user lookup map.</p>
@@ -169,8 +175,9 @@ public class Hub
      */
     public void send(final Packet packet) throws IOException
     {
-	synchronized (receivedPackets)
-	{   receivedPackets.add(packet.uuid);
+	synchronized (this.receivedPacketsSet)
+	{   this.receivedPacketsSet.put(packet.uuid, null);
+	    this.receivedPacketsQueue.offer(packet.uuid);
 	}
 	
 	packet.cast.addReceived(this.localUser.getUUID());
@@ -273,10 +280,11 @@ public class Hub
 				{   Hub.this.deadSockets.remove(socket);
 				}
 				
-				synchronized (receivedPackets)
-				{   if (receivedPackets.contains(packet.uuid))
+				synchronized (Hub.this.receivedPacketsSet)
+				{   if (Hub.this.receivedPacketsSet.containsKey(packet.uuid))
 					continue;
-				    receivedPackets.add(packet.uuid);
+				    Hub.this.receivedPacketsSet.put(packet.uuid, null);
+				    Hub.this.receivedPacketsQueue.offer(packet.uuid);
 				}
 				
 				if (packet.cast instanceof Anycast)
