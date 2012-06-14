@@ -1,7 +1,4 @@
 shibboleet
-show w  (warranty)
-show c  (copying)
-show l  (license)
 package management
 tcp + upnp port forwarding
 uuid resolver

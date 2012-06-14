@@ -1,1 +1,6 @@
+REQUIRED:
 java-runtime>=7
+coreutils
+
+OPTIONAL:
+x-server
