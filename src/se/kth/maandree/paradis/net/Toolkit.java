@@ -137,10 +137,22 @@ public class Toolkit
 	{   return 0;
 	}
 	
-	final boolean level1 = isReachable("192.168.0.1") || isReachable("192.168.1.1");
+	final boolean level1 = isAnyReachable("192.168.0.1", "192.168.1.1");
 	System.err.println("Level 1: " + (level1 ? "yes" : "no"));
 	
-	final boolean level2 = isReachable("83.255.245.11") || isReachable("193.150.193.150");
+	final String[] nameservers = getNameServers();
+	final boolean level2;
+	if (nameservers == null)
+	{
+	    System.err.println("Could not read nameservers, level 2 is automatically passed.");
+	    level2 = true;
+	}
+	else
+        {
+	    if (nameservers.length == 0)
+		System.err.println("No nameservers found, level 2 is automatically passed.");
+	    level2 = isAnyReachable(nameservers);
+	}
 	System.err.println("Level 2: " + (level2 ? "yes" : "no"));
 	
 	boolean level3 = level2;
@@ -157,6 +169,85 @@ public class Toolkit
 	if (level2)  return 2;
 	if (level1)  return 1;
 	return 0;
+    }
+    
+    
+    /**
+     * Returns an array of all DNS name servers
+     * 
+     * @erturn  All DNS name servers, {@code null} on error
+     */
+    public static String[] getNameServers()
+    {
+	InputStream is = null;
+	try
+	{
+	    final Vector<String> rc = new Vector<String>();
+	    
+	    is = new BufferedInputStream(new FileInputStream(new File("/etc/resolv.conf")));
+	    final Scanner sc = new Scanner(is);
+	    
+	    while (sc.hasNextLine())
+	    {
+		String line = sc.nextLine();
+		int col = 0;
+		while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
+		    col++;
+		line = line.substring(0, col);
+		
+		if (line.startsWith("nameserver ") || line.startsWith("nameserver\t"))
+		{
+		    col = "nameserver ".length();
+		    while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
+			col++;
+		    line = line.substring(0, col);
+		    
+		    line.replace("\t", " ");
+		    if (line.contains(" "))
+			line = line.substring(0, line.indexOf(' '));
+		    
+		    if (line.length() > 0)
+			rc.add(line);
+		}
+	    }
+	    
+	    final String[] _rc = new String[rc.size()];
+	    rc.toArray(_rc);
+	    return _rc;
+	}
+	catch (final FileNotFoundException err)
+	{
+	    System.err.println("System does not have file: /etc/resolv.conf");
+	    return null;
+	}
+	catch (final Throwable err)
+	{
+	    System.err.println("Cannot read /etc/resolv.conf");
+	    return null;
+	}
+	finally
+	{   if (is != null)
+		try
+		{   is.close();
+		}
+		catch  (final Throwable ignore)
+		{   //ignore
+	}       }
+    }
+    
+    
+    /**
+     * Tests whether any host is reachable, with test timeout at 4 seconds
+     * 
+     * @param   hosts  The remote hosts' addresses, IP or DNS
+     * @return         Whether the remote host is reachable
+     */
+    public static boolean isAnyReachable(final String... hosts)
+    {
+	for (final String host : hosts)
+	    if (isReachable(host))
+		return true;
+	return false;
     }
     
     
