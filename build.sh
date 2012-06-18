@@ -54,8 +54,10 @@ jars=`echo $(find lib | grep .jar$) | sed -e 's/lib\//:/g' -e 's/ //g'`
 
 ## parse options
 paramEcho=0
+paramEcj=0
 for opt in "$@"; do
     if [[ $opt = '-ecj' ]]; then
+	paramEcj=1
 	function javacSeven()
 	{
             ecj -source 7 -target 7 "$@"
@@ -77,6 +79,8 @@ done
 ) |
 ( if [[ $paramEcho = 1 ]]; then
       cat
+  elif [[ $paramEcj = 1 ]]; then
+      cat
   else
       javaSeven -jar colourpipe.javac.jar
   fi
@@ -91,6 +95,8 @@ echo -e '\n\n\n'  &&
 ) |
 ( if [[ $paramEcho = 1 ]]; then
       cat
+  elif [[ $paramEcj = 1 ]]; then
+      cat
   else
       javaSeven -jar colourpipe.javac.jar
   fi
@@ -100,6 +106,8 @@ echo -e '\n\n\n'  &&
 ( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
 ) |
 ( if [[ $paramEcho = 1 ]]; then
+      cat
+  elif [[ $paramEcj = 1 ]]; then
       cat
   else
       javaSeven -jar colourpipe.javac.jar
