@@ -61,14 +61,12 @@ for opt in "$@"; do
     if [[ $opt = '-ecj' ]]; then
 	paramEcj=1
 	function javacSeven()
-	{
-            ecj "$@"
+	{   ecj "$@"
 	}
     elif [[ $opt = '-echo' ]]; then
 	paramEcho=1
 	function javacSeven()
-	{
-	    echo "$@"
+	{   echo "$@"
 	}
     elif [[ $opt = '-q' ]]; then
 	warns=''
@@ -76,9 +74,9 @@ for opt in "$@"; do
 done
 
 
-if [ -f 'src/se/kth/maandree/ExceptionGenerator.java' ]; then
+if [ -f 'src/se/kth/maandree/javagen/ExceptionGenerator.java' ]; then
     ## compile exception generator
-    ( javacSeven $warns -cp . $params 'src/se/kth/maandree/ExceptionGenerator.java'  2>&1
+    ( javacSeven $warns -cp . $params 'src/se/kth/maandree/javagen/ExceptionGenerator.java'  2>&1
     ) |
     ( if [[ $paramEcho = 1 ]]; then
           cat
@@ -92,7 +90,7 @@ if [ -f 'src/se/kth/maandree/ExceptionGenerator.java' ]; then
     ) &&
 
     ## generate exceptions code
-    javaSeven -ea -cp bin$jars "se.kth.maandree.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
+    javaSeven -ea -cp bin$jars "se.kth.maandree.javagen.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
     echo -e '\n\n\n'  &&
 
     ## generate exceptions binaries

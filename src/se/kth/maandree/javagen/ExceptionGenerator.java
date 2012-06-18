@@ -1,4 +1,9 @@
-package se.kth.maandree;
+/**
+ * javagen — Collection of small code generators for Java
+ * 
+ * Public Domain 2012, by Mattias Andrée (maandree@kth.se)
+ */
+package se.kth.maandree.javagen;
 
 import java.io.*;
 import java.util.*;
