@@ -9,35 +9,34 @@ mkdir bin 2>/dev/null
 
 
 ## in with resources to bin/
-cp -r res bin
+if [ -d res ]; then
+    cp -r res bin
+fi
 
 
 ## java compiler if default is for Java 7
 [[ $(javac -version 2>&1 | cut -d . -f 2) = '7' ]] &&
     function javacSeven()
-    {
-	javac "$@"
+    {   javac "$@"
     }
 
 ## java compiler if default is not for Java 7
 [[ $(javac -version 2>&1 | cut -d . -f 2) = '7' ]] ||
     function javacSeven()
-    {
-	javac7 "$@"
+    {   javac7 "$@"
     }
 
 
 ## java executer if default is for Java 7
 [[ $(echo `java -version 2>&1 | cut -d . -f 2` | cut -d ' ' -f 1) = '7' ]] &&
     function javaSeven()
-    {
-	java "$@"
+    {   java "$@"
     }
 
 ## java executer if default is not for Java 7
 [[ $(echo `java -version 2>&1 | cut -d . -f 2` | cut -d ' ' -f 1) = '7' ]] ||
-    function javaSeven() {
-	java7 "$@"
+    function javaSeven()
+    {   java7 "$@"
     }
 
 
@@ -49,7 +48,10 @@ params="-source 7 -target 7 -s src -d bin"
 
 
 ## libraries
-jars=`echo $(find lib | grep .jar$) | sed -e 's/lib\//:/g' -e 's/ //g'`
+jars=''
+if [ -d lib ]; then
+    jars=`echo $(find lib | grep .jar$) | sed -e 's/lib\//:/g' -e 's/ //g'`
+fi
 
 
 ## parse options
@@ -60,7 +62,7 @@ for opt in "$@"; do
 	paramEcj=1
 	function javacSeven()
 	{
-            ecj -source 7 -target 7 "$@"
+            ecj "$@"
 	}
     elif [[ $opt = '-echo' ]]; then
 	paramEcho=1
@@ -74,33 +76,39 @@ for opt in "$@"; do
 done
 
 
-## compile exception generator
-( javacSeven $warns -cp . $params 'src/se/kth/maandree/ExceptionGenerator.java'  2>&1
-) |
-( if [[ $paramEcho = 1 ]]; then
-      cat
-  elif [[ $paramEcj = 1 ]]; then
-      cat
-  else
-      javaSeven -jar colourpipe.javac.jar
-  fi
-)
+if [ -f 'src/se/kth/maandree/ExceptionGenerator.java' ]; then
+    ## compile exception generator
+    ( javacSeven $warns -cp . $params 'src/se/kth/maandree/ExceptionGenerator.java'  2>&1
+    ) |
+    ( if [[ $paramEcho = 1 ]]; then
+          cat
+      elif [[ $paramEcj = 1 ]]; then
+          cat
+      elif [[ -f "colourpipe.javac.jar" ]]; then
+          javaSeven -jar colourpipe.javac.jar
+      else
+	  cat
+      fi
+    ) &&
 
-## generate exceptions code
-javaSeven -ea -cp bin$jars "se.kth.maandree.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
-echo -e '\n\n\n'  &&
+    ## generate exceptions code
+    javaSeven -ea -cp bin$jars "se.kth.maandree.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
+    echo -e '\n\n\n'  &&
 
-## generate exceptions binaries
-( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1
-) |
-( if [[ $paramEcho = 1 ]]; then
-      cat
-  elif [[ $paramEcj = 1 ]]; then
-      cat
-  else
-      javaSeven -jar colourpipe.javac.jar
-  fi
-)
+    ## generate exceptions binaries
+    ( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1
+    ) |
+    ( if [[ $paramEcho = 1 ]]; then
+          cat
+      elif [[ $paramEcj = 1 ]]; then
+          cat
+      elif [[ -f "colourpipe.javac.jar" ]]; then
+          javaSeven -jar colourpipe.javac.jar
+      else
+	  cat
+      fi
+    )
+fi  &&
 
 ## compile paradis
 ( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
@@ -109,7 +117,9 @@ echo -e '\n\n\n'  &&
       cat
   elif [[ $paramEcj = 1 ]]; then
       cat
-  else
+  elif [[ -f "colourpipe.javac.jar" ]]; then
       javaSeven -jar colourpipe.javac.jar
+  else
+      cat
   fi
 )
