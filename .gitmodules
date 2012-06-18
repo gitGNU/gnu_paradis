@@ -1,0 +1,3 @@
+[submodule "javagen"]
+	path = javagen
+	url = git://github.com/maandree/javagen.git
