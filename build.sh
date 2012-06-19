@@ -74,20 +74,26 @@ for opt in "$@"; do
 done
 
 
+## colouriser
+function colourise()
+{
+    if [[ $paramEcho = 1 ]]; then
+        cat
+    elif [[ $paramEcj = 1 ]]; then
+        javaSeven -jar colourpipe.ecj.jar
+    elif [[ -f "colourpipe.javac.jar" ]]; then
+        javaSeven -jar colourpipe.javac.jar
+    else
+	cat
+    fi
+}
+
+
+## exception generation
 if [ -f 'src/se/kth/maandree/javagen/ExceptionGenerator.java' ]; then
     ## compile exception generator
     ( javacSeven $warns -cp . $params 'src/se/kth/maandree/javagen/ExceptionGenerator.java'  2>&1
-    ) |
-    ( if [[ $paramEcho = 1 ]]; then
-          cat
-      elif [[ $paramEcj = 1 ]]; then
-          cat
-      elif [[ -f "colourpipe.javac.jar" ]]; then
-          javaSeven -jar colourpipe.javac.jar
-      else
-	  cat
-      fi
-    ) &&
+    ) | colourise &&
 
     ## generate exceptions code
     javaSeven -ea -cp bin$jars "se.kth.maandree.javagen.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
@@ -95,29 +101,9 @@ if [ -f 'src/se/kth/maandree/javagen/ExceptionGenerator.java' ]; then
 
     ## generate exceptions binaries
     ( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1
-    ) |
-    ( if [[ $paramEcho = 1 ]]; then
-          cat
-      elif [[ $paramEcj = 1 ]]; then
-          cat
-      elif [[ -f "colourpipe.javac.jar" ]]; then
-          javaSeven -jar colourpipe.javac.jar
-      else
-	  cat
-      fi
-    )
-fi  &&
+    ) | colourise
+fi
 
 ## compile paradis
 ( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
-) |
-( if [[ $paramEcho = 1 ]]; then
-      cat
-  elif [[ $paramEcj = 1 ]]; then
-      cat
-  elif [[ -f "colourpipe.javac.jar" ]]; then
-      javaSeven -jar colourpipe.javac.jar
-  else
-      cat
-  fi
-)
+) | colourise
