@@ -143,16 +143,15 @@ public class Toolkit
 	final String[] nameservers = getNameServers();
 	final boolean level2;
 	if (nameservers == null)
-	{
-	    System.err.println("Could not read nameservers, level 2 is automatically passed.");
+	{   System.err.println("Could not read nameservers, level 2 is automatically passed.");
+	    level2 = true;
+	}
+	else if (nameservers.length == 0)
+	{   System.err.println("No nameservers found, level 2 is automatically passed.");
 	    level2 = true;
 	}
 	else
-        {
-	    if (nameservers.length == 0)
-		System.err.println("No nameservers found, level 2 is automatically passed.");
 	    level2 = isAnyReachable(nameservers);
-	}
 	System.err.println("Level 2: " + (level2 ? "yes" : "no"));
 	
 	boolean level3 = level2;
@@ -190,17 +189,18 @@ public class Toolkit
 	    while (sc.hasNextLine())
 	    {
 		String line = sc.nextLine();
+		System.err.println(line);
 		int col = 0;
 		while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
 		    col++;
-		line = line.substring(0, col);
+		line = line.substring(col);
 		
 		if (line.startsWith("nameserver ") || line.startsWith("nameserver\t"))
 		{
 		    col = "nameserver ".length();
 		    while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
 			col++;
-		    line = line.substring(0, col);
+		    line = line.substring(col);
 		    
 		    line.replace("\t", " ");
 		    if (line.contains(" "))
