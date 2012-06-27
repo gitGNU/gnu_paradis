@@ -261,12 +261,16 @@ public class Toolkit
      */
     public static boolean isReachable(final String host)
     {
+	final String isWindows = System.getProperty("os.name").startsWith("Windows ");
+	
 	try
 	{
 	    byte[] buf = new byte[256];
 	    int ptr = 0;
             
-	    final ProcessBuilder procBuilder = new ProcessBuilder("ping", host, "-c", "1", "-q", "-w", "4");
+	    final ProcessBuilder procBuilder = isWindows ? new ProcessBuilder("ping", host, "-n", "1", "-w", "4000")
+		                                         : new ProcessBuilder("ping", host, "-c", "1", "-q", "-w", "4");
+	    
 	    final Process process = procBuilder.start();
 	    final InputStream stream = process.getInputStream();
             
@@ -286,12 +290,19 @@ public class Toolkit
 		return false;
             
 	    String data = new String(buf, 0, ptr, "UTF-8");
-	    data = data.substring(data.indexOf("\n---") + 1);
-	    data = data.substring(data.indexOf('\n') + 1);
-	    data = data.split("\n")[0].replace(", ", ",");
-	    data = data.split(",")[1].split(" ")[0];
-	    
-	    return data.equals("1");
+	    if (isWindows)
+	    {
+		data = data.split("\n")[5].split("[()]")[1];
+		return data.equals("100% loss") == false;
+	    }
+	    else
+	    {
+		data = data.substring(data.indexOf("\n---") + 1);
+		data = data.substring(data.indexOf('\n') + 1);
+		data = data.split("\n")[0].replace(", ", ",");
+		data = data.split(",")[1].split(" ")[0];
+		return data.equals("1");
+	    }
 	}
 	catch (final Throwable err)
 	{
