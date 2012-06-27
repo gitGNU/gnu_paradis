@@ -464,18 +464,16 @@ public class INI implements INIInterface
         final ArrayList<String> list = new ArrayList<String>();
         int i = 0;
         
-        for (int index = 0;; index++)
+        for (;;)
         {
             int j = text.indexOf(delimiter, i);
             
             if (j >= 0)
-            {
-                list.add(text.substring(i, j));
+            {   list.add(text.substring(i, j));
                 i = j += delimiter.length();
             }
             else
-            {
-                list.add(text.substring(i, text.length()));
+            {   list.add(text.substring(i, text.length()));
                 break;
             }
         }
