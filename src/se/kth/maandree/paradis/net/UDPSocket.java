@@ -33,39 +33,39 @@ import java.util.*;
  */
 public class UDPSocket
 {
-    /** ASCII control character */ private static final byte NULL = 0x00;
-    /** ASCII control character */ private static final byte START_OF_HEADING = 0x01;
+    //** ASCII control character */ private static final byte NULL = 0x00;
+    //** ASCII control character */ private static final byte START_OF_HEADING = 0x01;
     /** ASCII control character */ private static final byte START_OF_TEXT = 0x02;
     /** ASCII control character */ private static final byte END_OF_TEXT = 0x03;
     /** ASCII control character */ private static final byte END_OF_TRANSMISSION = 0x04;
     /** ASCII control character */ private static final byte ENQUIRY = 0x05;
     /** ASCII control character */ private static final byte ACKNOWLEDGE = 0x06;
     /** ASCII control character */ private static final byte BELL = 0x07;
-    /** ASCII control character */ private static final byte BACKSPACE = 0x08;
-    /** ASCII control character */ private static final byte CHARACTER_TABULATION = 0x09;
-    /** ASCII control character */ private static final byte LINE_FEED = 0x0A;
-    /** ASCII control character */ private static final byte LINE_TABULATION = 0x0B;
-    /** ASCII control character */ private static final byte FORM_FEED = 0x0C;
-    /** ASCII control character */ private static final byte CARRIAGE_RETURN = 0x0D;
-    /** ASCII control character */ private static final byte SHIFT_OUT = 0x0E;
-    /** ASCII control character */ private static final byte SHIFT_IN = 0x0F;
-    /** ASCII control character */ private static final byte DATA_LINK_ESCAPE = 0x10;
-    /** ASCII control character */ private static final byte DEVICE_CONTROL_ONE = 0x11;
-    /** ASCII control character */ private static final byte DEVICE_CONTROL_TWO = 0x12;
-    /** ASCII control character */ private static final byte DEVICE_CONTROL_THREE = 0x13;
-    /** ASCII control character */ private static final byte DEVICE_CONTROL_FOUR = 0x14;
+    //** ASCII control character */ private static final byte BACKSPACE = 0x08;
+    //** ASCII control character */ private static final byte CHARACTER_TABULATION = 0x09;
+    //** ASCII control character */ private static final byte LINE_FEED = 0x0A;
+    //** ASCII control character */ private static final byte LINE_TABULATION = 0x0B;
+    //** ASCII control character */ private static final byte FORM_FEED = 0x0C;
+    //** ASCII control character */ private static final byte CARRIAGE_RETURN = 0x0D;
+    //** ASCII control character */ private static final byte SHIFT_OUT = 0x0E;
+    //** ASCII control character */ private static final byte SHIFT_IN = 0x0F;
+    //** ASCII control character */ private static final byte DATA_LINK_ESCAPE = 0x10;
+    //** ASCII control character */ private static final byte DEVICE_CONTROL_ONE = 0x11;
+    //** ASCII control character */ private static final byte DEVICE_CONTROL_TWO = 0x12;
+    //** ASCII control character */ private static final byte DEVICE_CONTROL_THREE = 0x13;
+    //** ASCII control character */ private static final byte DEVICE_CONTROL_FOUR = 0x14;
     /** ASCII control character */ private static final byte NEGATIVE_ACKNOWLEDGE = 0x15;
-    /** ASCII control character */ private static final byte SYNCHRONOUS_IDLE = 0x16;
-    /** ASCII control character */ private static final byte END_OF_TRANSMISSION_BLOCK = 0x17;
-    /** ASCII control character */ private static final byte CANCEL = 0x18;
-    /** ASCII control character */ private static final byte END_OF_MEDIUM = 0x19;
-    /** ASCII control character */ private static final byte SUBSTITUTE = 0x1A;
-    /** ASCII control character */ private static final byte ESCAPE = 0x1B;
-    /** ASCII control character */ private static final byte INFORMATION_SEPARATOR_FOUR = 0x1C;
-    /** ASCII control character */ private static final byte INFORMATION_SEPARATOR_THREE = 0x1D;
-    /** ASCII control character */ private static final byte INFORMATION_SEPARATOR_TWO = 0x1E;
-    /** ASCII control character */ private static final byte INFORMATION_SEPARATOR_ONE = 0x1F;
-    /** ASCII control character */ private static final byte DELETE = 0x7F;
+    //** ASCII control character */ private static final byte SYNCHRONOUS_IDLE = 0x16;
+    //** ASCII control character */ private static final byte END_OF_TRANSMISSION_BLOCK = 0x17;
+    //** ASCII control character */ private static final byte CANCEL = 0x18;
+    //** ASCII control character */ private static final byte END_OF_MEDIUM = 0x19;
+    //** ASCII control character */ private static final byte SUBSTITUTE = 0x1A;
+    //** ASCII control character */ private static final byte ESCAPE = 0x1B;
+    //** ASCII control character */ private static final byte INFORMATION_SEPARATOR_FOUR = 0x1C;
+    //** ASCII control character */ private static final byte INFORMATION_SEPARATOR_THREE = 0x1D;
+    //** ASCII control character */ private static final byte INFORMATION_SEPARATOR_TWO = 0x1E;
+    //** ASCII control character */ private static final byte INFORMATION_SEPARATOR_ONE = 0x1F;
+    //** ASCII control character */ private static final byte DELETE = 0x7F;
     
     /**
      * Time to wait for acknowledgement before deeming receiver dead

@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis;
-import se.kth.maandree.paradis.net.*;
 import se.kth.maandree.paradis.util.*;
 import se.kth.maandree.paradis.local.Properties; //Explicit
 

@@ -68,10 +68,10 @@ class StringTransferProtocol implements TransferProtocol<String>
 	    if (((c = data.charAt(i)) & 0xDC00) == 0xD800)
 	    {
 		int wc = ((int)c & 1023) << 10;
-		if (i < n)
-		    wc |= ((int)(data.charAt(i++)) & 1023);
+		if (i + 1 < n)
+		    wc |= ((int)(data.charAt(++i)) & 1023);
 		wc += 0x10000;
-		chars[ptr++] = 0;
+		chars[ptr++] = wc;
 	    }
 	    else
 		chars[ptr++] = (int)c;

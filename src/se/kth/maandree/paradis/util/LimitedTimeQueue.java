@@ -17,9 +17,6 @@
  */
 package se.kth.maandree.paradis.util;
 
-import java.io.*;
-import java.util.*;
-
 
 /**
  * Minimalistic queue with without poll and peek put with self maintained polling

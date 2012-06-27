@@ -305,6 +305,7 @@ public class Blackboard
      * @deprecated  Use overloading {@link #registerThreadingPolicy(BlackboardObserver, ThreadingPolicy, Class<? extends BlackboardMessage>...)} instead
      */
     @Deprecated
+    @SuppressWarnings("unchecked")
     public void registerThreadingPolicy(final BlackboardObserver observer, final Class<? extends BlackboardMessage> messageType, final ThreadingPolicy policy)
     {
 	registerThreadingPolicy(observer, policy, messageType);
@@ -320,7 +321,7 @@ public class Blackboard
      * @param  messageTypes  The message types, must be <code>Class<? extends BlackboardMessage></code>
      */
     @SuppressWarnings("unchecked")
-    public void registerThreadingPolicy(final BlackboardObserver observer, final ThreadingPolicy policy, final Class... messageTypes)
+    public void registerThreadingPolicy(final BlackboardObserver observer, final ThreadingPolicy policy, final Class<? extends BlackboardMessage>... messageTypes)
     {
 	synchronized (this.monitor)
 	{
@@ -345,7 +346,7 @@ public class Blackboard
      *                       you can used <code>null</code> to set a default for the observer
      */
     @SuppressWarnings("unchecked")
-    public void registerPriority(final BlackboardObserver observer, final int nice, final Class... messageTypes)
+    public void registerPriority(final BlackboardObserver observer, final int nice, final Class<? extends BlackboardMessage>... messageTypes)
     {
 	synchronized (this.monitor)
 	{
@@ -371,7 +372,6 @@ public class Blackboard
 	synchronized (this.monitor)
 	{
 	    System.err.println("BLACKBOARD.broadcastMessage(" + message.toString() + ")");
-	    final ArrayList<Thread> threads = new ArrayList<Thread>();
 	    final PriorityQueue<Integer> priorities = new PriorityQueue<Integer>();
 	    final HashMap<Integer, Vector<BlackboardObserver>> prioObservers = new HashMap<>();
 	    
