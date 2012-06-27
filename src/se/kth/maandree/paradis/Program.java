@@ -17,6 +17,8 @@
  */
 package se.kth.maandree.paradis;
 import se.kth.maandree.paradis.net.*;
+import se.kth.maandree.paradis.util.*;
+import se.kth.maandree.paradis.local.*;
 
 import java.util.*;
 
@@ -103,7 +105,15 @@ public class Program
  	    }
 	    else if (line.equals("show l"))
 	    {
-		//TODO show l
+		final String pager = Properties.getPager();
+		
+		if      ((new File("res/LICENSE.AGPL3+colour")).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3+colour");
+		else if ((new File("res/LICENSE.AGPL3"       )).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3");
+		else                                                       Pager.pageFile(pager, "GNU Affero General Public License v3", "LICENSE.AGPL3");
+		
+		if      ((new File("res/LICENSE.GPL2+colour")).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2+colour");
+		else if ((new File("res/LICENSE.GPL2"       )).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2");
+		else                                                      Pager.pageFile(pager, "GNU General Public License v2", "LICENSE.GPL2");
 	    }
 	    else if (line.equals("version"))
 	    {

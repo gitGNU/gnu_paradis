@@ -18,6 +18,7 @@
 package se.kth.maandree.paradis.util;
 
 import java.io.*;
+import java.util.*;
 
 
 /**
@@ -38,7 +39,75 @@ public class Pager
     
     
     /**
-     * Starts text pager
+     * Starts a text pager
+     * 
+     * @param  pager  The users pager of choice
+     * @param  title  The title of the document
+     * @param  file   The file to page
+     */
+    public static void pageFile(final String pager, final String title, final String file)
+    {
+	if ((new File(file)).exists() == false)
+	{
+	    final String text = "The file " + file + " is missing.\nIts title is: " + title + "\n\n";
+	    page(pager, "--:: FILE MISSING ::--", text);
+	    return;
+	}
+	
+	final String text;
+	final Vector<byte[]> bufs = new Vector<byte[]>();
+	int size = 0;
+	
+	InputStream is = null;
+	try
+	{
+	    is = new BufferedInputStream(new FileInputStream(new File(file)));
+	    
+	    for (int av; (av = is.available()) > 0;)
+	    {
+		byte[] buf = new byte[av];
+		av = is.read(buf, 0, av);
+		if (av < buf.length)
+		{
+		    final byte[] nbuf = new byte[av];
+		    System.arraycopy(buf, 0, nbuf, 0, av);
+		    buf = nbuf;
+		}
+		size += av;
+		bufs.add(buf);
+	    }
+	    
+	    final byte[] full = new byte[size];
+	    int ptr = 0;
+	    for (final byte[] buf : bufs)
+	    {
+		System.arraycopy(buf, 0, full, ptr, buf.length);
+		ptr += buf.length;
+	    }
+	    
+	    text = new String(full, "UTF-8");
+	}
+	catch (final Throwable err)
+	{
+	    final String text = "The file " + file + " could not be read.\nIts title is: " + title + "\n" + err.toString() + "\n\n";
+	    page(pager, "--:: FILE READ ERROR ::--", text);
+	    return;
+	}
+	finally
+	{   if (is != null)
+		try
+		{   is.close();
+		}
+		catch (final Throwable ignore)
+		{   //Ignore
+	}	}
+	
+	page(pager, title, text);
+    }
+    
+    
+    /**
+     * Starts a text pager
      * 
      * @param  pager  The users pager of choice
      * @param  title  The title of the document
@@ -51,6 +120,11 @@ public class Pager
 	
 	//TODO: lets make a pager
 	
+	//split text into lines
+	//  remove all ANSI escape sequences except colours and boldness
+	//  split colouring and boldness so the colour of a character can
+	//  absolutly be determined by only examine that line
+	
 	//allow another pager (not if 'pager' is null or 'pager' is empty)
 	
 	//`stty size` --> rows cols
@@ -58,11 +132,6 @@ public class Pager
 	//init terminal
 	//hide cursor
 	//`stty -icanon -echo`
-	
-	//split text into lines
-	//  remove all ANSI escape sequences except colours and boldness
-	//  split colouring and boldness so the colour of a character can
-	//  absolutly be determined by only examine that line
 	
 	//h --> help
 	//l --> reload terminal size and reprint
@@ -79,7 +148,7 @@ public class Pager
 	//show status bar
 	//  h for help
 	//  q for quit
-	//  all/top/bot/??%
+	//  All/Top/Bot/??%
 	//  first line - last line
 	
 	//finally
@@ -87,8 +156,8 @@ public class Pager
 	//  terminate terminal
 	//  reset stty
     }
-
-
+    
+    
     /**
      * Prints lines to the terminal using a pager
      *
