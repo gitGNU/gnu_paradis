@@ -189,7 +189,6 @@ public class Toolkit
 	    while (sc.hasNextLine())
 	    {
 		String line = sc.nextLine();
-		System.err.println(line);
 		int col = 0;
 		while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
 		    col++;
@@ -207,7 +206,10 @@ public class Toolkit
 			line = line.substring(0, line.indexOf(' '));
 		    
 		    if (line.length() > 0)
+		    {
 			rc.add(line);
+			System.err.println("DNS nameserver found: " + line);
+		    }
 		}
 	    }
 	    
