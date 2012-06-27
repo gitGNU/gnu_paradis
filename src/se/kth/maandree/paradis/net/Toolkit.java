@@ -261,7 +261,7 @@ public class Toolkit
      */
     public static boolean isReachable(final String host)
     {
-	final String isWindows = System.getProperty("os.name").startsWith("Windows ");
+	final boolean isWindows = System.getProperty("os.name").startsWith("Windows ");
 	
 	try
 	{
