@@ -6,6 +6,7 @@
 
 ## create directory for Java binaries
 mkdir bin 2>/dev/null
+chmod -R 755 bin
 
 
 ## in with resources to bin/

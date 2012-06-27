@@ -18,9 +18,10 @@
 package se.kth.maandree.paradis;
 import se.kth.maandree.paradis.net.*;
 import se.kth.maandree.paradis.util.*;
-import se.kth.maandree.paradis.local.*;
+import se.kth.maandree.paradis.local.Properties; //Explicit
 
 import java.util.*;
+import java.io.File;
 
 
 /**

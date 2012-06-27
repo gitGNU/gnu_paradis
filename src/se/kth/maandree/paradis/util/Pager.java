@@ -49,19 +49,20 @@ public class Pager
     {
 	if ((new File(file)).exists() == false)
 	{
-	    final String text = "The file " + file + " is missing.\nIts title is: " + title + "\n\n";
-	    page(pager, "--:: FILE MISSING ::--", text);
+	    final String errText = "The file " + file + " is missing.\nIts title is: " + title + "\n\n";
+	    page(pager, "--:: FILE MISSING ::--", errText);
 	    return;
 	}
 	
 	final String text;
-	final Vector<byte[]> bufs = new Vector<byte[]>();
-	int size = 0;
 	
 	InputStream is = null;
 	try
 	{
 	    is = new BufferedInputStream(new FileInputStream(new File(file)));
+	    
+	    final Vector<byte[]> bufs = new Vector<byte[]>();
+	    int size = 0;
 	    
 	    for (int av; (av = is.available()) > 0;)
 	    {
@@ -89,8 +90,8 @@ public class Pager
 	}
 	catch (final Throwable err)
 	{
-	    final String text = "The file " + file + " could not be read.\nIts title is: " + title + "\n" + err.toString() + "\n\n";
-	    page(pager, "--:: FILE READ ERROR ::--", text);
+	    final String errText = "The file " + file + " could not be read.\nIts title is: " + title + "\n" + err.toString() + "\n\n";
+	    page(pager, "--:: FILE READ ERROR ::--", errText);
 	    return;
 	}
 	finally
