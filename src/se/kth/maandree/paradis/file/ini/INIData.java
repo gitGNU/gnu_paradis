@@ -25,13 +25,7 @@ package se.kth.maandree.paradis.file.ini;
  */
 class INIData
 {
-    /**
-     * Non-constructor
-     */
-    private INIData()
-    {
-	assert false : "You may not create instances of this class [INIData].";
-    }
+    //Has default constructor
     
     
     
