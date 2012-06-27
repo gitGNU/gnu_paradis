@@ -72,7 +72,7 @@ class DataFixer
      */
     static void clean(final INIData iniData)
     {
-        if (iniData.filetext.isEmtpy())
+        if (iniData.filetext.isEmpty())
         {
             String[] lines = iniData.filetext.split(LINE_ENDING);
             String text = "";
