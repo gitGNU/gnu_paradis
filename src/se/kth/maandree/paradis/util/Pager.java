@@ -139,7 +139,7 @@ public class Pager
 	//home/end/pgup/pgdn --> navigate
 	//c --> toggle colours and boldness   //TODO: lets add this stuff to all documents
 	//q --> quit
-	//esc esc es --> quit
+	//esc esc esc --> quit
 	//enter --> quit
 	//space --> paragraph down
 	
