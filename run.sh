@@ -70,7 +70,7 @@ elif [[ $1 = "multichat" ]]; then
 elif [[ $1 = "hubchat" ]]; then
     javaSeven -ea -cp bin$jars "$package".demo.HubChat
 
-elif [[ $1 = "InterfaceChat" ]]; then
+elif [[ $1 = "interfacechat" ]]; then
     javaSeven -ea -cp bin$jars "$package".demo.InterfaceChat
 
 
