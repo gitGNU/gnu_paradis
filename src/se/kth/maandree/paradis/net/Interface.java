@@ -97,8 +97,6 @@ public class Interface
 		final HashMap<Integer, UDPSocket> map = this.hub.connections.get(host);
 		if ((map == null) || (map.containsKey(Integer.valueOf(port))) == false)
 		    connect(host, port);
-		else
-		    System.err.println("\033[31mKnow: " + address + "\033[39m");
 	    }
 	    catch (final Exception ignore)
 	    {   //Ignore
