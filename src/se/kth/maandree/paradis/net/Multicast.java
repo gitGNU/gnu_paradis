@@ -32,30 +32,30 @@ public class Multicast implements Cast
     /**
      * Constructor
      * 
-     * @param  sender     The sender of the packet
-     * @param  receivers  The desired receivers of the packet
+     * @param  sender         The sender of the packet
+     * @param  receivers      The desired receivers of the packet
+     * @param  senderAddress  The address:port of the send, {@code null} if not shared
      */
-    public Multicast(final UUID sender, final UUID[] receivers)
+    public Multicast(final UUID sender, final UUID[] receivers, final String senderAddress)
     {
-	this.sender = sender;
-	this.receivers = receivers;
-	this.received = new UUID[] { sender };
-	this.receivedCount = 1;
+	this(sender, receivers, new UUID[] { sender }, senderAddress);
     }
     
     /**
      * Constructor
      * 
-     * @param  sender     The sender of the packet
-     * @param  receivers  The desired receivers of the packet
-     * @param  received   Clients known to have, or currenty is receiving, a copy of the packet
+     * @param  sender         The sender of the packet
+     * @param  receivers      The desired receivers of the packet
+     * @param  received       Clients known to have, or currenty is receiving, a copy of the packet
+     * @param  senderAddress  The address:port of the send, {@code null} if not shared
      */
-    protected Multicast(final UUID sender, final UUID[] receivers, final UUID[] received)
+    protected Multicast(final UUID sender, final UUID[] receivers, final UUID[] received, final String senderAddress)
     {
 	this.sender = sender;
 	this.receivers = receivers;
 	this.received = received;
 	this.receivedCount = received.length;
+	this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
     }
     
     
@@ -80,6 +80,11 @@ public class Multicast implements Cast
      */
     public int receivedCount;
     
+    /**
+     * The address:port of the send, {@code null} if not shared
+     */
+    public final String senderAddress;
+    
     
     
     /**
@@ -97,10 +102,13 @@ public class Multicast implements Cast
 	 * {@inheritDoc}
 	 */
 	public Multicast read(final TransferInputStream stream) throws IOException
-	{   return new Multicast(stream.readObject(UUID.class), stream.readObject(UUID[].class), stream.readObject(UUID[].class));
+	{   return new Multicast(stream.readObject(UUID.class),
+				 stream.readObject(UUID[].class),
+				 stream.readObject(UUID[].class),
+				 stream.readObject(String.class));
 	}
-    
-    
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -115,8 +123,9 @@ public class Multicast implements Cast
 	    stream.writeObject(data.sender);
 	    stream.writeObject(data.receivers);
 	    stream.writeObject(data.received);
+	    stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
 	}
-    
+	
     }
     
     

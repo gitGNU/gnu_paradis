@@ -304,6 +304,14 @@ public class User implements Comparable<User>
     }
     
     /**
+     * Gets the address:port of the user in the format: {@code <PULBIC-IP>/<LOCAL-IP>:<PORT>}
+     */
+    public String getAddress()
+    {
+	return this.getPublicIP() + "/" + this.getLocalIP() + ":" + this.getPort();
+    }
+    
+    /**
      * Gets the DNS names of the user
      * 
      * @return  The descripted data

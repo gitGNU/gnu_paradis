@@ -31,11 +31,13 @@ public class Anycast implements Cast
     /**
      * Constructor
      * 
-     * @param  sender  The sender of the packet
+     * @param  sender         The sender of the packet
+     * @param  senderAddress  The address:port of the send, {@code null} if not shared
      */
-    public Anycast(final UUID sender)
+    public Anycast(final UUID sender, final String senderAddress)
     {
 	this.sender = sender;
+	this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
     }
     
     
@@ -44,6 +46,11 @@ public class Anycast implements Cast
      * The sender of the packet
      */
     public final UUID sender;
+    
+    /**
+     * The address:port of the send, {@code null} if not shared
+     */
+    public final String senderAddress;
     
     
     
@@ -62,17 +69,19 @@ public class Anycast implements Cast
 	 * {@inheritDoc}
 	 */
 	public Anycast read(final TransferInputStream stream) throws IOException
-	{   return new Anycast(stream.readObject(UUID.class));
+	{   return new Anycast(stream.readObject(UUID.class),
+			       stream.readObject(String.class));
 	}
-    
-    
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	public void write(final Anycast data, final TransferOutputStream stream) throws IOException
 	{   stream.writeObject(data.sender);
+	    stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
 	}
-    
+	
     }
     
     

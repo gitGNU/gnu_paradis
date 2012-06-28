@@ -39,6 +39,7 @@ public class PacketFactory
 	this.alsoSendToSelf = alsoSendToSelf;
 	this.urgent         = urgent;
 	this.timeToLive     = timeToLive;
+	this.address        = localUser.getAddress();
     }
     
     
@@ -63,6 +64,11 @@ public class PacketFactory
      */
     private final short timeToLive;
     
+    /**
+     * The address:port of the local use
+     */
+    private final String address;
+    
     
     
     /**
@@ -72,8 +78,7 @@ public class PacketFactory
      * @param  messageType  The type identifer for the message
      */
     public Packet createAnycast(final Object message, final String messageType)
-    {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Anycast(this.localUser.getUUID()), new byte[0], new byte[0], message, messageType);
+    {   return createPacket(message, messageType, new Anycast(this.localUser.getUUID(), null));
     }
     
     /**
@@ -83,8 +88,7 @@ public class PacketFactory
      * @param  messageType  The type identifer for the message
      */
     public Packet createUnicast(final Object message, final String messageType, final UUID receiver)
-    {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Unicast(this.localUser.getUUID(), receiver), new byte[0], new byte[0], message, messageType);
+    {   return createPacket(message, messageType, new Unicast(this.localUser.getUUID(), receiver, null));
     }
     
     /**
@@ -94,8 +98,7 @@ public class PacketFactory
      * @param  messageType  The type identifer for the message
      */
     public Packet createMulticast(final Object message, final String messageType, final UUID... receivers)
-    {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Multicast(this.localUser.getUUID(), receivers), new byte[0], new byte[0], message, messageType);
+    {   return createPacket(message, messageType, new Multicast(this.localUser.getUUID(), receivers, this.address));
     }
     
     /**
@@ -105,8 +108,19 @@ public class PacketFactory
      * @param  messageType  The type identifer for the message
      */
     public Packet createBroadcast(final Object message, final String messageType)
-    {
-	return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, new Broadcast(this.localUser.getUUID()), new byte[0], new byte[0], message, messageType);
+    {   return createPacket(message, messageType, new Broadcast(this.localUser.getUUID(), this.address));
+    }
+    
+    
+    /**
+     * Creates a packet
+     * 
+     * @param  message      The message transmitted in the packet (payload)
+     * @param  messageType  The type identifer for the message
+     * @param  cast         The cast information
+     */
+    private Packet createPacket(final Object message, final String messageType, final Cast cast)
+    {   return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, cast, new byte[0], new byte[0], message, messageType);
     }
     
     

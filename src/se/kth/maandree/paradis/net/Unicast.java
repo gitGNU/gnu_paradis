@@ -31,13 +31,15 @@ public class Unicast implements Cast
     /**
      * Constructor
      * 
-     * @param  sender    The sender of the packet
-     * @param  receiver  The desired receiver of the packet
+     * @param  sender         The sender of the packet
+     * @param  receiver       The desired receiver of the packet
+     * @param  senderAddress  The address:port of the send, {@code null} if not shared
      */
-    public Unicast(final UUID sender, final UUID receiver)
+    public Unicast(final UUID sender, final UUID receiver, final String senderAddress)
     {
 	this.sender = sender;
 	this.receiver = receiver;
+	this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
     }
     
     
@@ -51,6 +53,11 @@ public class Unicast implements Cast
      * The desired receiver of the packet
      */
     public final UUID receiver;
+    
+    /**
+     * The address:port of the send, {@code null} if not shared
+     */
+    public final String senderAddress;
     
     
     
@@ -69,18 +76,21 @@ public class Unicast implements Cast
 	 * {@inheritDoc}
 	 */
 	public Unicast read(final TransferInputStream stream) throws IOException
-	{   return new Unicast(stream.readObject(UUID.class), stream.readObject(UUID.class));
+	{   return new Unicast(stream.readObject(UUID.class),
+			       stream.readObject(UUID.class),
+			       stream.readObject(String.class));
 	}
-    
-    
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	public void write(final Unicast data, final TransferOutputStream stream) throws IOException
 	{   stream.writeObject(data.sender);
 	    stream.writeObject(data.receiver);
+	    stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
 	}
-    
+	
     }
     
     

@@ -32,26 +32,27 @@ public class Broadcast implements Cast
     /**
      * Constructor
      * 
-     * @param  sender  The sender of the packet
+     * @param  sender         The sender of the packet
+     * @param  senderAddress  The address:port of the send, {@code null} if not shared
      */
-    public Broadcast(final UUID sender)
+    public Broadcast(final UUID sender, final String senderAddress)
     {
-	this.sender = sender;
-	this.received = new UUID[] { sender };
-	this.receivedCount = 1;
+	this(sender, new UUID[] { sender }, senderAddress);
     }
     
     /**
      * Constructor
      * 
-     * @param  sender    The sender of the packet
-     * @param  received  Clients known to have, or currenty is receiving, a copy of the packet
+     * @param  sender         The sender of the packet
+     * @param  received       Clients known to have, or currenty is receiving, a copy of the packet
+     * @param  senderAddress  The address:port of the send, {@code null} if not shared
      */
-    protected Broadcast(final UUID sender, final UUID[] received)
+    protected Broadcast(final UUID sender, final UUID[] received, final String senderAddress)
     {
 	this.sender = sender;
 	this.received = received;
 	this.receivedCount = received.length;
+	this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
     }
     
     
@@ -71,6 +72,11 @@ public class Broadcast implements Cast
      */
     public int receivedCount;
     
+    /**
+     * The address:port of the send, {@code null} if not shared
+     */
+    public final String senderAddress;
+    
     
     
     /**
@@ -88,10 +94,12 @@ public class Broadcast implements Cast
 	 * {@inheritDoc}
 	 */
 	public Broadcast read(final TransferInputStream stream) throws IOException
-	{   return new Broadcast(stream.readObject(UUID.class), stream.readObject(UUID[].class));
+	{   return new Broadcast(stream.readObject(UUID.class),
+				 stream.readObject(UUID[].class),
+				 stream.readObject(String.class));
 	}
-    
-    
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -105,8 +113,9 @@ public class Broadcast implements Cast
 	    }
 	    stream.writeObject(data.sender);
 	    stream.writeObject(data.received);
+	    stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
 	}
-    
+	
     }
     
     
