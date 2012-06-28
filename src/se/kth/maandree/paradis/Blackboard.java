@@ -206,7 +206,7 @@ public class Blackboard
 	/**
 	 * Gets the observer
 	 * 
-	 * @param  The observer
+	 * @return  The observer
 	 */
 	public BlackboardObserver getObserver()
 	{   return this.observer;
@@ -303,7 +303,7 @@ public class Blackboard
      * @param  messageType  The message type
      * @param  policy       The threading policy
      * 
-     * @deprecated  Use overloading {@link #registerThreadingPolicy(BlackboardObserver, ThreadingPolicy, Class<? extends BlackboardMessage>...)} instead
+     * @deprecated  Use overloading {@link #registerThreadingPolicy(BlackboardObserver, ThreadingPolicy, Class...)} instead
      */
     @Deprecated
     @SuppressWarnings("unchecked")
@@ -319,7 +319,7 @@ public class Blackboard
      * 
      * @param  observer      The observer
      * @param  policy        The threading policy
-     * @param  messageTypes  The message types, must be <code>Class<? extends BlackboardMessage></code>
+     * @param  messageTypes  The message types, must be {@link Class}<code><? extends </code>{@link BlackboardMessage}<code>></code>
      */
     @SuppressWarnings("unchecked")
     public void registerThreadingPolicy(final BlackboardObserver observer, final ThreadingPolicy policy, final Class<? extends BlackboardMessage>... messageTypes)
@@ -343,8 +343,8 @@ public class Blackboard
      * 
      * @param  observer      The observer
      * @param  nice          The priority, zero is default, and negive is low priority (that is, executed later that positive)
-     * @param  messageTypes  The message types, must be <code>Class<? extends BlackboardMessage></code>,
-     *                       you can used <code>null</code> to set a default for the observer
+     * @param  messageTypes  The message types, must be {@link Class}<? extends </code>{@link BlackboardMessage}<code>></code>,
+     *                       you can used {@code null} to set a default for the observer
      */
     @SuppressWarnings("unchecked")
     public void registerPriority(final BlackboardObserver observer, final int nice, final Class<? extends BlackboardMessage>... messageTypes)

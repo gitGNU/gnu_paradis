@@ -198,7 +198,7 @@ public class Properties
      * {@link NullPointerException} can be throws if you do
      * not have coreutils or `stty` is otherwise not invokable.
      * 
-     * @param  The number of columns in the terminal
+     * @return  The number of columns in the terminal
      */
     @requires("coreutils")
     public static int getTerminalWidth()
@@ -212,7 +212,7 @@ public class Properties
      * {@link NullPointerException} can be throws if you do
      * not have coreutils or `stty` is otherwise not invokable.
      * 
-     * @param  The number of lines in the terminal
+     * @return  The number of lines in the terminal
      */
     @requires("coreutils")
     public static int getTerminalHeight()
@@ -226,7 +226,7 @@ public class Properties
      * {@link NullPointerException} can be throws if you do
      * not have coreutils or `stty` is otherwise not invokable.
      * 
-     * @param  The current STTY settings that you may modify
+     * @return  The current STTY settings that you may modify
      */
     @requires("coreutils")
     public static String getSTTYSettings()

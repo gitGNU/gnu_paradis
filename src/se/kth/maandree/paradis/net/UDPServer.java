@@ -134,7 +134,7 @@ public class UDPServer implements Runnable
      * 
      * @param   remoteAddress  The remote machine's address
      * @param   remotePort     The remote machine's port
-     * @erturn                 The UDP socket connected to the remote machine
+     * @return                 The UDP socket connected to the remote machine
      */
     public UDPSocket connect(final InetAddress remoteAddress, final int remotePort)
     {

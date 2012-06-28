@@ -176,7 +176,7 @@ public class Toolkit
     /**
      * Returns an array of all DNS name servers
      * 
-     * @erturn  All DNS name servers, {@code null} on error
+     * @return  All DNS name servers, {@code null} on error
      */
     public static String[] getNameServers()
     {
