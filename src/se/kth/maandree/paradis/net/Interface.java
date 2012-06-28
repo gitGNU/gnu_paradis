@@ -93,7 +93,7 @@ public class Interface implements Blackboard.BlackboardObserver
     /**
      * Fetches the next packet in the inbox, and waits for one if it is empty
      * 
-     * @param  The next packet in the inbox
+     * @return  The next packet in the inbox
      */
     private Packet receive()
     {

@@ -17,9 +17,9 @@
  */
 package se.kth.maandree.paradis.local;
 import se.kth.maandree.paradis.file.ini.*;
-import se.kth.maandree.paradis.*;
 
 import java.io.*;
+import java.util.*;
 
 
 /**
@@ -43,6 +43,14 @@ public class Configurations
     
     
     
+    
+    /**
+     * Configurations
+     */
+    public static final INI conf;
+    
+    
+    
     /**
      * Class initialiser
      */
@@ -60,13 +68,6 @@ public class Configurations
 	conf = new INI(FILE, content);
 	conf.refreshContentTree();
     }
-    
-    
-    
-    /**
-     * Configurations
-     */
-    public static final INI conf;
     
     
     

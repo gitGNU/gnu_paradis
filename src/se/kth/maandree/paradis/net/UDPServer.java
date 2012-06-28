@@ -160,7 +160,7 @@ public class UDPServer implements Runnable
     /**
      * Binds a UDP socket's output to the server socket
      * 
-     * @parma  sock  The UDP socket
+     * @param  sock  The UDP socket
      */
     private void bind(final UDPSocket sock)
     {

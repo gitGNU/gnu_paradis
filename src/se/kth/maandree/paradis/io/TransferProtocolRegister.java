@@ -19,7 +19,7 @@ package se.kth.maandree.paradis.io;
 import se.kth.maandree.paradis.net.*;
 
 import java.util.HashMap;
-import java.io.IOException;
+import java.io.*;
 
 
 /**

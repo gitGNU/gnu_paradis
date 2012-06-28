@@ -83,9 +83,9 @@ done
 
 if [[ $paramDoc = 1 ]]; then
     ## generate javadoc
-    $docparams="-private -sourcepath src -source 7 -encoding utf-8 -version -author -charset utf-8 -linksource -sourcetab 8 -keywords -docencoding utf-8"
-    javadoc7 $docparams -d doc/javadoc $(find src | grep '.java$') $(find bin | grep '.java$') ||
-    javadoc  $docparams -d doc/javadoc $(find src | grep '.java$') $(find bin | grep '.java$')
+    $docparams="-sourcepath src -source 7 -encoding utf-8 -version -author -charset utf-8 -linksource -sourcetab 8 -keywords -docencoding utf-8"
+    javadoc7 $docparams -d doc/javadoc -private $(find src | grep '.java$') $(find bin | grep '.java$') ||
+    javadoc  $docparams -d doc/javadoc -private $(find src | grep '.java$') $(find bin | grep '.java$')
 else
     ## colouriser
     function colourise()
