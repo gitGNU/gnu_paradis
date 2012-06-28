@@ -17,6 +17,7 @@
  */
 package se.kth.maandree.paradis.net;
 import se.kth.maandree.paradis.util.*;
+import se.kth.maandree.paradis.*;
 
 import java.io.*;
 import java.net.*;
@@ -124,12 +125,14 @@ public class Hub
     /**
      * Set of dead sockets
      */
+    @requires("java-runtime>=6")
     protected final HashSet<UDPSocket> deadSockets = new HashSet<>();
     
     /**
      * Errors throws by sending mechanism, use this with synchronisation on itself.
      * You can get check if it is empty or wait for notifications can poll errors from it.
      */
+    @requires("java-runtime>=6")
     public final ArrayDeque<Throwable> errors = new ArrayDeque<>();
     
     /**

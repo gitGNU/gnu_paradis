@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.util;
+import se.kth.maandree.paradis.*;
 
 import java.util.*;
 
@@ -97,11 +98,13 @@ public class TimeQueue<E>
     /**
      * Actual queue with content
      */
+    @requires("java-runtime>=6")
     protected final ArrayDeque<E> elements = new ArrayDeque<>();
     
     /**
      * Queue with the contents insert times
      */
+    @requires("java-runtime>=6")
     protected final ArrayDeque<Long> times = new ArrayDeque<>();
     
     /**

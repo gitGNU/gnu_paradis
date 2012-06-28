@@ -18,6 +18,7 @@
 package se.kth.maandree.paradis.demo;
 import se.kth.maandree.paradis.net.*;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.net.InetAddress;
 
@@ -44,7 +45,7 @@ public class Chat
      * 
      * @param  args  Startup arguments, unused
      */
-    public static void main(final String... args) throws java.io.IOException
+    public static void main(final String... args) throws IOException
     {
 	final int port = Toolkit.getRandomPortUDP();
 	System.out.println("Alive status: " + Toolkit.getAliveStatus());

@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.local;
+import se.kth.maandree.paradis.*;
 
 import java.io.*;
 
@@ -199,6 +200,7 @@ public class Properties
      * 
      * @param  The number of columns in the terminal
      */
+    @requires("coreutils")
     public static int getTerminalWidth()
     {
 	return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
@@ -212,6 +214,7 @@ public class Properties
      * 
      * @param  The number of lines in the terminal
      */
+    @requires("coreutils")
     public static int getTerminalHeight()
     {
 	return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
@@ -225,6 +228,7 @@ public class Properties
      * 
      * @param  The current STTY settings that you may modify
      */
+    @requires("coreutils")
     public static String getSTTYSettings()
     {
 	String[] data = execSystemProperty(LineRule.SPACE, "stty", "-a").split(";");
@@ -242,6 +246,7 @@ public class Properties
      * @param  lineRule  What to do with line breaks
      * @param  cmd       The command to run, {@code null} on error
      */
+    @requires("java-runtime>=7")
     public static String execSystemProperty(final LineRule lineRule, final String... cmd)
     {
         try

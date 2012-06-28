@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.*;
 
 import java.io.*;
 import java.net.*;
@@ -84,6 +85,7 @@ public class Toolkit
      * @author  Calle Lejdbrandt, <a href="mailto:callel@kth.se">callel@kth.se</a>, as a port of <a href="www.gitub.com/maandree/cnt">CNT</a>.
      * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>, changed failure precedure
      */
+    @requires("java-runtime>=6")
     public static String getLocalIP() throws IOException
     {
 	// This is all because InetAddress.getLocalHost().getHostAddress() returns loopback (127.0.*.1) to where we cannot portforward
@@ -259,6 +261,7 @@ public class Toolkit
      * @param   host  The remote host's address, IP or DNS
      * @return        Whether the remote host is reachable
      */
+    @requires("iputils")
     public static boolean isReachable(final String host)
     {
 	final boolean isWindows = System.getProperty("os.name").startsWith("Windows ");

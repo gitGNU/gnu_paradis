@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.util;
+import se.kth.maandree.paradis.*;
 
 import java.io.*;
 import java.util.*;
@@ -165,6 +166,7 @@ public class Pager
      * @param  pager  The pager to use
      * @param  text   The text to print
      */
+    @requires("coreutils")
     private static void page(final String pager, final String text)
     {
 	try

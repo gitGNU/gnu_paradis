@@ -45,7 +45,7 @@ public class MultiChat
      * 
      * @param  args  Startup arguments, unused
      */
-    public static void main(final String... args) throws java.io.IOException
+    public static void main(final String... args) throws IOException
     {
 	final int port = Toolkit.getRandomPortUDP();
 	System.out.println("Alive status: " + Toolkit.getAliveStatus());

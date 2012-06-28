@@ -58,6 +58,7 @@ fi
 ## parse options
 paramEcho=0
 paramEcj=0
+paramAnnot=0
 for opt in "$@"; do
     if [[ $opt = '-ecj' ]]; then
 	paramEcj=1
@@ -69,6 +70,8 @@ for opt in "$@"; do
 	function javacSeven()
 	{   echo "$@"
 	}
+    elif [[ $opt = '-annot' ]]; then
+	paramAnnot=1
     elif [[ $opt = '-q' ]]; then
 	warns=''
     fi
@@ -107,8 +110,18 @@ if [ -f 'src/se/kth/maandree/javagen/ExceptionGenerator.java' ]; then
     ## generate exceptions binaries
     ( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1
     ) | colourise
-fi
+fi &&
 
-## compile paradis
-( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
-) | colourise
+## compile annotations and annotation processorors
+
+( javacSeven $warns -cp .:bin$jars $params src/se/kth/maandree/paradis/{ATProcessor,requires}.java  2>&1
+) | colourise &&
+
+if [[ $paramAnnot = 0 ]]; then
+    ## compile paradis
+    ( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
+    ) | colourise
+else
+    ## run annotation processor (and compile paradis)
+    javacSeven -processor se.kth.maandree.paradis.ATProcessor -processorpath bin -implicit:class -cp .:bin$jars $params $(find src | grep '.java$')
+fi
