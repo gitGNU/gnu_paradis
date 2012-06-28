@@ -73,6 +73,9 @@ public class Program
 	while (sc.hasNextLine())
 	{
 	    final String line = sc.nextLine();
+	    if (line.isEmpty())
+		continue;
+	    
 	    if (line.equals("help"))
 	    {
 		System.out.println("COMMANDS:     DESCRIPTIONS:");
