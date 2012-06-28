@@ -74,10 +74,12 @@ public class Interface
 	final Packet packet = this.hub.receive();
 	final Cast cast = packet.cast;
 	String address = null;
-	if (cast instanceof Anycast)    address = ((Anycast)cast).senderAddress;
-	if (cast instanceof Unicast)    address = ((Unicast)cast).senderAddress;
-	if (cast instanceof Multicast)  address = ((Multicast)cast).senderAddress;
-	if (cast instanceof Broadcast)  address = ((Broadcast)cast).senderAddress;
+	if      (cast instanceof Anycast)    address = ((Anycast)cast).senderAddress;
+	else if (cast instanceof Unicast)    address = ((Unicast)cast).senderAddress;
+	else if (cast instanceof Multicast)  address = ((Multicast)cast).senderAddress;
+	else if (cast instanceof Broadcast)  address = ((Broadcast)cast).senderAddress;
+	
+	System.err.println("Receiving from: " + address);
 	
 	if (address != null)
 	    try
@@ -85,7 +87,7 @@ public class Interface
 		final String _pub = address.substring(0, address.indexOf("/"));
 		final String _port = address.substring(address.lastIndexOf(':') + 1);
 		String _loc = address.substring(_pub.length() + 1);
-		_loc = _loc.substring(0, _port.length() - 1);
+		_loc = _loc.substring(0, _loc.length() - _port.length() - 1);
 		
 		final int port = Integer.parseInt(_port);
 		final InetAddress host = _pub.equals(localUser.getPublicIP())
@@ -95,9 +97,12 @@ public class Interface
 		final HashMap<Integer, UDPSocket> map = this.hub.connections.get(host);
 		if ((map == null) || (map.containsKey(Integer.valueOf(port))) == false)
 		    connect(host, port);
+		else
+		    System.err.println("\033[31mKnow: " + address + "\033[39m");
 	    }
 	    catch (final Exception ignore)
 	    {   //Ignore
+		ignore.printStackTrace(System.err);
 	    }
 	
 	return packet;
@@ -111,7 +116,9 @@ public class Interface
      * @param  remotePort     The remote machine's port
      */
     public void connect(final InetAddress remoteAddress, final int remotePort)
-    {   this.hub.connect(remoteAddress, remotePort);
+    {
+	System.err.println("Connecting to: " + remoteAddress + ":" + remotePort);
+	this.hub.connect(remoteAddress, remotePort);
     }
     
     

@@ -66,14 +66,15 @@ public class TimeQueue<E>
 				    if (TimeQueue.this.times.isEmpty())
 					continue;
 					
-				    final long time = TimeQueue.this.times.peekFirst().longValue() - System.currentTimeMillis();
+				    final long time = System.currentTimeMillis() - TimeQueue.this.times.peekFirst().longValue();
 					
 				    if (time > age)
 				    {   TimeQueue.this.times.pollFirst();
 					TimeQueue.this.elements.pollFirst();
 				    }
 				    else
-				    {   if (time % 60_000L != 0)
+				    {
+					if (time % 60_000L != 0)
 					    Thread.sleep(time % 60_000L);
 					for (int i = 0, n = (int)(time / 60_000L); i < n; i++)
 					    Thread.sleep(60_000);
