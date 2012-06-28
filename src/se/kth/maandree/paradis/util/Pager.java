@@ -117,7 +117,7 @@ public class Pager
      */
     public static void page(final String pager, final String title, final String text)
     {
-	page(pager == null ? "less" : pager.isEmpty() ? "less" : pager, text);
+	page(pager == null ? "less -r" : pager.isEmpty() ? "less -r" : pager, text);
 	
 	
 	//TODO: lets make a pager
@@ -139,7 +139,7 @@ public class Pager
 	//l --> reload terminal size and reprint
 	//arrows --> navigate
 	//home/end/pgup/pgdn --> navigate
-	//c --> toggle colours and boldness   //TODO: lets add this stuff to all documents
+	//c --> toggle colours and boldness
 	//q --> quit
 	//esc esc esc --> quit
 	//enter --> quit
