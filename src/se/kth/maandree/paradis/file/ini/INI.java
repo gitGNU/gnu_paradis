@@ -78,7 +78,7 @@ public class INI implements INIInterface
     /**
      * Constructor
      *
-     * @param  filename            The INI-/INF-file's filename, <code>null</code> if not any file
+     * @param  filename            The INI-/INF-file's filename, {@code null} if not any file
      * @param  content             The content of the file
      * @param  keyEnding           Key ending, separating the value from the key
      * @param  commentNotation     What the line beginning with that making the line a comment
@@ -91,7 +91,7 @@ public class INI implements INIInterface
     /**
      * Constructor
      *
-     * @param  filename            The INI-/INF-file's filename, <code>null</code> if not any file
+     * @param  filename            The INI-/INF-file's filename, {@code null} if not any file
      * @param  content             The content of the file
      */
     public INI(final String filename, final String content)
@@ -100,7 +100,7 @@ public class INI implements INIInterface
     }
     
     /**
-     * Private cloneing constructor
+     * Private cloning constructor
      *
      * @param  orginal  Item to clone
      */
