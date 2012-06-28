@@ -25,6 +25,7 @@ import java.util.*;
  *
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
+@requires("java-runtime>=7" /**syntax**/)
 public class Blackboard
 {
     /**
@@ -374,19 +375,27 @@ public class Blackboard
 	    System.err.println("BLACKBOARD.broadcastMessage(" + message.toString() + ")");
 	    final PriorityQueue<Integer> priorities = new PriorityQueue<Integer>();
 	    final HashMap<Integer, Vector<BlackboardObserver>> prioObservers = new HashMap<>();
+	    final HashSet<Integer> regdPrioes = new HashSet<Integer>();
 	    
 	    for (final BlackboardObserver observer : this.observers)
 	    {
-		HashMap<Class<? extends BlackboardMessage>, Integer> map = observationPriorities.get(observer);
-		int priority = 0;
+		final HashMap<Class<? extends BlackboardMessage>, Integer> map = observationPriorities.get(observer);
+		Integer priority = Integer.valueOf(0);
 		if (map != null)
 		{
 		    Integer tmp;
-		    if      ((tmp = map.get(message.getClass())) != null)  priority = tmp.intValue();
-		    else if ((tmp = map.get(null)) != null)                priority = tmp.intValue();
+		    if      ((tmp = map.get(message.getClass())) != null)  priority = tmp;
+		    else if ((tmp = map.get(null)) != null)                priority = tmp;
 		}
-		priorities.add(priority);
-		
+		if (regdPrioes.contains(priority) == false)
+		{
+		    priorities.add(priority);
+		    regdPrioes.add(priority);
+		}
+		Vector<BlackboardObserver> vector = prioObservers.get(priority);
+		if (vector == null)
+		    prioObservers.put(priority, vector = new Vector<BlackboardObserver>());
+		vector.add(observer);
 	    }
 	    
 	    for (Integer priority; (priority = priorities.poll()) != null;) // iterator messes up order
