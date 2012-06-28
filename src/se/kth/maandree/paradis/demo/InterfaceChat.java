@@ -17,8 +17,10 @@
  */
 package se.kth.maandree.paradis.demo;
 import se.kth.maandree.paradis.net.*;
+import se.kth.maandree.paradis.net.messages.*;
 import se.kth.maandree.paradis.net.UUID; //Explicit
 import se.kth.maandree.paradis.io.*;
+import se.kth.maandree.paradis.*;
 
 import java.util.*;
 import java.net.*;
@@ -78,18 +80,21 @@ public class InterfaceChat
 	final Scanner sc = new Scanner(System.in);
 	final Interface intrf = new Interface(port, localUser);
 	
-	final Thread thread = new Thread()
-	        {   public void run()
-		    {   for (;;)
-			{   final Packet packet = intrf.receive();
-			    if (packet == null)
-			    {   return;
-			    }
-			    System.out.print(packet.message);
-		}   }   };
-	
-	thread.setDaemon(true);
-	thread.start();
+	Blackboard.getInstance(null).registerObserver(new Blackboard.BlackboardObserver()
+	        {
+		    /**
+		     * {@inheritDoc}
+		     */
+		    public void messageBroadcasted(final Blackboard.BlackboardMessage message)
+		    {
+			if (message instanceof PacketReceived)
+			{
+			    final Packet packet = ((PacketReceived)message).packet;
+			    if (packet.messageType.equals("chat message"))
+				System.out.print(packet.message);
+			}
+		    }
+		});
 	
 	for (String line;;)
 	    if ((line = sc.nextLine()).isEmpty())
@@ -100,7 +105,7 @@ public class InterfaceChat
 	    else if (line.charAt(0) == '>')
 		connect(intrf, line.substring(1));
 	    else
-		intrf.send(factory.createBroadcast(line + '\n', "chat message"));
+		Blackboard.getInstance(null).broadcastMessage(new SendPacket(factory.createBroadcast(line + '\n', "chat message")));
     }
     
     private static void connect(final Interface intrf, final String remote) throws IOException
@@ -119,7 +124,7 @@ public class InterfaceChat
 	    remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
 	}
 	
-	intrf.connect(remoteAddress, remotePort);
+	Blackboard.getInstance(null).broadcastMessage(new MakeConnection(remoteAddress, remotePort));
     }
     
 }

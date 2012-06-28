@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.net;
+import se.kth.maandree.paradis.net.messages.*;
+import se.kth.maandree.paradis.*;
 
 import java.io.*;
 import java.net.*;
@@ -27,7 +29,7 @@ import java.util.*;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class Interface
+public class Interface implements Blackboard.BlackboardObserver
 {
     /**
      * Constructor
@@ -43,6 +45,25 @@ public class Interface
 	
 	this.localPort = this.hub.localPort;
 	this.localUser = this.hub.localUser;
+	
+	final Blackboard blackboard;
+	(blackboard = Blackboard.getInstance(null)).registerObserver(this);
+	
+	final Thread thread = new Thread()
+	        {
+		    /**
+		     * {@inheritDoc}
+		     */
+		    @Override
+		    public void run()
+		    {
+			while (Interface.this.closed == false)
+			    blackboard.broadcastMessage(new PacketReceived(Interface.this.receive()));
+		    }
+	        };
+	
+	thread.setDaemon(true);
+	thread.start();
     }
     
     
@@ -62,6 +83,11 @@ public class Interface
      */
     public final Hub hub;
     
+    /**
+     * Whether the interface has been closed
+     */
+    protected volatile boolean closed = false;
+    
     
     
     /**
@@ -69,7 +95,7 @@ public class Interface
      * 
      * @param  The next packet in the inbox
      */
-    public Packet receive()
+    private Packet receive()
     {
 	final Packet packet = this.hub.receive();
 	final Cast cast = packet.cast;
@@ -113,9 +139,8 @@ public class Interface
      * @param  remoteAddress  The remote machine's address
      * @param  remotePort     The remote machine's port
      */
-    public void connect(final InetAddress remoteAddress, final int remotePort)
-    {
-	System.err.println("Connecting to: " + remoteAddress + ":" + remotePort);
+    private void connect(final InetAddress remoteAddress, final int remotePort)
+    {   System.err.println("Connecting to: " + remoteAddress + ":" + remotePort);
 	this.hub.connect(remoteAddress, remotePort);
     }
     
@@ -127,7 +152,7 @@ public class Interface
      * 
      * @throws  IOException  On I/O error
      */
-    public void send(final Packet packet) throws IOException
+    private void send(final Packet packet) throws IOException
     {   this.hub.send(packet);
     }
     
@@ -137,7 +162,7 @@ public class Interface
      * 
      * @param  group  The group to join
      */
-    public void joinGroup(final UUID group)
+    private void joinGroup(final UUID group)
     {   this.hub.joinGroup(group);
     }
     
@@ -147,7 +172,7 @@ public class Interface
      * 
      * @param  group  The group to leave
      */
-    public void leaveGroup(final UUID group)
+    private void leaveGroup(final UUID group)
     {   this.hub.leaveGroup(group);
     }
     
@@ -157,6 +182,29 @@ public class Interface
      */
     public void close() throws IOException
     {   this.hub.close();
+	Blackboard.getInstance(null).unregisterObserver(this);
+	this.closed = true;
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void messageBroadcasted(final Blackboard.BlackboardMessage message)
+    {
+	if (message instanceof JoinMulticastGroup)
+	    joinGroup(((JoinMulticastGroup)message).group);
+	else if (message instanceof LeaveMulticastGroup)
+	    leaveGroup(((LeaveMulticastGroup)message).group);
+	else if (message instanceof MakeConnection)
+	    connect(((MakeConnection)message).remoteAddress, ((MakeConnection)message).remotePort);
+	else if (message instanceof SendPacket)
+	    try
+	    {   send(((SendPacket)message).packet);
+	    }
+	    catch (final Throwable err)
+	    {   ((SendPacket)message).error = err;
+	    }
     }
     
 }
