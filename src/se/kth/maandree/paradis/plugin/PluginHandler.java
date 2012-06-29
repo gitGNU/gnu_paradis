@@ -67,14 +67,19 @@ public class PluginHandler
     private static Vector<PluginV1> pluginInstances = new Vector<PluginV1>();
     
     /**
-     * The plug-in files
+     * The plug-in files, list
      */
     private static Vector<String> pluginFiles = new Vector<String>();
     
     /**
+     * The plug-in files, set
+     */
+    private static HashSet<String> pluginHash = new HashSet<String>();
+    
+    /**
      * The active plug-ins
      */
-    private static Vector<PluginV1> activePlugins = new Vector<PluginV1>();
+    private static HashSet<PluginV1> activePlugins = new HashSet<PluginV1>();
     
     
     
@@ -151,54 +156,58 @@ public class PluginHandler
      */
     public static void setActive(final int plugin, final boolean active)
     {
+	if (activePlugins.contains(pluginInstances.get(plugin)) ^ active)
+            if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  getPlugin(i).initialize();  }
+	    else         {  activePlugins.remove(pluginInstances.get(plugin));  getPlugin(i).terminate();   }
+	
         if (isActive(plugin) ^ active)
-        {
-            if (active)  activePlugins.add   (pluginInstances.get(plugin));
-            else         activePlugins.remove(pluginInstances.get(plugin));
-            
-            for (;;)
-                try
+	    try
+            {
+		StringBuilder buf = new StringBuilder();
+		for (final PluginV1 p : activePlugins)
                 {
-                    String data = "";
-                    for (final PluginV1 p : activePlugins)
-                    {
-                        int indexOf = pluginInstances.indexOf(p);
-                        String pluginFile = pluginFiles.get(indexOf);
-                        data += pluginFile + "\n";
-                    }
-                    
-                    if (data.length() > 0)
-                        data = data.substring(0, data.length() - "\n".length());
-                    
-                    OutputStream os = null;
-                    try
-                    {   os = new BufferedOutputStream(new FileOutputStream(new File(PLUGINS_FILE)));
-                        os.write(data.getBytes("UTF-8"));
-                        os.flush();
-                    }
-                    finally
-                    {   if (os != null)
-                            try
-                            {    os.close();
-                            }
-                            catch (final Throwable ignore)
-                            {    //Ignore
-                    }       }
-                    
-                    break;
-                }
-                catch (final Throwable err)
-                {   System.err.println("Problem with plug-in " + (active ? "activation" : "deactivation") + ": " + err.toString());
-                }
-        }
+		    int indexOf = pluginInstances.indexOf(p);
+		    String pluginFile = pluginFiles.get(indexOf);
+		    buf.append(pluginFile);
+		    buf.append("\n");
+		}
+                
+		Stirng data = buf.toString();
+		if (data.isEmpty() == false)
+		    data = data.substring(0, data.length() - "\n".length());
+		
+		OutputStream os = null;
+		try
+                {   os = new BufferedOutputStream(new FileOutputStream(new File(PLUGINS_FILE)));
+		    os.write(data.getBytes("UTF-8"));
+		    os.flush();
+		}
+		finally
+                {   if (os != null)
+			try
+                        {    os.close();
+			}
+			catch (final Throwable ignore)
+                        {    //Ignore
+		}       }
+                
+		break;
+	    }
+	    catch (final Throwable err)
+            {   System.err.println("Problem with plug-in " + (active ? "activation" : "deactivation") + ": " + err.toString());
+	    }
     }
     
     
     /**
      * Finds all plug-ins
+     * 
+     * @return  A list of indices for new plugins
      */
-    public static void findPlugins()
+    public static Vector<Integer> findPlugins()
     {
+	final Vector<Integer> rc = new Vector<Integer>();
+	
         final String fs;
         final String dir = PLUGIN_DIR + (fs = Properties.getFileSeparator());
         
@@ -211,12 +220,19 @@ public class PluginHandler
                     name = name.substring(name.lastIndexOf(fs) + fs.length());
                     name = name.substring(0, name.length() - ".jar".length());
                     
-                    pluginInstances.add(getPluginInstance(name));
-                    pluginFiles.add(name);
+		    int index = pluginFiles.size();
+		    if (pluginHash.contains(name) == false)
+		    {   pluginInstances.add(getPluginInstance(name));
+			pluginFiles.add(name);
+			pluginHash.add(name);
+			rc.add(Integer.valueOf(index));
+		    }
                 }
                 catch (final Exception err)
                 {   //Do nothing
                 }
+	
+	return rc;
     }
     
     
@@ -227,7 +243,7 @@ public class PluginHandler
      * @return             The plug-in as an instance
      * @throws  Exception  If the plug-in can't be loaded
      */
-    @requires("java-runtime>=7")
+    @requires("java-environment>=7")
     private static PluginV1 getPluginInstance(final String name) throws Exception
     {
         final String dir = PLUGIN_DIR + Properties.getFileSeparator();
@@ -254,17 +270,15 @@ public class PluginHandler
     
     
     /**
-     * <p>Starts the active plugins</p>
-     * <p>
-     *   Run only once before any plugin is activated
-     * </p>
+     * Activates all plugins that are already maked as active;
+     * it is only useful to run this once, at the beginning.
      */
     public static void startPlugins()
     {
+	findPlugins();
         try
         {   for (int i = 0, n = getPluginCount(); i < n; i++)
-                if (isActive(i))
-                    getPlugin(i).initialize();
+                setActive(i, isActive(i));
         }
         catch (final Throwable err)
         {   System.err.println("Problem with initial plug-in activation: " + err.toString());
