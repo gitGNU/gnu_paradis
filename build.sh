@@ -51,7 +51,7 @@ params="-source 7 -target 7 -s src -d bin"
 ## libraries
 jars=''
 if [ -d lib ]; then
-    jars=`echo $(find lib | grep .jar$) | sed -e 's/lib\//:/g' -e 's/ //g'`
+    jars=`echo $(find lib | grep .jar$) | sed -e 's/lib\//:lib\//g' -e 's/ //g'`
 fi
 
 
@@ -63,9 +63,15 @@ paramDoc=0
 for opt in "$@"; do
     if [[ $opt = '-ecj' ]]; then
 	paramEcj=1
-	function javacSeven()
-	{   ecj "$@"
-	}
+	if [ -d /opt/java7/jre/lib ]; then
+	    function javacSeven()
+	    {   ecj -bootclasspath `echo $(find /opt/java7/jre/lib | grep .jar$) | sed -e 's/\/opt\/java7\/jre\/lib\//:\/opt\/java7\/jre\/lib\//g' -e 's/ //g' | dd skip=1 bs=1 2>/dev/null` "$@"
+	    }
+	else
+	    function javacSeven()
+	    {   ecj  "$@"
+	    }
+	fi
     elif [[ $opt = '-echo' ]]; then
 	paramEcho=1
 	function javacSeven()
