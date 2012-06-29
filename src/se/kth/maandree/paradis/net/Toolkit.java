@@ -122,7 +122,7 @@ public class Toolkit
     
     
     /**
-     * Checks the alive status for the client, with test timeout at 4 seconds
+     * Checks the alive status for the client, with test timeout at (by default) 4 seconds
      * 
      * @return  Statuses: 0. totally dead. 1. can reach to router, 2 can reach primary or
      *          secondary standard DNS server, 3 can get public IP address and can reach
@@ -241,7 +241,7 @@ public class Toolkit
     
     
     /**
-     * Tests whether any host is reachable, with test timeout at 4 seconds
+     * Tests whether any host is reachable, with test timeout at (by default) 4 seconds
      * 
      * @param   hosts  The remote hosts' addresses, IP or DNS
      * @return         Whether the remote host is reachable
@@ -256,7 +256,7 @@ public class Toolkit
     
     
     /**
-     * Tests whether a host is reachable, with test timeout at 4 seconds
+     * Tests whether a host is reachable, with test timeout at (by default) 4 seconds
      * 
      * @param   host  The remote host's address, IP or DNS
      * @return        Whether the remote host is reachable
@@ -271,8 +271,8 @@ public class Toolkit
 	    byte[] buf = new byte[256];
 	    int ptr = 0;
             
-	    final ProcessBuilder procBuilder = isWindows ? new ProcessBuilder("ping", host, "-n", "1", "-w", "4000")
-		                                         : new ProcessBuilder("ping", host, "-c", "1", "-q", "-w", "4");
+	    final ProcessBuilder procBuilder = isWindows ? new ProcessBuilder("ping", host, "-n", "1", "-w", Integer.toString(NetConf.getTimeout() * 1000))
+		                                         : new ProcessBuilder("ping", host, "-c", "1", "-q", "-w", Integer.toString(NetConf.getTimeout()));
 	    
 	    final Process process = procBuilder.start();
 	    final InputStream stream = process.getInputStream();
