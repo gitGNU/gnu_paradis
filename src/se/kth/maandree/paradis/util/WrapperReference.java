@@ -21,6 +21,8 @@ package se.kth.maandree.paradis.util;
 /**
  * A wrapper reference is a strong reference wrapping another reference, allowing independent non-strong references
  * 
+ * @param  <T>  The element type of the reference
+ * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
 public class WrapperReference<T>

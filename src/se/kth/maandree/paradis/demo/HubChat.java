@@ -19,6 +19,7 @@ package se.kth.maandree.paradis.demo;
 import se.kth.maandree.paradis.net.*;
 import se.kth.maandree.paradis.net.UUID; //Explicit
 import se.kth.maandree.paradis.io.*;
+import se.kth.maandree.paradis.*;
 
 import java.util.*;
 import java.net.*;
@@ -46,7 +47,10 @@ public class HubChat
      * This is the main entry point of the demo
      * 
      * @param  args  Startup arguments, unused
+     * 
+     * @throws  Exception  On error
      */
+    @requires("java-environment>=7")
     public static void main(final String... args) throws Exception
     {
         final int port = Toolkit.getRandomPortUDP();
@@ -75,34 +79,45 @@ public class HubChat
         TransferProtocolRegister.register(String.class, "chat message");
         final PacketFactory factory = new PacketFactory(localUser, false, false, (short)16);
         
-        final Scanner sc = new Scanner(System.in);
-        final Hub hub = new Hub(port, localUser);
-        
-        final Thread thread = new Thread()
-                {   public void run()
-                    {   for (;;)
-                        {   final Packet packet = hub.receive();
-                            if (packet == null)
-                            {   return;
-                            }
-                            System.out.print(packet.message);
-                }   }   };
-        
-        thread.setDaemon(true);
-        thread.start();
-        
-        for (String line;;)
-            if ((line = sc.nextLine()).isEmpty())
-            {
-                hub.close();
-                return;
-            }
-            else if (line.charAt(0) == '>')
-                connect(hub, line.substring(1));
-            else
-                hub.send(factory.createBroadcast(line + '\n', "chat message"));
+        try (final Scanner sc = new Scanner(System.in))
+        {
+            final Hub hub = new Hub(port, localUser);
+            
+            final Thread thread = new Thread()
+                    {   @Override
+                        public void run()
+                        {   for (;;)
+                            {   final Packet packet = hub.receive();
+                                if (packet == null)
+                                {   return;
+                                }
+                                System.out.print(packet.message);
+                    }   }   };
+            
+            thread.setDaemon(true);
+            thread.start();
+            
+            for (String line;;)
+                if ((line = sc.nextLine()).isEmpty())
+                {
+                    hub.close();
+                    return;
+                }
+                else if (line.charAt(0) == '>')
+                    connect(hub, line.substring(1));
+                else
+                    hub.send(factory.createBroadcast(line + '\n', "chat message"));
+        }
     }
     
+    /**
+     * Connects to a remote machine
+     * 
+     * @param  hub     The hub with which to connect
+     * @param  remote  The to which to machine connect
+     * 
+     * @throws  IOException  On error
+     */
     private static void connect(final Hub hub, final String remote) throws IOException
     {
         final InetAddress remoteAddress;
@@ -111,7 +126,7 @@ public class HubChat
         if (remote.startsWith("[") && remote.contains("]:"))
         {
             remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
-            remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
+            remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));
         }
         else
         {

@@ -169,6 +169,7 @@ public class User implements Comparable<User>
         /**
          * {@inheritDoc}
          */
+        @Override
         public User read(final TransferInputStream stream) throws IOException
         {
             return new User(stream.readObject(UUID.class),
@@ -193,6 +194,7 @@ public class User implements Comparable<User>
         /**
          * {@inheritDoc}
          */
+        @Override
         public void write(final User data, final TransferOutputStream stream) throws IOException
         {
             stream.writeObject(data.getUUID());
@@ -221,6 +223,7 @@ public class User implements Comparable<User>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(final Object other)
     {
         if ((other == null) || (other instanceof User == false))
@@ -236,6 +239,7 @@ public class User implements Comparable<User>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode()
     {   return this.uuid.hashCode();
     }
@@ -244,6 +248,7 @@ public class User implements Comparable<User>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compareTo(final User other)
     {   return this.uuid.compareTo(other.uuid);
     }
@@ -252,6 +257,7 @@ public class User implements Comparable<User>
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString()
     {   return (this.name + " (") + (this.uuid.toString() + ")");
     }
@@ -304,7 +310,9 @@ public class User implements Comparable<User>
     }
     
     /**
-     * Gets the address:port of the user in the format: {@code <PULBIC-IP>/<LOCAL-IP>:<PORT>}
+     * Gets the address:port of the user in the format: <code>&lt;PULBIC-IP&gt;/&lt;LOCAL-IP&gt;:&lt;PORT&gt;</code>
+     * 
+     * @return  The address:port of the user
      */
     public String getAddress()
     {

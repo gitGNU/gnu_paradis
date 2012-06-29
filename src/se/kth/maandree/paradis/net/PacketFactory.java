@@ -74,8 +74,9 @@ public class PacketFactory
     /**
      * Creates an anycast packet
      * 
-     * @param  message      The message transmitted in the packet (payload)
-     * @param  messageType  The type identifer for the message
+     * @param   message      The message transmitted in the packet (payload)
+     * @param   messageType  The type identifer for the message
+     * @return               The created packet
      */
     public Packet createAnycast(final Object message, final String messageType)
     {   return createPacket(message, messageType, new Anycast(this.localUser.getUUID(), null));
@@ -84,8 +85,10 @@ public class PacketFactory
     /**
      * Creates an unicast packet
      * 
-     * @param  message      The message transmitted in the packet (payload)
-     * @param  messageType  The type identifer for the message
+     * @param   message      The message transmitted in the packet (payload)
+     * @param   messageType  The type identifer for the message
+     * @param   receiver     The UUID of the intended receiver
+     * @return               The created packet
      */
     public Packet createUnicast(final Object message, final String messageType, final UUID receiver)
     {   return createPacket(message, messageType, new Unicast(this.localUser.getUUID(), receiver, null));
@@ -94,8 +97,10 @@ public class PacketFactory
     /**
      * Creates an multicast packet
      * 
-     * @param  message      The message transmitted in the packet (payload)
-     * @param  messageType  The type identifer for the message
+     * @param   message      The message transmitted in the packet (payload)
+     * @param   messageType  The type identifer for the message
+     * @param   receivers    The UUID:s of the intended receivers
+     * @return               The created packet
      */
     public Packet createMulticast(final Object message, final String messageType, final UUID... receivers)
     {   return createPacket(message, messageType, new Multicast(this.localUser.getUUID(), receivers, this.address));
@@ -104,8 +109,9 @@ public class PacketFactory
     /**
      * Creates an broadcast packet
      * 
-     * @param  message      The message transmitted in the packet (payload)
-     * @param  messageType  The type identifer for the message
+     * @param   message      The message transmitted in the packet (payload)
+     * @param   messageType  The type identifer for the message
+     * @return               The created packet
      */
     public Packet createBroadcast(final Object message, final String messageType)
     {   return createPacket(message, messageType, new Broadcast(this.localUser.getUUID(), this.address));
@@ -115,9 +121,10 @@ public class PacketFactory
     /**
      * Creates a packet
      * 
-     * @param  message      The message transmitted in the packet (payload)
-     * @param  messageType  The type identifer for the message
-     * @param  cast         The cast information
+     * @param   message      The message transmitted in the packet (payload)
+     * @param   messageType  The type identifer for the message
+     * @param   cast         The cast information
+     * @return               The created packet
      */
     private Packet createPacket(final Object message, final String messageType, final Cast cast)
     {   return new Packet(new UUID(), this.alsoSendToSelf, this.urgent, this.timeToLive, (short)0, cast, new byte[0], new byte[0], message, messageType);
@@ -130,6 +137,7 @@ public class PacketFactory
      * @param   timeToLive  The time to live for the assemblied packets, in units of clients
      * @return              A new packet factory
      */
+    @SuppressWarnings("hiding")
     public PacketFactory fork(final short timeToLive)
     {   return new PacketFactory(this.localUser, this.alsoSendToSelf, this.urgent, timeToLive);
     }
@@ -141,6 +149,7 @@ public class PacketFactory
      * @param   urgent          Whether the assemblied packets are urgent
      * @return                  A new packet factory
      */
+    @SuppressWarnings("hiding")
     public PacketFactory fork(final boolean alsoSendToSelf, final boolean urgent)
     {   return new PacketFactory(this.localUser, alsoSendToSelf, urgent, this.timeToLive);
     }
@@ -153,6 +162,7 @@ public class PacketFactory
      * @param   timeToLive      The time to live for the assemblied packets, in units of clients
      * @return                  A new packet factory
      */
+    @SuppressWarnings("hiding")
     public PacketFactory fork(final boolean alsoSendToSelf, final boolean urgent, final short timeToLive)
     {   return new PacketFactory(this.localUser, alsoSendToSelf, urgent, timeToLive);
     }
@@ -163,6 +173,7 @@ public class PacketFactory
      * @param   alsoSendToSelf  Whether to do a loop back send as well
      * @return                  A new packet factory
      */
+    @SuppressWarnings("hiding")
     public PacketFactory forkLoopback(final boolean alsoSendToSelf)
     {   return new PacketFactory(this.localUser, alsoSendToSelf, this.urgent, this.timeToLive);
     }
@@ -174,6 +185,7 @@ public class PacketFactory
      * @param   timeToLive      The time to live for the assemblied packets, in units of clients
      * @return                  A new packet factory
      */
+    @SuppressWarnings("hiding")
     public PacketFactory forkLoopback(final boolean alsoSendToSelf, final short timeToLive)
     {   return new PacketFactory(this.localUser, alsoSendToSelf, this.urgent, timeToLive);
     }
@@ -184,6 +196,7 @@ public class PacketFactory
      * @param   urgent  Whether the assemblied packets are urgent
      * @return          A new packet factory
      */
+    @SuppressWarnings("hiding")
     public PacketFactory forkUrgent(final boolean urgent)
     {   return new PacketFactory(this.localUser, this.alsoSendToSelf, urgent, this.timeToLive);
     }
@@ -195,6 +208,7 @@ public class PacketFactory
      * @param   timeToLive  The time to live for the assemblied packets, in units of clients
      * @return              A new packet factory
      */
+    @SuppressWarnings("hiding")
     public PacketFactory forkUrgent(final boolean urgent, final short timeToLive)
     {   return new PacketFactory(this.localUser, this.alsoSendToSelf, urgent, timeToLive);
     }

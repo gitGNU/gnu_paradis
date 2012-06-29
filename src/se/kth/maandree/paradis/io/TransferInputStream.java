@@ -158,11 +158,11 @@ public class TransferInputStream extends FilterInputStream
     {
         short hi = readShort();
         if (hi >= 0)
-            return (int)hi;
+            return hi;
         
         short lo = readShort();
         
-        return ~(((int)hi << 16) | ((int)lo & 0xFFFF));
+        return ~((hi << 16) | (lo & 0xFFFF));
     }
     
     
@@ -182,7 +182,7 @@ public class TransferInputStream extends FilterInputStream
                ((long)(this.read()) << 24L) |
                ((long)(this.read()) << 16L) |
                ((long)(this.read()) << 8L) |
-               (long)(this.read());
+               (this.read());
     }
     
     

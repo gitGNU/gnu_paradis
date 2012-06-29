@@ -34,6 +34,7 @@ class StringTransferProtocol implements TransferProtocol<String>
     /**
      * {@inheritDoc}
      */
+    @Override
     public String read(final TransferInputStream stream) throws IOException
     {
         final int len = stream.readLen();
@@ -58,6 +59,7 @@ class StringTransferProtocol implements TransferProtocol<String>
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final String data, final TransferOutputStream stream) throws IOException
     {
         final int[] chars = new int[data.length()];
@@ -67,14 +69,14 @@ class StringTransferProtocol implements TransferProtocol<String>
         for (int i = 0, n = data.length(); i < n; i++)
             if (((c = data.charAt(i)) & 0xDC00) == 0xD800)
             {
-                int wc = ((int)c & 1023) << 10;
+                int wc = (c & 1023) << 10;
                 if (i + 1 < n)
-                    wc |= ((int)(data.charAt(++i)) & 1023);
+                    wc |= ((data.charAt(++i)) & 1023);
                 wc += 0x10000;
                 chars[ptr++] = wc;
             }
             else
-                chars[ptr++] = (int)c;
+                chars[ptr++] = c;
         
         stream.writeLen(ptr);
         for (int i = 0; i < ptr; i++)

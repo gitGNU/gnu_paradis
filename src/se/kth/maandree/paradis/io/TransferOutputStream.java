@@ -68,7 +68,7 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeByte(final byte data) throws IOException
     {
-        this.write((int)data & 255);
+        this.write(data & 255);
     }
     
     
@@ -95,7 +95,7 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeChar(final char data) throws IOException
     {
-        writeWChar((int)data);
+        writeWChar(data);
     }
     
     
@@ -201,9 +201,20 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeLenOf(final Object data) throws IOException
     {
-        final LengthCalculatingStream lcs = new LengthCalculatingStream();
-        lcs.writeObject(data);
-        writeLen(lcs.length);
+        LengthCalculatingStream lcs = null;
+        try
+        {   lcs = new LengthCalculatingStream();
+            lcs.writeObject(data);
+            writeLen(lcs.length);
+        }
+        finally
+        {   if (lcs != null)
+                try
+                {   lcs.close();
+                }
+                catch (final Throwable ignore)
+                {   //Ignore
+        }       }
     }
     
     

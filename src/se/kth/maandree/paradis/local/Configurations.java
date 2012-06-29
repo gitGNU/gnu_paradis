@@ -29,6 +29,9 @@ import java.util.*;
  */
 public class Configurations
 {
+    /**
+     * The file with the settings
+     */
     private static final String FILE = "~/.paradis/paradis.conf".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
     
     
