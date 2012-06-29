@@ -36,7 +36,7 @@ if [[ $hasMain = 1 ]]; then
 fi
 
 ## custom runs
-runs+='chat multichat hubchat interfacechat'
+runs+='chat multichat hubchat interfacechat plugins'
 
 
 ## default run
@@ -72,6 +72,9 @@ elif [[ $1 = "hubchat" ]]; then
 
 elif [[ $1 = "interfacechat" ]]; then
     javaSeven -ea -cp bin$jars "$package".demo.InterfaceChat
+
+elif [[ $1 = "plugins" ]]; then
+    javaSeven -ea -cp bin$jars "$package".demo.PluginDemo
 
 
 ## completion
