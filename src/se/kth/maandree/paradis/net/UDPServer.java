@@ -87,10 +87,8 @@ public class UDPServer implements Runnable
      * Waits for a new client, {@code null} is returned if the server socket is closing
      * 
      * @return  A socket binded to the new client through this server socket
-     * 
-     * @throws  IOException  On I/O error
      */
-    public UDPSocket accept() throws IOException
+    public UDPSocket accept()
     {
         synchronized (this.newSockets)
         {   if (this.newSockets.isEmpty())

@@ -108,7 +108,7 @@ public class InterfaceChat
                     return;
                 }
                 else if (line.charAt(0) == '>')
-                    connect(intrf, line.substring(1));
+                    connect(line.substring(1));
                 else
                     Blackboard.getInstance(null).broadcastMessage(new SendPacket(factory.createBroadcast(line + '\n', "chat message")));
         }
@@ -117,12 +117,11 @@ public class InterfaceChat
     /**
      * Connects to a remote machine
      * 
-     * @param  intrf   The interface twith which to connect
      * @param  remote  The to which to machine connect
      * 
      * @throws  IOException  On error
      */
-    private static void connect(final Interface intrf, final String remote) throws IOException
+    private static void connect(final String remote) throws IOException
     {
         final InetAddress remoteAddress;
         final int remotePort;

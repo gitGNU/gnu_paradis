@@ -115,6 +115,7 @@ public class Pager
      * @param  title  The title of the document
      * @param  text   The text to page
      */
+    @SuppressWarnings("unused")
     public static void page(final String pager, final String title, final String text)
     {
         page(pager == null ? "less -r" : pager.isEmpty() ? "less -r" : pager, text);

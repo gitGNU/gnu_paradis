@@ -118,6 +118,7 @@ else
 	elif [[ $paramEcj = 1 ]]; then
 	    if [[ -f "colourpipe.ecj.jar" ]]; then
 		sed -e 's/invalid warning token: '\''resource'\''. Ignoring warning and compiling//g' | dd "skip=1" "bs=1" 2>/dev/null | javaSeven -jar colourpipe.ecj.jar
+		## this sed | dd is for only an old version of colourpipe incompatible with new ecj
 	    else
 		cat
 	    fi
