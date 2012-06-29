@@ -67,7 +67,6 @@ public class Toolkit
                         break;
                     
                 String line = in.nextLine();
-                sock.close();
                 line = line.substring(0, line.indexOf("</body>"));
                 line = line.substring(line.lastIndexOf(' ') + 1);
             
@@ -350,7 +349,6 @@ public class Toolkit
     {
         try (final DatagramSocket socket = new DatagramSocket(0))
         {   final int port = socket.getLocalPort();
-            socket.close();
             return port;
         }
     }
