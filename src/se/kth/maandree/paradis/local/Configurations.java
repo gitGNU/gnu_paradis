@@ -78,7 +78,7 @@ public class Configurations
      * @param   key   The name of the key
      * @return        The value of the hive–key pair
      */
-    public String getSetting(final String hive, final String key)
+    public static String getSetting(final String hive, final String key)
     {
 	return conf.getKeyValue(hive, key);
     }
@@ -91,7 +91,7 @@ public class Configurations
      * @param  key    The name of the key
      * @param  value  The new value of the hive–key pair
      */
-    public void setSetting(final String hive, final String key, final String value)
+    public static void setSetting(final String hive, final String key, final String value)
     {
 	conf.createKey(hive, key, value, true);
     }
@@ -104,7 +104,7 @@ public class Configurations
      * @param  key            The name of the key
      * @param  defaultValue   The default of the hive–key pair
      */
-    public void defaultSetting(final String hive, final String key, final String defaultValue)
+    public static void defaultSetting(final String hive, final String key, final String defaultValue)
     {
 	if (getSetting(hive, key) == null)
 	    setSetting(hive, key, defaultValue);

@@ -29,7 +29,7 @@ public class NetConf
     /**
      * The hive for the configurations managed by this class
      */
-    private final String HIVE = "paradis.net";
+    private static final String HIVE = "paradis.net";
     
     
     
@@ -48,7 +48,7 @@ public class NetConf
      */
     public static void createDefaults()
     {
-	Configuratons.defaultSetting(HIVE, "timeout", "4");
+	Configurations.defaultSetting(HIVE, "timeout", "4");
     }
     
     
@@ -59,7 +59,7 @@ public class NetConf
      */
     public static int getTimeout()
     {
-	final String value = Configuratons.getSettings(HIVE, "timeout");
+	final String value = Configurations.getSetting(HIVE, "timeout");
 	int rc = 0;
 	try
 	{   rc = Integer.parseInt(value);
@@ -99,7 +99,7 @@ public class NetConf
      */
     public static void setTimeout(final int value)
     {
-	Configuratons.setSettings(HIVE, "timeout", Integer.toString(value));
+	Configurations.setSetting(HIVE, "timeout", Integer.toString(value));
     }
     
 }
