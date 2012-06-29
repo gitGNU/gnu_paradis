@@ -69,7 +69,7 @@ for opt in "$@"; do
 	    }
 	else
 	    function javacSeven()
-	    {   ecj  "$@"
+	    {   ecj "$@"
 	    }
 	fi
     elif [[ $opt = '-echo' ]]; then
