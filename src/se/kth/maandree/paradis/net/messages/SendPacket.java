@@ -34,7 +34,7 @@ public class SendPacket implements Blackboard.BlackboardMessage
      */
     public SendPacket(final Packet packet)
     {
-	this.packet = packet;
+        this.packet = packet;
     }
     
     

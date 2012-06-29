@@ -49,29 +49,29 @@ public class Toolkit
      */
     public static String getPublicIP() throws IOException
     {
-	final Socket sock = new Socket("checkip.dyndns.org", 80);
-	final InputStream is = new BufferedInputStream(sock.getInputStream());
-	final OutputStream os = new BufferedOutputStream(sock.getOutputStream());
-	    
-	final Scanner in = new Scanner(is);
-	final PrintStream out = new PrintStream(os);
-	    
-	out.print("GET / HTTP/1.1\r\n");
-	out.print("Host: checkip.dyndns.org\r\n");
-	out.print("\r\n");
-	out.flush();
-	    
-	for (;;)
-	    if (in.nextLine().isEmpty())
-		break;
-	    
-	String line = in.nextLine();
-	sock.close();
-	    
-	line = line.substring(0, line.indexOf("</body>"));
-	line = line.substring(line.lastIndexOf(' ') + 1);
-	
-	return line;
+        final Socket sock = new Socket("checkip.dyndns.org", 80);
+        final InputStream is = new BufferedInputStream(sock.getInputStream());
+        final OutputStream os = new BufferedOutputStream(sock.getOutputStream());
+            
+        final Scanner in = new Scanner(is);
+        final PrintStream out = new PrintStream(os);
+            
+        out.print("GET / HTTP/1.1\r\n");
+        out.print("Host: checkip.dyndns.org\r\n");
+        out.print("\r\n");
+        out.flush();
+            
+        for (;;)
+            if (in.nextLine().isEmpty())
+                break;
+            
+        String line = in.nextLine();
+        sock.close();
+            
+        line = line.substring(0, line.indexOf("</body>"));
+        line = line.substring(line.lastIndexOf(' ') + 1);
+        
+        return line;
     }
     
     
@@ -88,36 +88,36 @@ public class Toolkit
     @requires("java-runtime>=6")
     public static String getLocalIP() throws IOException
     {
-	// This is all because InetAddress.getLocalHost().getHostAddress() returns loopback (127.0.*.1) to where we cannot portforward
-	// See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4665037 for details of problem.
-	// This hopefully solves it. 
-	
-	try
+        // This is all because InetAddress.getLocalHost().getHostAddress() returns loopback (127.0.*.1) to where we cannot portforward
+        // See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4665037 for details of problem.
+        // This hopefully solves it. 
+        
+        try
         {
-	    for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) //Get all interfaces
-	    {
-		NetworkInterface iface = en.nextElement();
-		if (iface.isUp() == false) // If the interface is not up, then we don't want to use it.
-		    continue;
-		
-		for (InterfaceAddress eth : iface.getInterfaceAddresses()) // Get ALL addresses listed on the interface
-		{
-		    System.err.println("Possible Address: " + eth.getAddress().getHostAddress());
-		    
-		    // We don't want loopback or IPv6.
-		    if ((eth.getAddress().isLoopbackAddress() == false) && (eth.getAddress().getHostAddress().contains(":") == false))
-		    {
-			System.err.println("Choosen Address: " + eth.getAddress().getHostAddress());
-			return eth.getAddress().getHostAddress();
-		    }
-		}
-	    }
-	}
-	catch (final Throwable err)
-	{   throw new IOException(err);
-	}
-	
-	throw new IOException();
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) //Get all interfaces
+            {
+                NetworkInterface iface = en.nextElement();
+                if (iface.isUp() == false) // If the interface is not up, then we don't want to use it.
+                    continue;
+                
+                for (InterfaceAddress eth : iface.getInterfaceAddresses()) // Get ALL addresses listed on the interface
+                {
+                    System.err.println("Possible Address: " + eth.getAddress().getHostAddress());
+                    
+                    // We don't want loopback or IPv6.
+                    if ((eth.getAddress().isLoopbackAddress() == false) && (eth.getAddress().getHostAddress().contains(":") == false))
+                    {
+                        System.err.println("Choosen Address: " + eth.getAddress().getHostAddress());
+                        return eth.getAddress().getHostAddress();
+                    }
+                }
+            }
+        }
+        catch (final Throwable err)
+        {   throw new IOException(err);
+        }
+        
+        throw new IOException();
     }
     
     
@@ -131,45 +131,45 @@ public class Toolkit
      */
     public static byte getAliveStatus()
     {
-	try
-	{   if (isReachable(getLocalIP()) == false)
-		return 0;
-	}
-	catch (final Throwable err)
-	{   return 0;
-	}
-	
-	final boolean level1 = isAnyReachable("192.168.0.1", "192.168.1.1");
-	System.err.println("Level 1: " + (level1 ? "yes" : "no"));
-	
-	final String[] nameservers = getNameServers();
-	final boolean level2;
-	if (nameservers == null)
-	{   System.err.println("Could not read nameservers, level 2 is automatically passed.");
-	    level2 = true;
-	}
-	else if (nameservers.length == 0)
-	{   System.err.println("No nameservers found, level 2 is automatically passed.");
-	    level2 = true;
-	}
-	else
-	    level2 = isAnyReachable(nameservers);
-	System.err.println("Level 2: " + (level2 ? "yes" : "no"));
-	
-	boolean level3 = level2;
-	if (level3)
-	    try
-	    {   level3 = isReachable(getPublicIP());
-	    }
-	    catch (final Throwable err)
-	    {   level3 = false;
-	    }
-	System.err.println("Level 3: " + (level3 ? "yes" : "no"));
-	
-	if (level3)  return 3;
-	if (level2)  return 2;
-	if (level1)  return 1;
-	return 0;
+        try
+        {   if (isReachable(getLocalIP()) == false)
+                return 0;
+        }
+        catch (final Throwable err)
+        {   return 0;
+        }
+        
+        final boolean level1 = isAnyReachable("192.168.0.1", "192.168.1.1");
+        System.err.println("Level 1: " + (level1 ? "yes" : "no"));
+        
+        final String[] nameservers = getNameServers();
+        final boolean level2;
+        if (nameservers == null)
+        {   System.err.println("Could not read nameservers, level 2 is automatically passed.");
+            level2 = true;
+        }
+        else if (nameservers.length == 0)
+        {   System.err.println("No nameservers found, level 2 is automatically passed.");
+            level2 = true;
+        }
+        else
+            level2 = isAnyReachable(nameservers);
+        System.err.println("Level 2: " + (level2 ? "yes" : "no"));
+        
+        boolean level3 = level2;
+        if (level3)
+            try
+            {   level3 = isReachable(getPublicIP());
+            }
+            catch (final Throwable err)
+            {   level3 = false;
+            }
+        System.err.println("Level 3: " + (level3 ? "yes" : "no"));
+        
+        if (level3)  return 3;
+        if (level2)  return 2;
+        if (level1)  return 1;
+        return 0;
     }
     
     
@@ -180,63 +180,63 @@ public class Toolkit
      */
     public static String[] getNameServers()
     {
-	InputStream is = null;
-	try
-	{
-	    final Vector<String> rc = new Vector<String>();
-	    
-	    is = new BufferedInputStream(new FileInputStream(new File("/etc/resolv.conf")));
-	    final Scanner sc = new Scanner(is);
-	    
-	    while (sc.hasNextLine())
-	    {
-		String line = sc.nextLine();
-		int col = 0;
-		while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
-		    col++;
-		line = line.substring(col);
-		
-		if (line.startsWith("nameserver ") || line.startsWith("nameserver\t"))
-		{
-		    col = "nameserver ".length();
-		    while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
-			col++;
-		    line = line.substring(col);
-		    
-		    line.replace("\t", " ");
-		    if (line.contains(" "))
-			line = line.substring(0, line.indexOf(' '));
-		    
-		    if (line.length() > 0)
-		    {
-			rc.add(line);
-			System.err.println("DNS nameserver found: " + line);
-		    }
-		}
-	    }
-	    
-	    final String[] _rc = new String[rc.size()];
-	    rc.toArray(_rc);
-	    return _rc;
-	}
-	catch (final FileNotFoundException err)
-	{
-	    System.err.println("System does not have file: /etc/resolv.conf");
-	    return null;
-	}
-	catch (final Throwable err)
-	{
-	    System.err.println("Cannot read /etc/resolv.conf");
-	    return null;
-	}
-	finally
-	{   if (is != null)
-		try
-		{   is.close();
-		}
-		catch  (final Throwable ignore)
-		{   //ignore
-	}       }
+        InputStream is = null;
+        try
+        {
+            final Vector<String> rc = new Vector<String>();
+            
+            is = new BufferedInputStream(new FileInputStream(new File("/etc/resolv.conf")));
+            final Scanner sc = new Scanner(is);
+            
+            while (sc.hasNextLine())
+            {
+                String line = sc.nextLine();
+                int col = 0;
+                while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
+                    col++;
+                line = line.substring(col);
+                
+                if (line.startsWith("nameserver ") || line.startsWith("nameserver\t"))
+                {
+                    col = "nameserver ".length();
+                    while ((col < line.length()) && ((line.charAt(col) == ' ') || (line.charAt(col) == '\t')))
+                        col++;
+                    line = line.substring(col);
+                    
+                    line.replace("\t", " ");
+                    if (line.contains(" "))
+                        line = line.substring(0, line.indexOf(' '));
+                    
+                    if (line.length() > 0)
+                    {
+                        rc.add(line);
+                        System.err.println("DNS nameserver found: " + line);
+                    }
+                }
+            }
+            
+            final String[] _rc = new String[rc.size()];
+            rc.toArray(_rc);
+            return _rc;
+        }
+        catch (final FileNotFoundException err)
+        {
+            System.err.println("System does not have file: /etc/resolv.conf");
+            return null;
+        }
+        catch (final Throwable err)
+        {
+            System.err.println("Cannot read /etc/resolv.conf");
+            return null;
+        }
+        finally
+        {   if (is != null)
+                try
+                {   is.close();
+                }
+                catch  (final Throwable ignore)
+                {   //ignore
+        }       }
     }
     
     
@@ -248,10 +248,10 @@ public class Toolkit
      */
     public static boolean isAnyReachable(final String... hosts)
     {
-	for (final String host : hosts)
-	    if (isReachable(host))
-		return true;
-	return false;
+        for (final String host : hosts)
+            if (isReachable(host))
+                return true;
+        return false;
     }
     
     
@@ -264,53 +264,53 @@ public class Toolkit
     @requires("iputils")
     public static boolean isReachable(final String host)
     {
-	final boolean isWindows = System.getProperty("os.name").startsWith("Windows ");
-	
-	try
-	{
-	    byte[] buf = new byte[256];
-	    int ptr = 0;
+        final boolean isWindows = System.getProperty("os.name").startsWith("Windows ");
+        
+        try
+        {
+            byte[] buf = new byte[256];
+            int ptr = 0;
             
-	    final ProcessBuilder procBuilder = isWindows ? new ProcessBuilder("ping", host, "-n", "1", "-w", Integer.toString(NetConf.getTimeout() * 1000))
-		                                         : new ProcessBuilder("ping", host, "-c", "1", "-q", "-w", Integer.toString(NetConf.getTimeout()));
-	    
-	    final Process process = procBuilder.start();
-	    final InputStream stream = process.getInputStream();
+            final ProcessBuilder procBuilder = isWindows ? new ProcessBuilder("ping", host, "-n", "1", "-w", Integer.toString(NetConf.getTimeout() * 1000))
+                                                         : new ProcessBuilder("ping", host, "-c", "1", "-q", "-w", Integer.toString(NetConf.getTimeout()));
             
-	    for (int d; (d = stream.read()) != -1; )
-	    {
-		if (ptr == buf.length)
-		{
-		    final byte[] nbuf = new byte[ptr + 128];
-		    System.arraycopy(buf, 0, nbuf, 0, ptr);
-		    buf = nbuf;
-		}
-		buf[ptr++] = (byte)d;
-	    }
+            final Process process = procBuilder.start();
+            final InputStream stream = process.getInputStream();
             
-	    process.waitFor();
-	    if (process.exitValue() != 0)
-		return false;
+            for (int d; (d = stream.read()) != -1; )
+            {
+                if (ptr == buf.length)
+                {
+                    final byte[] nbuf = new byte[ptr + 128];
+                    System.arraycopy(buf, 0, nbuf, 0, ptr);
+                    buf = nbuf;
+                }
+                buf[ptr++] = (byte)d;
+            }
             
-	    String data = new String(buf, 0, ptr, "UTF-8");
-	    if (isWindows)
-	    {
-		data = data.split("\n")[5].split("[()]")[1];
-		return data.equals("100% loss") == false;
-	    }
-	    else
-	    {
-		data = data.substring(data.indexOf("\n---") + 1);
-		data = data.substring(data.indexOf('\n') + 1);
-		data = data.split("\n")[0].replace(", ", ",");
-		data = data.split(",")[1].split(" ")[0];
-		return data.equals("1");
-	    }
-	}
-	catch (final Throwable err)
-	{
-	    return false;
-	}
+            process.waitFor();
+            if (process.exitValue() != 0)
+                return false;
+            
+            String data = new String(buf, 0, ptr, "UTF-8");
+            if (isWindows)
+            {
+                data = data.split("\n")[5].split("[()]")[1];
+                return data.equals("100% loss") == false;
+            }
+            else
+            {
+                data = data.substring(data.indexOf("\n---") + 1);
+                data = data.substring(data.indexOf('\n') + 1);
+                data = data.split("\n")[0].replace(", ", ",");
+                data = data.split(",")[1].split(" ")[0];
+                return data.equals("1");
+            }
+        }
+        catch (final Throwable err)
+        {
+            return false;
+        }
     }
     
     
@@ -323,10 +323,10 @@ public class Toolkit
      */
     public static int getRandomPortTCP() throws IOException
     {
-	final ServerSocket socket = new ServerSocket(0);
-	final int port = socket.getLocalPort();
-	socket.close();
-	return port;
+        final ServerSocket socket = new ServerSocket(0);
+        final int port = socket.getLocalPort();
+        socket.close();
+        return port;
     }
     
     
@@ -339,10 +339,10 @@ public class Toolkit
      */
     public static int getRandomPortUDP() throws IOException
     {
-	final DatagramSocket socket = new DatagramSocket(0);
-	final int port = socket.getLocalPort();
-	socket.close();
-	return port;
+        final DatagramSocket socket = new DatagramSocket(0);
+        final int port = socket.getLocalPort();
+        socket.close();
+        return port;
     }
     
 }

@@ -36,11 +36,11 @@ class LongArrayTransferProtocol implements TransferProtocol<long[]>
      */
     public long[] read(final TransferInputStream stream) throws IOException
     {
-	final int len = stream.readLen();
-	final long[] rc = new long[len];
-	for (int i = 0; i < len; i++)
-	    rc[i] = stream.readLong();
-	return rc;
+        final int len = stream.readLen();
+        final long[] rc = new long[len];
+        for (int i = 0; i < len; i++)
+            rc[i] = stream.readLong();
+        return rc;
     }
     
     
@@ -49,9 +49,9 @@ class LongArrayTransferProtocol implements TransferProtocol<long[]>
      */
     public void write(final long[] data, final TransferOutputStream stream) throws IOException
     {
-	stream.writeLen(data.length);
-	for (int i = 0, n = data.length; i < n; i++)
-	    stream.writeLong(data[i]);
+        stream.writeLen(data.length);
+        for (int i = 0, n = data.length; i < n; i++)
+            stream.writeLong(data[i]);
     }
     
 }

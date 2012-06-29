@@ -36,7 +36,7 @@ public class LocalUser
      */
     static
     {
-	load();
+        load();
     }
     
     
@@ -46,7 +46,7 @@ public class LocalUser
      */
     private LocalUser()
     {
-	assert false : "You may not create instances of this class [LocalUser].";
+        assert false : "You may not create instances of this class [LocalUser].";
     }
     
     
@@ -142,41 +142,41 @@ public class LocalUser
      */
     public static void save() throws IOException
     {
-	TransferOutputStream out = null;
-	try
-	{
-	    final String sep = Properties.getFileSeparator();
-	    String file = Properties.getHome();
-	    if (file.endsWith(sep))
-		file += sep;
-	    (new File(file += "." + Program.PACKAGE)).mkdirs();
-	    file += sep + "localuser";
-	    out = new TransferOutputStream(new FileOutputStream(new File(file)));
-	    
-	    out.writeObject(uuid);
-	    out.writeObject(name);
-	    out.writeInt(port);
-	    out.writeObject(dnsNames);
-	    out.writeObject(signature);
-	    out.writeObject(friendUUIDs);
-	    out.writeObject(friendUpdates);
-	    out.writeObject(friendNames);
-	    out.writeObject(friendLocalIPs);
-	    out.writeObject(friendPublicIPs);
-	    out.writeObject(friendPorts);
-	    out.writeObject(friendDNSNames);
-	    out.writeObject(friendSignatures);
-	    
-	    out.flush();
-	}
-	finally
-	{   if (out != null)
-		try
-		{    out.close();
-		}
-		catch (final Throwable ignore)
-		{    // ignore
-	}       }
+        TransferOutputStream out = null;
+        try
+        {
+            final String sep = Properties.getFileSeparator();
+            String file = Properties.getHome();
+            if (file.endsWith(sep))
+                file += sep;
+            (new File(file += "." + Program.PACKAGE)).mkdirs();
+            file += sep + "localuser";
+            out = new TransferOutputStream(new FileOutputStream(new File(file)));
+            
+            out.writeObject(uuid);
+            out.writeObject(name);
+            out.writeInt(port);
+            out.writeObject(dnsNames);
+            out.writeObject(signature);
+            out.writeObject(friendUUIDs);
+            out.writeObject(friendUpdates);
+            out.writeObject(friendNames);
+            out.writeObject(friendLocalIPs);
+            out.writeObject(friendPublicIPs);
+            out.writeObject(friendPorts);
+            out.writeObject(friendDNSNames);
+            out.writeObject(friendSignatures);
+            
+            out.flush();
+        }
+        finally
+        {   if (out != null)
+                try
+                {    out.close();
+                }
+                catch (final Throwable ignore)
+                {    // ignore
+        }       }
     }
     
     /**
@@ -184,71 +184,71 @@ public class LocalUser
      */
     private static void load()
     {
-	boolean gen = true;
-	TransferInputStream in = null;
-	try
-	{
-	    final String sep = Properties.getFileSeparator();
-	    String file = Properties.getHome();
-	    if (file.endsWith(sep))
-		file += sep;
-	    (new File(file += "." + Program.PACKAGE)).mkdirs();
-	    file += sep + "localuser";
-	    in = new TransferInputStream(new FileInputStream(new File(file)));
-	    
-	    uuid             = in.readObject(    UUID  .class);
-	    name             = in.readObject(  String  .class);
-	    port             = in.readInt();
-	    dnsNames         = in.readObject(String[]  .class);
-	    signature        = in.readObject(  byte[]  .class);
-	    friendUUIDs      = in.readObject(  UUID[]  .class);
-	    friendUpdates    = in.readObject(  long[]  .class);
-	    friendNames      = in.readObject(String[]  .class);
-	    friendLocalIPs   = in.readObject(String[]  .class);
-	    friendPublicIPs  = in.readObject(String[]  .class);
-	    friendPorts      = in.readObject(   int[]  .class);
-	    friendDNSNames   = in.readObject(String[][].class);
-	    friendSignatures = in.readObject(  byte[][].class);
-	    
-	    gen = false;
-	}
-	catch (final Throwable err)
-	{   System.err.println("Failed to load local user data, generates instead, and saves");
-	}
-	finally
-	{   if (in != null)
-		try
-		{    in.close();
-		}
-		catch (final Throwable ignore)
-		{    // ignore
-	}       }
-	
-	if (gen)
-	{   uuid             = new UUID();
-	    name             = Properties.getUser();
-	    if (name == null)
-		name = "nopony";
-	    port             = 0;
-	    dnsNames         = new String[0];
-	    signature        = new byte[0];
-	    friendUUIDs      = new UUID[0];
-	    friendUpdates    = new long[0];
-	    friendNames      = new String[0];
-	    friendLocalIPs   = new String[0];
-	    friendPublicIPs  = new String[0];
-	    friendPorts      = new int[0];
-	    friendDNSNames   = new String[0][];
-	    friendSignatures = new byte[0][];
-	}
-	
-	if (gen)
-	    try
-	    {   save();
-	    }
-	    catch (final Throwable err)
-	    {   System.err.println("Failed to save generated local user data");
-	    }
+        boolean gen = true;
+        TransferInputStream in = null;
+        try
+        {
+            final String sep = Properties.getFileSeparator();
+            String file = Properties.getHome();
+            if (file.endsWith(sep))
+                file += sep;
+            (new File(file += "." + Program.PACKAGE)).mkdirs();
+            file += sep + "localuser";
+            in = new TransferInputStream(new FileInputStream(new File(file)));
+            
+            uuid             = in.readObject(    UUID  .class);
+            name             = in.readObject(  String  .class);
+            port             = in.readInt();
+            dnsNames         = in.readObject(String[]  .class);
+            signature        = in.readObject(  byte[]  .class);
+            friendUUIDs      = in.readObject(  UUID[]  .class);
+            friendUpdates    = in.readObject(  long[]  .class);
+            friendNames      = in.readObject(String[]  .class);
+            friendLocalIPs   = in.readObject(String[]  .class);
+            friendPublicIPs  = in.readObject(String[]  .class);
+            friendPorts      = in.readObject(   int[]  .class);
+            friendDNSNames   = in.readObject(String[][].class);
+            friendSignatures = in.readObject(  byte[][].class);
+            
+            gen = false;
+        }
+        catch (final Throwable err)
+        {   System.err.println("Failed to load local user data, generates instead, and saves");
+        }
+        finally
+        {   if (in != null)
+                try
+                {    in.close();
+                }
+                catch (final Throwable ignore)
+                {    // ignore
+        }       }
+        
+        if (gen)
+        {   uuid             = new UUID();
+            name             = Properties.getUser();
+            if (name == null)
+                name = "nopony";
+            port             = 0;
+            dnsNames         = new String[0];
+            signature        = new byte[0];
+            friendUUIDs      = new UUID[0];
+            friendUpdates    = new long[0];
+            friendNames      = new String[0];
+            friendLocalIPs   = new String[0];
+            friendPublicIPs  = new String[0];
+            friendPorts      = new int[0];
+            friendDNSNames   = new String[0][];
+            friendSignatures = new byte[0][];
+        }
+        
+        if (gen)
+            try
+            {   save();
+            }
+            catch (final Throwable err)
+            {   System.err.println("Failed to save generated local user data");
+            }
     }
     
     
@@ -279,10 +279,10 @@ public class LocalUser
      */
     public static boolean setName(final String value)
     {   if (nameChanged)
-	    return false;
-	nameChanged = true;
-	name = value;
-	return true;
+            return false;
+        nameChanged = true;
+        name = value;
+        return true;
     }
     
     /**
@@ -302,10 +302,10 @@ public class LocalUser
      */
     public static boolean setPort(final int value)
     {   if (portChanged)
-	    return false;
-	portChanged = true;
-	port = value;
-	return true;
+            return false;
+        portChanged = true;
+        port = value;
+        return true;
     }
     
     /**
@@ -325,10 +325,10 @@ public class LocalUser
      */
     public static boolean setSignature(final byte[] value)
     {   if (signatureChanged)
-	    return false;
-	signatureChanged = true;
-	signature = value;
-	return true;
+            return false;
+        signatureChanged = true;
+        signature = value;
+        return true;
     }
     
     /**
@@ -348,14 +348,14 @@ public class LocalUser
      */
     public static String[] addDNSName(final String value)
     {   int pos = Arrays.binarySearch(dnsNames, value);
-	if (pos >= 0)
-	    return dnsNames;
-	pos = ~pos;
-	final String[] tmp = new String[dnsNames.length + 1];
-	System.arraycopy(dnsNames, 0, tmp, 0, pos);
-	System.arraycopy(dnsNames, pos, tmp, pos + 1, dnsNames.length - pos);
-	tmp[pos] = value;
-	return dnsNames = tmp;
+        if (pos >= 0)
+            return dnsNames;
+        pos = ~pos;
+        final String[] tmp = new String[dnsNames.length + 1];
+        System.arraycopy(dnsNames, 0, tmp, 0, pos);
+        System.arraycopy(dnsNames, pos, tmp, pos + 1, dnsNames.length - pos);
+        tmp[pos] = value;
+        return dnsNames = tmp;
     }
     
     /**
@@ -366,13 +366,13 @@ public class LocalUser
      */
     public static String[] removeDNSName(final String value)
     {   int pos = Arrays.binarySearch(dnsNames, value);
-	if (pos < 0)
-	    return dnsNames;
-	final String[] tmp = new String[dnsNames.length - 1];
-	System.arraycopy(dnsNames, 0, tmp, 0, pos);
-	if (pos < dnsNames.length)
-	    System.arraycopy(dnsNames, pos + 1, tmp, pos, tmp.length - pos);
-	return dnsNames = tmp;
+        if (pos < 0)
+            return dnsNames;
+        final String[] tmp = new String[dnsNames.length - 1];
+        System.arraycopy(dnsNames, 0, tmp, 0, pos);
+        if (pos < dnsNames.length)
+            System.arraycopy(dnsNames, pos + 1, tmp, pos, tmp.length - pos);
+        return dnsNames = tmp;
     }
     
     
@@ -390,52 +390,52 @@ public class LocalUser
      */
     public static boolean addFriend(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[] dnsNames, final byte[] signature)
     {   int pos = Arrays.binarySearch(friendUUIDs, uuid);
-	if (pos >= 0)
-	    return false;
-	pos = ~pos;
-	
+        if (pos >= 0)
+            return false;
+        pos = ~pos;
+        
         {   final UUID[] x = friendUUIDs, tmp = new UUID[x.length + 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendUUIDs = tmp)[pos] = uuid;
-	}
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendUUIDs = tmp)[pos] = uuid;
+        }
         {   final long[] x = friendUpdates, tmp = new long[x.length + 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendUpdates = tmp)[pos] = System.currentTimeMillis();
-	}
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendUpdates = tmp)[pos] = System.currentTimeMillis();
+        }
         {   final String[] x = friendNames, tmp = new String[x.length + 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendNames = tmp)[pos] = name;
-	}
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendNames = tmp)[pos] = name;
+        }
         {   final String[] x = friendLocalIPs, tmp = new String[x.length + 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendLocalIPs = tmp)[pos] = localIP;
-	}
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendLocalIPs = tmp)[pos] = localIP;
+        }
         {   final String[] x = friendPublicIPs, tmp = new String[x.length + 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendPublicIPs = tmp)[pos] = publicIP;
-	}
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendPublicIPs = tmp)[pos] = publicIP;
+        }
         {   final int[] x = friendPorts, tmp = new int[x.length + 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendPorts = tmp)[pos] = port;
-	}
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendPorts = tmp)[pos] = port;
+        }
         {   final String[][] x = friendDNSNames, tmp = new String[x.length + 1][];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendDNSNames = tmp)[pos] = dnsNames;
-	}
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendDNSNames = tmp)[pos] = dnsNames;
+        }
         {   final byte[][] x = friendSignatures, tmp = new byte[x.length + 1][];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
-	    (friendSignatures = tmp)[pos] = signature;
-	}
-	
-	return true;
+            System.arraycopy(x, 0, tmp, 0, pos);
+            System.arraycopy(x, pos, tmp, pos + 1, x.length - pos);
+            (friendSignatures = tmp)[pos] = signature;
+        }
+        
+        return true;
     }
     
     /**
@@ -446,51 +446,51 @@ public class LocalUser
      */
     public static boolean removeFriend(final UUID uuid)
     {   int pos = Arrays.binarySearch(friendUUIDs, uuid);
-	if (pos < 0)
-	    return false;
-	
-	{   final UUID[] x = friendUUIDs, tmp = new UUID[x.length - 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendUUIDs = tmp;
-	}
-	{   final long[] x = friendUpdates, tmp = new long[x.length - 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendUpdates = tmp;
-	}
-	{   final String[] x = friendNames, tmp = new String[x.length - 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendNames = tmp;
-	}
-	{   final String[] x = friendLocalIPs, tmp = new String[x.length - 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendLocalIPs = tmp;
-	}
-	{   final String[] x = friendPublicIPs, tmp = new String[x.length - 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendPublicIPs = tmp;
-	}
-	{   final int[] x = friendPorts, tmp = new int[x.length - 1];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendPorts = tmp;
-	}
-	{   final String[][] x = friendDNSNames, tmp = new String[x.length - 1][];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendDNSNames = tmp;
-	}
-	{   final byte[][] x = friendSignatures, tmp = new byte[x.length - 1][];
-	    System.arraycopy(x, 0, tmp, 0, pos);
-	    if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
-	    friendSignatures = tmp;
-	}
-	
-	return true;
+        if (pos < 0)
+            return false;
+        
+        {   final UUID[] x = friendUUIDs, tmp = new UUID[x.length - 1];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendUUIDs = tmp;
+        }
+        {   final long[] x = friendUpdates, tmp = new long[x.length - 1];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendUpdates = tmp;
+        }
+        {   final String[] x = friendNames, tmp = new String[x.length - 1];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendNames = tmp;
+        }
+        {   final String[] x = friendLocalIPs, tmp = new String[x.length - 1];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendLocalIPs = tmp;
+        }
+        {   final String[] x = friendPublicIPs, tmp = new String[x.length - 1];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendPublicIPs = tmp;
+        }
+        {   final int[] x = friendPorts, tmp = new int[x.length - 1];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendPorts = tmp;
+        }
+        {   final String[][] x = friendDNSNames, tmp = new String[x.length - 1][];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendDNSNames = tmp;
+        }
+        {   final byte[][] x = friendSignatures, tmp = new byte[x.length - 1][];
+            System.arraycopy(x, 0, tmp, 0, pos);
+            if (pos < x.length)  System.arraycopy(x, pos + 1, tmp, pos, tmp.length - pos);
+            friendSignatures = tmp;
+        }
+        
+        return true;
     }
 
     /**
@@ -584,14 +584,14 @@ public class LocalUser
      */
     public static String[] addFriendDNSName(final int index, final String value)
     {   int pos = Arrays.binarySearch(friendDNSNames[index], value);
-	if (pos >= 0)
-	    return friendDNSNames[index];
-	pos = ~pos;
-	final String[] tmp = new String[friendDNSNames[index].length + 1];
-	System.arraycopy(friendDNSNames[index], 0, tmp, 0, pos);
-	System.arraycopy(friendDNSNames[index], pos, tmp, pos + 1, friendDNSNames[index].length - pos);
-	tmp[pos] = value;
-	return friendDNSNames[index] = tmp;
+        if (pos >= 0)
+            return friendDNSNames[index];
+        pos = ~pos;
+        final String[] tmp = new String[friendDNSNames[index].length + 1];
+        System.arraycopy(friendDNSNames[index], 0, tmp, 0, pos);
+        System.arraycopy(friendDNSNames[index], pos, tmp, pos + 1, friendDNSNames[index].length - pos);
+        tmp[pos] = value;
+        return friendDNSNames[index] = tmp;
     }
     
     /**
@@ -603,14 +603,14 @@ public class LocalUser
      */
     public static String[] removeFriendDNSName(final int index, final String value)
     {   int pos = Arrays.binarySearch(friendDNSNames[index], value);
-	if (pos < 0)
-	    return friendDNSNames[index];
-	pos = ~pos;
-	final String[] tmp = new String[friendDNSNames[index].length - 1];
-	System.arraycopy(friendDNSNames[index], 0, tmp, 0, pos);
-	if (pos < friendDNSNames[index].length)
-	    System.arraycopy(friendDNSNames[index], pos + 1, tmp, pos, tmp.length - pos);
-	return friendDNSNames[index] = tmp;
+        if (pos < 0)
+            return friendDNSNames[index];
+        pos = ~pos;
+        final String[] tmp = new String[friendDNSNames[index].length - 1];
+        System.arraycopy(friendDNSNames[index], 0, tmp, 0, pos);
+        if (pos < friendDNSNames[index].length)
+            System.arraycopy(friendDNSNames[index], pos + 1, tmp, pos, tmp.length - pos);
+        return friendDNSNames[index] = tmp;
     }
     
 }

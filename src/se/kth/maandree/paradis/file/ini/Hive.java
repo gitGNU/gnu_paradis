@@ -98,13 +98,13 @@ class Hive implements Serializable
                 int len = lines[index].indexOf(this.ini.getKeyEnding());
                 len = (len < 0) ? lines[index].length() : len;
                 String keyname = lines[index].substring(0, len);
-		
+                
                 len = keyname.length() + this.ini.getKeyEnding().length();
                 String keyvalue = lines[index].substring(len, lines[index].length());
-		
+                
                 keyname  = Escaper.unescape(keyname);
                 keyvalue = Escaper.unescape(keyvalue);
-		
+                
                 if (getKey(keyname) != null)
                 {   if (this.ini.getLastEntryOverrides())
                         getKey(keyname).setValue(keyvalue);
@@ -126,7 +126,7 @@ class Hive implements Serializable
         for (Key key : this.keys)
             if (key.getName().toLowerCase().equals(name.toLowerCase()))
                 return key;
-	
+        
         return null;
     }
     

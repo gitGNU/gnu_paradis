@@ -172,12 +172,12 @@ public class PipedOutputStream extends OutputStream
     // A close call on an unconnected PipedOutputStream has no effect.
     if (sink != null)
       {
-	closed = true;
-	// Notify any waiting readers that the stream is now closed.
-	synchronized (sink)
-	{	  
-	  sink.notifyAll();
-	}
+        closed = true;
+        // Notify any waiting readers that the stream is now closed.
+        synchronized (sink)
+        {         
+          sink.notifyAll();
+        }
       }
   }
 }

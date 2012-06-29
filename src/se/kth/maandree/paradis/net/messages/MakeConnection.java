@@ -36,8 +36,8 @@ public class MakeConnection implements Blackboard.BlackboardMessage
      */
     public MakeConnection(final InetAddress remoteAddress, final int remotePort)
     {
-	this.remoteAddress = remoteAddress;
-	this.remotePort = remotePort;
+        this.remoteAddress = remoteAddress;
+        this.remotePort = remotePort;
     }
     
     

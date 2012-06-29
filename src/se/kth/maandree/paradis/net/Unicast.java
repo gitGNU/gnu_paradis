@@ -37,9 +37,9 @@ public class Unicast implements Cast
      */
     public Unicast(final UUID sender, final UUID receiver, final String senderAddress)
     {
-	this.sender = sender;
-	this.receiver = receiver;
-	this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
     }
     
     
@@ -68,29 +68,29 @@ public class Unicast implements Cast
      */
     public static class UnicastTransferProtocol implements TransferProtocol<Unicast>
     {
-	//Has default constructor
-	
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public Unicast read(final TransferInputStream stream) throws IOException
-	{   return new Unicast(stream.readObject(UUID.class),
-			       stream.readObject(UUID.class),
-			       stream.readObject(String.class));
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public void write(final Unicast data, final TransferOutputStream stream) throws IOException
-	{   stream.writeObject(data.sender);
-	    stream.writeObject(data.receiver);
-	    stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
-	}
-	
+        //Has default constructor
+        
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Unicast read(final TransferInputStream stream) throws IOException
+        {   return new Unicast(stream.readObject(UUID.class),
+                               stream.readObject(UUID.class),
+                               stream.readObject(String.class));
+        }
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void write(final Unicast data, final TransferOutputStream stream) throws IOException
+        {   stream.writeObject(data.sender);
+            stream.writeObject(data.receiver);
+            stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
+        }
+        
     }
     
     

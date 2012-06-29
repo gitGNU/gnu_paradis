@@ -30,7 +30,7 @@ public class Escaper
      */
     private Escaper()
     {
-	assert false : "You may not create instances of this class [Constants].";
+        assert false : "You may not create instances of this class [Constants].";
     }
     
     
@@ -85,7 +85,7 @@ public class Escaper
     public static String escape(final String text, final String newline)
     {
         String rc = text;
-	
+        
         if ((rc != null) && (rc != ""))
         {
             rc = rc.replace("\\", "\\\\"); //this one most be first
@@ -95,30 +95,30 @@ public class Escaper
             rc = rc.replace("\t", "\\t");
             rc = rc.replace("\r", "\\r");
             rc = rc.replace("\n", "\\n");
-	    
+            
             final String HEXADEC = Constants.HEXADEC;
-	    
+            
             int bColon     = ':';
             int bEqual     = '=';
             int bSemicolon = ';';
             int bSquare    = '#';
             int bHiveStart = '[';
             int bComma     = ',';
-	    
+            
             String xColon     = "\\x00" + HEXADEC.charAt((bColon     & 0xf0) >> 4) + HEXADEC.charAt(bColon     & 0x0f);
             String xEqual     = "\\x00" + HEXADEC.charAt((bEqual     & 0xf0) >> 4) + HEXADEC.charAt(bEqual     & 0x0f);
             String xSemicolon = "\\x00" + HEXADEC.charAt((bSemicolon & 0xf0) >> 4) + HEXADEC.charAt(bSemicolon & 0x0f);
             String xSquare    = "\\x00" + HEXADEC.charAt((bSquare    & 0xf0) >> 4) + HEXADEC.charAt(bSquare    & 0x0f);
             String xHiveStart = "\\x00" + HEXADEC.charAt((bHiveStart & 0xf0) >> 4) + HEXADEC.charAt(bHiveStart & 0x0f);
             String xComma     = "\\x00" + HEXADEC.charAt((bComma     & 0xf0) >> 4) + HEXADEC.charAt(bComma     & 0x0f);
-	    
+            
             rc = rc.replace(":", xColon    );
             rc = rc.replace("=", xEqual    );
             rc = rc.replace(";", xSemicolon);
             rc = rc.replace("#", xSquare   );
             rc = rc.replace("[", xHiveStart);
             rc = rc.replace(",", xComma    );
-	    
+            
             for (int i = 0; i < ' '; i++)
             {
                 String x = "\\x00";
@@ -134,11 +134,11 @@ public class Escaper
                 x += HEXADEC.charAt((i & 0x0f00) >> (4 * 2));
                 x += HEXADEC.charAt((i & 0x00f0) >> (4 * 1));
                 x += HEXADEC.charAt((i & 0x000f) >> (4 * 0));
-		
+                
                 rc = rc.replace("" + (char)i, x);
             }
         }
-	
+        
         return rc;
     }
     
@@ -166,7 +166,7 @@ public class Escaper
     public static String unescape(final String text)
     {
         String rc = text;
-	
+        
         if ((rc != null) && (rc.length() > 0))
         {
             String buf = "";
@@ -176,7 +176,7 @@ public class Escaper
                 if (rc.charAt(col) == '\\')
                 {
                     col++;
-		    
+                    
                     if (col < rc.length())
                     {
                         if (rc.charAt(col) == '\\')
@@ -207,7 +207,7 @@ public class Escaper
                                 case '[': buf += "["; break;
                                 case ',': buf += ","; break;
                             }
-			    
+                            
                             if ((rc.charAt(col) == 'x') && (col + "x????".length() <= rc.length()))
                             {
                                 int a = col + 1;
@@ -218,21 +218,21 @@ public class Escaper
                                            .replace("4", "").replace("5", "").replace("6", "").replace("7", "")
                                            .replace("8", "").replace("9", "").replace("A", "").replace("B", "")
                                            .replace("C", "").replace("D", "").replace("E", "").replace("F", "");
-				
+                                
                                 if (comp.length() == 0)
                                 {
                                     int val = 0;
-				    
+                                    
                                     for (int i = 0, n = tmp.length(); i < n; i++)
                                     {
                                         int v = Constants.HEXADEC.indexOf(tmp.charAt(i));
                                         val *= Constants.HEXADEC.length();
                                         val += v;
                                     }
-				    
+                                    
                                     buf += (char)val;
                                 }
-				
+                                
                                 col += "????".length();
                             }
                         }
@@ -244,7 +244,7 @@ public class Escaper
             }
             rc = buf;
         }
-	
+        
         return rc;
     }
     

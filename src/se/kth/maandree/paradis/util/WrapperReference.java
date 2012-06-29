@@ -32,7 +32,7 @@ public class WrapperReference<T>
      */
     public WrapperReference(final T item)
     {
-	this.item = item;
+        this.item = item;
     }
     
     
@@ -51,7 +51,7 @@ public class WrapperReference<T>
      */
     public T get()
     {
-	return this.item;
+        return this.item;
     }
     
     /**
@@ -61,13 +61,13 @@ public class WrapperReference<T>
     @SuppressWarnings("rawtypes")
     public boolean equals(final Object other)
     {
-	if ((other == null) || (other instanceof WrapperReference == false))
-	    return false;
-	if (other == this)
-	    return true;
-	if (this.item == null)
-	    return ((WrapperReference)other).item == null;
-	return this.item.equals(((WrapperReference)other).item);
+        if ((other == null) || (other instanceof WrapperReference == false))
+            return false;
+        if (other == this)
+            return true;
+        if (this.item == null)
+            return ((WrapperReference)other).item == null;
+        return this.item.equals(((WrapperReference)other).item);
     }
     
     /**
@@ -76,7 +76,7 @@ public class WrapperReference<T>
     @Override
     public int hashCode()
     {
-	return this.item == null ? 0 : this.item.hashCode();
+        return this.item == null ? 0 : this.item.hashCode();
     }
     
 }

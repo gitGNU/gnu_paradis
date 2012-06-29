@@ -35,7 +35,7 @@ public class Chat
      */
     private Chat()
     {
-	assert false : "You may not create instances of this class [Chat].";
+        assert false : "You may not create instances of this class [Chat].";
     }
     
     
@@ -47,66 +47,66 @@ public class Chat
      */
     public static void main(final String... args) throws IOException
     {
-	final int port = Toolkit.getRandomPortUDP();
-	System.out.println("Alive status: " + Toolkit.getAliveStatus());
-	System.out.println("Local IP: " + Toolkit.getLocalIP());
-	System.out.println("Public IP: " + Toolkit.getPublicIP());
-	//System.out.println("Random TCP port: " + Toolkit.getRandomPortTCP());
-	System.out.println("UDP port: " + port);
-	
-	final Scanner sc = new Scanner(System.in);
-	final String remote = sc.nextLine();
-	final InetAddress remoteAddress;
-	final int remotePort;
-	
-	if (remote.startsWith("[") && remote.contains("]:"))
-	{
-	    remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
-	    remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
-	}
-	else
-	{
-	    remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
-	    remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
-	}
-	
-	final UDPServer server = new UDPServer(port);
-	final UDPSocket socket = server.connect(remoteAddress, remotePort);
-	
-	final Thread thread = new Thread()
-	        {   public void run()
-		    {   try
-			{
-			    final byte[] buf = new byte[1024];
-			    for (;;)
-			    {
-				final int len = socket.inputStream.read(buf);
-				System.out.print("\033[33m");
-				System.out.write(buf, 0, len);
-				System.out.print("\033[39m\n");
-				System.out.flush();
-			    }
-			}
-			catch (final Throwable err)
-			{   err.printStackTrace(System.err);
-	        }   }   };
-	
-	thread.setDaemon(true);
-	thread.start();
-	
-	
-	for (String line;;)
-	    if ((line = sc.nextLine()).isEmpty())
-	    {   server.close();
-		return;
-	    }
-	    else if (line.equals("?"))
-	    {   System.out.println("\033[34m" + (socket.isAlive() ? "alive" : "dead") + "\033[39m");
-	    }
-	    else
-	    {   socket.outputStream.write(line.getBytes("UTF-8"));
-		socket.outputStream.flush();
-	    }
+        final int port = Toolkit.getRandomPortUDP();
+        System.out.println("Alive status: " + Toolkit.getAliveStatus());
+        System.out.println("Local IP: " + Toolkit.getLocalIP());
+        System.out.println("Public IP: " + Toolkit.getPublicIP());
+        //System.out.println("Random TCP port: " + Toolkit.getRandomPortTCP());
+        System.out.println("UDP port: " + port);
+        
+        final Scanner sc = new Scanner(System.in);
+        final String remote = sc.nextLine();
+        final InetAddress remoteAddress;
+        final int remotePort;
+        
+        if (remote.startsWith("[") && remote.contains("]:"))
+        {
+            remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
+            remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
+        }
+        else
+        {
+            remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
+            remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
+        }
+        
+        final UDPServer server = new UDPServer(port);
+        final UDPSocket socket = server.connect(remoteAddress, remotePort);
+        
+        final Thread thread = new Thread()
+                {   public void run()
+                    {   try
+                        {
+                            final byte[] buf = new byte[1024];
+                            for (;;)
+                            {
+                                final int len = socket.inputStream.read(buf);
+                                System.out.print("\033[33m");
+                                System.out.write(buf, 0, len);
+                                System.out.print("\033[39m\n");
+                                System.out.flush();
+                            }
+                        }
+                        catch (final Throwable err)
+                        {   err.printStackTrace(System.err);
+                }   }   };
+        
+        thread.setDaemon(true);
+        thread.start();
+        
+        
+        for (String line;;)
+            if ((line = sc.nextLine()).isEmpty())
+            {   server.close();
+                return;
+            }
+            else if (line.equals("?"))
+            {   System.out.println("\033[34m" + (socket.isAlive() ? "alive" : "dead") + "\033[39m");
+            }
+            else
+            {   socket.outputStream.write(line.getBytes("UTF-8"));
+                socket.outputStream.flush();
+            }
     }
     
 }

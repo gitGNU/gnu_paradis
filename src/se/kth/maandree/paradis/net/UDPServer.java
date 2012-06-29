@@ -38,10 +38,10 @@ public class UDPServer implements Runnable
      */
     public UDPServer(final int localPort) throws IOException
     {
-	this.socket = new DatagramSocket(localPort);
-	this.localPort = socket.getLocalPort();
-	
-	(new Thread(this)).start();
+        this.socket = new DatagramSocket(localPort);
+        this.localPort = socket.getLocalPort();
+        
+        (new Thread(this)).start();
     }
     
     
@@ -92,19 +92,19 @@ public class UDPServer implements Runnable
      */
     public UDPSocket accept() throws IOException
     {
-	synchronized (this.newSockets)
-	{   if (this.newSockets.isEmpty())
-		try
-		{   this.newSockets.wait();
-		}
-		catch (final InterruptedException err)
-		{   return null;
-		}
-	    
-	    if (this.newSockets.isEmpty())
-		return null;
-	    return this.newSockets.pollFirst();
-	}
+        synchronized (this.newSockets)
+        {   if (this.newSockets.isEmpty())
+                try
+                {   this.newSockets.wait();
+                }
+                catch (final InterruptedException err)
+                {   return null;
+                }
+            
+            if (this.newSockets.isEmpty())
+                return null;
+            return this.newSockets.pollFirst();
+        }
     }
     
     
@@ -115,17 +115,17 @@ public class UDPServer implements Runnable
      */
     public void close() throws IOException
     {
-	this.closing = true;
-	synchronized (this.newSockets)
-	{   this.newSockets.notifyAll();
-	}
-	synchronized (this.sockets)
-	{   for (final UDPSocket sock : this.sockets.values())
-	    {   sock.outputStream.flush();
-		//synchronized (sock.outputStreamReader) //nope, enters blocking state
-		//{   sock.outputStreamReader.notifyAll();
-	}   }   //}
-	this.socket.close();
+        this.closing = true;
+        synchronized (this.newSockets)
+        {   this.newSockets.notifyAll();
+        }
+        synchronized (this.sockets)
+        {   for (final UDPSocket sock : this.sockets.values())
+            {   sock.outputStream.flush();
+                //synchronized (sock.outputStreamReader) //nope, enters blocking state
+                //{   sock.outputStreamReader.notifyAll();
+        }   }   //}
+        this.socket.close();
     }
     
     
@@ -138,22 +138,22 @@ public class UDPServer implements Runnable
      */
     public UDPSocket connect(final InetAddress remoteAddress, final int remotePort)
     {
-	final String address = remoteAddress.getHostAddress() + ":" + remotePort;
-	synchronized (this.sockets)
-	{   UDPSocket sock = this.sockets.get(address);
-	    if (sock == null)
-	    {   sock = new UDPSocket(this.localPort, remoteAddress, remotePort, this);
-		this.sockets.put(address, sock);
-		bind(sock);
-		try
-		{   sock.toll();
-		}
-		catch (final IOException ignore)
-		{   // Ignore
-		}
-	    }
-	    return sock;
-	}
+        final String address = remoteAddress.getHostAddress() + ":" + remotePort;
+        synchronized (this.sockets)
+        {   UDPSocket sock = this.sockets.get(address);
+            if (sock == null)
+            {   sock = new UDPSocket(this.localPort, remoteAddress, remotePort, this);
+                this.sockets.put(address, sock);
+                bind(sock);
+                try
+                {   sock.toll();
+                }
+                catch (final IOException ignore)
+                {   // Ignore
+                }
+            }
+            return sock;
+        }
     }
     
     
@@ -164,38 +164,38 @@ public class UDPServer implements Runnable
      */
     private void bind(final UDPSocket sock)
     {
-	final Thread thread = new Thread("UDP socket binding")
-	        {
-		    /**
-		     * {@inheritDoc}
-		     */
-		    @Override
-		    public void run()
-		    {
-			try
-			{
-			    final InputStream in = sock.outputStreamReader;
-			    final byte[] buf = new byte[0x8400];
-			    final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, sock.remoteAddress, sock.remotePort);
-			    for (;;)
-			    {   final int len = in.read(buf, 0, 0x8000);
-				if (UDPServer.this.closing)
-				{   break;
-				}
-				if (len == 0)
-				    continue;
-				packet.setLength(len);
-				sock.send(packet);
-			    }
-			}
-			catch (final Throwable err)
-			{   err.printStackTrace(System.err);
-			}
-		    }
-	        };
-	
-	thread.setDaemon(true);
-	thread.start();
+        final Thread thread = new Thread("UDP socket binding")
+                {
+                    /**
+                     * {@inheritDoc}
+                     */
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            final InputStream in = sock.outputStreamReader;
+                            final byte[] buf = new byte[0x8400];
+                            final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, sock.remoteAddress, sock.remotePort);
+                            for (;;)
+                            {   final int len = in.read(buf, 0, 0x8000);
+                                if (UDPServer.this.closing)
+                                {   break;
+                                }
+                                if (len == 0)
+                                    continue;
+                                packet.setLength(len);
+                                sock.send(packet);
+                            }
+                        }
+                        catch (final Throwable err)
+                        {   err.printStackTrace(System.err);
+                        }
+                    }
+                };
+        
+        thread.setDaemon(true);
+        thread.start();
     }
     
     
@@ -204,39 +204,39 @@ public class UDPServer implements Runnable
      */
     public void run()
     {
-	if (runStarted)
-	    throw new Error("Excuse me!");
-	runStarted = true;
-	
-	try
-	{
-	    final byte[] bytes = new byte[0x8400];
-	    final DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length);
-	    
-	    for (;;)
-	    {
-		this.socket.receive(packet);
-		final String address = packet.getAddress().getHostAddress() + ":" + packet.getPort();
-		
-		UDPSocket sock;
-		
-		synchronized (this.sockets)
-		{   if ((sock = this.sockets.get(address)) == null)
-		    {   sock = new UDPSocket(this.localPort, packet.getAddress(), packet.getPort(), this);
-			this.sockets.put(address, sock);
-			bind(sock);
-			synchronized (this.newSockets)
-			{   this.newSockets.offerLast(sock);
-			    this.newSockets.notifyAll();
-		}   }   }
-		
-		sock.receive(packet);
-	    }
-	}
-	catch (final Throwable err)
-	{   if (this.closing == false)
-		err.printStackTrace(System.err);
-	}
+        if (runStarted)
+            throw new Error("Excuse me!");
+        runStarted = true;
+        
+        try
+        {
+            final byte[] bytes = new byte[0x8400];
+            final DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length);
+            
+            for (;;)
+            {
+                this.socket.receive(packet);
+                final String address = packet.getAddress().getHostAddress() + ":" + packet.getPort();
+                
+                UDPSocket sock;
+                
+                synchronized (this.sockets)
+                {   if ((sock = this.sockets.get(address)) == null)
+                    {   sock = new UDPSocket(this.localPort, packet.getAddress(), packet.getPort(), this);
+                        this.sockets.put(address, sock);
+                        bind(sock);
+                        synchronized (this.newSockets)
+                        {   this.newSockets.offerLast(sock);
+                            this.newSockets.notifyAll();
+                }   }   }
+                
+                sock.receive(packet);
+            }
+        }
+        catch (final Throwable err)
+        {   if (this.closing == false)
+                err.printStackTrace(System.err);
+        }
     }
     
 }

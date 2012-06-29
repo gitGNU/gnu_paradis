@@ -49,25 +49,25 @@ public class User implements Comparable<User>
      * @param  friendSignatures  {@link #friendSignatures}
      */
     public User(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[] dnsNames, final UUID connectedTo,
-		final byte[] signature, final UUID[] friendUUIDs, final long[] friendUpdates, final String[] friendNames, final String[] friendLocalIPs,
-		final String[] friendPublicIPs, final int[] friendPorts, final String[][] friendDNSNames, final byte[][] friendSignatures)
+                final byte[] signature, final UUID[] friendUUIDs, final long[] friendUpdates, final String[] friendNames, final String[] friendLocalIPs,
+                final String[] friendPublicIPs, final int[] friendPorts, final String[][] friendDNSNames, final byte[][] friendSignatures)
     {
-	this.uuid             = uuid;
-	this.name             = name;
-	this.localIP          = localIP;
-	this.publicIP         = publicIP;
-	this.port             = port;
-	this.dnsNames         = dnsNames;
-	this.connectedTo      = connectedTo;
-	this.signature        = signature;
-	this.friendUUIDs      = friendUUIDs;
-	this.friendUpdates    = friendUpdates;
-	this.friendNames      = friendNames;
-	this.friendLocalIPs   = friendLocalIPs;
-	this.friendPublicIPs  = friendPublicIPs;
-	this.friendPorts      = friendPorts;
-	this.friendDNSNames   = friendDNSNames;
-	this.friendSignatures = friendSignatures;
+        this.uuid             = uuid;
+        this.name             = name;
+        this.localIP          = localIP;
+        this.publicIP         = publicIP;
+        this.port             = port;
+        this.dnsNames         = dnsNames;
+        this.connectedTo      = connectedTo;
+        this.signature        = signature;
+        this.friendUUIDs      = friendUUIDs;
+        this.friendUpdates    = friendUpdates;
+        this.friendNames      = friendNames;
+        this.friendLocalIPs   = friendLocalIPs;
+        this.friendPublicIPs  = friendPublicIPs;
+        this.friendPorts      = friendPorts;
+        this.friendDNSNames   = friendDNSNames;
+        this.friendSignatures = friendSignatures;
     }
     
     
@@ -162,57 +162,57 @@ public class User implements Comparable<User>
      */
     public static class UserTransferProtocol implements TransferProtocol<User>
     {
-	//Has default constructor
-	
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public User read(final TransferInputStream stream) throws IOException
-	{
-	    return new User(stream.readObject(UUID.class),
-			    stream.readObject(String.class),
-			    stream.readObject(String.class),
-			    stream.readObject(String.class),
-			    stream.readInt(),
-			    stream.readObject(String[].class),
-			    stream.readObject(UUID.class),
-			    stream.readObject(byte[].class),
-			    stream.readObject(UUID[].class),
-			    stream.readObject(long[].class),
-			    stream.readObject(String[].class),
-			    stream.readObject(String[].class),
-			    stream.readObject(String[].class),
-			    stream.readObject(int[].class),
-			    stream.readObject(String[][].class),
-			    stream.readObject(byte[][].class));
-	}
+        //Has default constructor
+        
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public User read(final TransferInputStream stream) throws IOException
+        {
+            return new User(stream.readObject(UUID.class),
+                            stream.readObject(String.class),
+                            stream.readObject(String.class),
+                            stream.readObject(String.class),
+                            stream.readInt(),
+                            stream.readObject(String[].class),
+                            stream.readObject(UUID.class),
+                            stream.readObject(byte[].class),
+                            stream.readObject(UUID[].class),
+                            stream.readObject(long[].class),
+                            stream.readObject(String[].class),
+                            stream.readObject(String[].class),
+                            stream.readObject(String[].class),
+                            stream.readObject(int[].class),
+                            stream.readObject(String[][].class),
+                            stream.readObject(byte[][].class));
+        }
     
     
-	/**
-	 * {@inheritDoc}
-	 */
-	public void write(final User data, final TransferOutputStream stream) throws IOException
-	{
-	    stream.writeObject(data.getUUID());
-	    stream.writeObject(data.getName());
-	    stream.writeObject(data.getLocalIP());
-	    stream.writeObject(data.getPublicIP());
-	    stream.writeInt(data.getPort());
-	    synchronized (data)
-	    {   stream.writeObject(data.getDNSNames());
-		stream.writeObject(data.getConnectedTo());
-		stream.writeObject(data.getSignature());
-		stream.writeObject(data.getFriendUUIDs());
-		stream.writeObject(data.getFriendUpdates());
-		stream.writeObject(data.getFriendNames());
-		stream.writeObject(data.getFriendLocalIPs());
-		stream.writeObject(data.getFriendPublicIPs());
-		stream.writeObject(data.getFriendPorts());
-		stream.writeObject(data.getFriendDNSNames());
-		stream.writeObject(data.getFriendSignatures());
-	}   }
+        /**
+         * {@inheritDoc}
+         */
+        public void write(final User data, final TransferOutputStream stream) throws IOException
+        {
+            stream.writeObject(data.getUUID());
+            stream.writeObject(data.getName());
+            stream.writeObject(data.getLocalIP());
+            stream.writeObject(data.getPublicIP());
+            stream.writeInt(data.getPort());
+            synchronized (data)
+            {   stream.writeObject(data.getDNSNames());
+                stream.writeObject(data.getConnectedTo());
+                stream.writeObject(data.getSignature());
+                stream.writeObject(data.getFriendUUIDs());
+                stream.writeObject(data.getFriendUpdates());
+                stream.writeObject(data.getFriendNames());
+                stream.writeObject(data.getFriendLocalIPs());
+                stream.writeObject(data.getFriendPublicIPs());
+                stream.writeObject(data.getFriendPorts());
+                stream.writeObject(data.getFriendDNSNames());
+                stream.writeObject(data.getFriendSignatures());
+        }   }
     
     }
     
@@ -223,13 +223,13 @@ public class User implements Comparable<User>
      */
     public boolean equals(final Object other)
     {
-	if ((other == null) || (other instanceof User == false))
-	    return false;
-	
-	if (other == this)
-	    return true;
-	
-	return this.uuid.equals(((User)other).uuid);
+        if ((other == null) || (other instanceof User == false))
+            return false;
+        
+        if (other == this)
+            return true;
+        
+        return this.uuid.equals(((User)other).uuid);
     }
     
     
@@ -308,7 +308,7 @@ public class User implements Comparable<User>
      */
     public String getAddress()
     {
-	return this.getPublicIP() + "/" + this.getLocalIP() + ":" + this.getPort();
+        return this.getPublicIP() + "/" + this.getLocalIP() + ":" + this.getPort();
     }
     
     /**
@@ -318,7 +318,7 @@ public class User implements Comparable<User>
      */
     public String[] getDNSNames()
     {   synchronized (this)
-	{   return this.dnsNames;
+        {   return this.dnsNames;
     }   }
     
     /**
@@ -328,7 +328,7 @@ public class User implements Comparable<User>
      */
     public void setDNSNames(final String[] value)
     {   synchronized (this)
-	{   this.dnsNames = value;
+        {   this.dnsNames = value;
     }   }
     
     /**
@@ -338,7 +338,7 @@ public class User implements Comparable<User>
      */
     public UUID getConnectedTo()
     {   synchronized (this)
-	{   return this.connectedTo;
+        {   return this.connectedTo;
     }   }
     
     /**
@@ -348,7 +348,7 @@ public class User implements Comparable<User>
      */
     public void setConnectedTo(final UUID value)
     {   synchronized (this)
-	{   this.connectedTo = value;
+        {   this.connectedTo = value;
     }   }
     
     /**
@@ -358,7 +358,7 @@ public class User implements Comparable<User>
      */
     public byte[] getSignature()
     {   synchronized (this)
-	{   return this.signature;
+        {   return this.signature;
     }   }
     
     /**
@@ -368,7 +368,7 @@ public class User implements Comparable<User>
      */
     public void setSignature(final byte[] value)
     {   synchronized (this)
-	{   this.signature = value;
+        {   this.signature = value;
     }   }
     
     
@@ -379,7 +379,7 @@ public class User implements Comparable<User>
      */
     public UUID[] getFriendUUIDs()
     {   synchronized (this)
-	{   return this.friendUUIDs;
+        {   return this.friendUUIDs;
     }   }
     
     /**
@@ -389,7 +389,7 @@ public class User implements Comparable<User>
      */
     public void setFriendUUIDs(final UUID[] value)
     {   synchronized (this)
-	{   this.friendUUIDs = value;
+        {   this.friendUUIDs = value;
     }   }
     
     /**
@@ -399,7 +399,7 @@ public class User implements Comparable<User>
      */
     public long[] getFriendUpdates()
     {   synchronized (this)
-	{   return this.friendUpdates;
+        {   return this.friendUpdates;
     }   }
     
     /**
@@ -409,7 +409,7 @@ public class User implements Comparable<User>
      */
     public void setFriendUpdates(final long[] value)
     {   synchronized (this)
-	{   this.friendUpdates = value;
+        {   this.friendUpdates = value;
     }   }
     
     /**
@@ -419,7 +419,7 @@ public class User implements Comparable<User>
      */
     public String[] getFriendNames()
     {   synchronized (this)
-	{   return this.friendNames;
+        {   return this.friendNames;
     }   }
     
     /**
@@ -429,7 +429,7 @@ public class User implements Comparable<User>
      */
     public void setFriendNames(final String[] value)
     {   synchronized (this)
-	{   this.friendNames = value;
+        {   this.friendNames = value;
     }   }
     
     /**
@@ -439,7 +439,7 @@ public class User implements Comparable<User>
      */
     public String[] getFriendLocalIPs()
     {   synchronized (this)
-	{   return this.friendLocalIPs;
+        {   return this.friendLocalIPs;
     }   }
     
     /**
@@ -449,7 +449,7 @@ public class User implements Comparable<User>
      */
     public void setFriendLocalIPs(final String[] value)
     {   synchronized (this)
-	{   this.friendLocalIPs = value;
+        {   this.friendLocalIPs = value;
     }   }
     
     /**
@@ -459,7 +459,7 @@ public class User implements Comparable<User>
      */
     public String[] getFriendPublicIPs()
     {   synchronized (this)
-	{   return this.friendPublicIPs;
+        {   return this.friendPublicIPs;
     }   }
     
     /**
@@ -469,7 +469,7 @@ public class User implements Comparable<User>
      */
     public void setFriendPublicIPs(final String[] value)
     {   synchronized (this)
-	{   this.friendPublicIPs = value;
+        {   this.friendPublicIPs = value;
     }   }
     
     /**
@@ -479,7 +479,7 @@ public class User implements Comparable<User>
      */
     public int[] getFriendPorts()
     {   synchronized (this)
-	{   return this.friendPorts;
+        {   return this.friendPorts;
     }   }
     
     /**
@@ -489,7 +489,7 @@ public class User implements Comparable<User>
      */
     public void setFriendPorts(final int[] value)
     {   synchronized (this)
-	{   this.friendPorts = value;
+        {   this.friendPorts = value;
     }   }
     
     /**
@@ -499,7 +499,7 @@ public class User implements Comparable<User>
      */
     public String[][] getFriendDNSNames()
     {   synchronized (this)
-	{   return this.friendDNSNames;
+        {   return this.friendDNSNames;
     }   }
     
     /**
@@ -509,7 +509,7 @@ public class User implements Comparable<User>
      */
     public void setFriendDNSNames(final String[][] value)
     {   synchronized (this)
-	{   this.friendDNSNames = value;
+        {   this.friendDNSNames = value;
     }   }
     
     /**
@@ -519,7 +519,7 @@ public class User implements Comparable<User>
      */
     public byte[][] getFriendSignatures()
     {   synchronized (this)
-	{   return this.friendSignatures;
+        {   return this.friendSignatures;
     }   }
     
     /**
@@ -529,7 +529,7 @@ public class User implements Comparable<User>
      */
     public void setFriendSignatures(final byte[][] value)
     {   synchronized (this)
-	{   this.friendSignatures = value;
+        {   this.friendSignatures = value;
     }   }
 
 }

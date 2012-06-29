@@ -36,11 +36,11 @@ class ShortArrayTransferProtocol implements TransferProtocol<short[]>
      */
     public short[] read(final TransferInputStream stream) throws IOException
     {
-	final int len = stream.readLen();
-	final short[] rc = new short[len];
-	for (int i = 0; i < len; i++)
-	    rc[i] = stream.readShort();
-	return rc;
+        final int len = stream.readLen();
+        final short[] rc = new short[len];
+        for (int i = 0; i < len; i++)
+            rc[i] = stream.readShort();
+        return rc;
     }
     
     
@@ -49,9 +49,9 @@ class ShortArrayTransferProtocol implements TransferProtocol<short[]>
      */
     public void write(final short[] data, final TransferOutputStream stream) throws IOException
     {
-	stream.writeLen(data.length);
-	for (int i = 0, n = data.length; i < n; i++)
-	    stream.writeShort(data[i]);
+        stream.writeLen(data.length);
+        for (int i = 0, n = data.length; i < n; i++)
+            stream.writeShort(data[i]);
     }
     
 }

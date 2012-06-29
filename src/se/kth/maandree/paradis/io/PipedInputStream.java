@@ -225,39 +225,39 @@ public class PipedInputStream extends InputStream
     while (len > 0)
       {
         try
-	  {
-	    while (in == out)
-	      {
-		// The pipe is full. Wake up any readers and wait for them.
-		notifyAll();
-		wait();
-		// The pipe could have been closed while we were waiting.
-	        if (closed)
-		  throw new IOException ("Pipe closed");
-	      }
-	  }
-	catch (InterruptedException ix)
-	  {
+          {
+            while (in == out)
+              {
+                // The pipe is full. Wake up any readers and wait for them.
+                notifyAll();
+                wait();
+                // The pipe could have been closed while we were waiting.
+                if (closed)
+                  throw new IOException ("Pipe closed");
+              }
+          }
+        catch (InterruptedException ix)
+          {
             throw new InterruptedIOException ();
-	  }
+          }
 
-	if (in < 0) // The pipe is empty.
-	  in = 0;
-	
-	// Figure out how many bytes from buf can be copied without 
-	// overrunning out or going past the length of the buffer.
-	if (in < out)
-	  copylen = Math.min (len, out - in);
-	else
-	  copylen = Math.min (len, buffer.length - in);
+        if (in < 0) // The pipe is empty.
+          in = 0;
+        
+        // Figure out how many bytes from buf can be copied without 
+        // overrunning out or going past the length of the buffer.
+        if (in < out)
+          copylen = Math.min (len, out - in);
+        else
+          copylen = Math.min (len, buffer.length - in);
 
-	// Copy bytes until the pipe is filled, wrapping if necessary.
-	System.arraycopy(buf, bufpos, buffer, in, copylen);
-	len -= copylen;
-	bufpos += copylen;
-	in += copylen;
-	if (in == buffer.length)
-	  in = 0;
+        // Copy bytes until the pipe is filled, wrapping if necessary.
+        System.arraycopy(buf, bufpos, buffer, in, copylen);
+        len -= copylen;
+        bufpos += copylen;
+        in += copylen;
+        if (in == buffer.length)
+          in = 0;
       }
     // Notify readers that new data is in the pipe.
     notifyAll();
@@ -325,12 +325,12 @@ public class PipedInputStream extends InputStream
     // to read.
     try
       {
-	while (in < 0)
-	  {
-	    if (source.closed)
-	      return -1;
-	    wait();
-	  }
+        while (in < 0)
+          {
+            if (source.closed)
+              return -1;
+            wait();
+          }
       }
     catch (InterruptedException ix)
       {
@@ -342,37 +342,37 @@ public class PipedInputStream extends InputStream
     
     while (true)
       {
-	// Figure out how many bytes from the pipe can be copied without 
-	// overrunning in or going past the length of buf.
-	if (out < in)
-	  copylen = Math.min (len, in - out);
-	else
-	  copylen = Math.min (len, buffer.length - out);
+        // Figure out how many bytes from the pipe can be copied without 
+        // overrunning in or going past the length of buf.
+        if (out < in)
+          copylen = Math.min (len, in - out);
+        else
+          copylen = Math.min (len, buffer.length - out);
 
         System.arraycopy (buffer, out, buf, offset, copylen);
-	offset += copylen;
-	len -= copylen;
-	out += copylen;
-	total += copylen;
-	
-	if (out == buffer.length)
-	  out = 0;
-	
-	if (out == in)
-	  {
-	    // Pipe is now empty.
-	    in = -1;
-	    out = 0;
-	  }
+        offset += copylen;
+        len -= copylen;
+        out += copylen;
+        total += copylen;
+        
+        if (out == buffer.length)
+          out = 0;
+        
+        if (out == in)
+          {
+            // Pipe is now empty.
+            in = -1;
+            out = 0;
+          }
 
         // If output buffer is filled or the pipe is empty, we're done.
-	if (len == 0 || in == -1)
-	  {
-	    // Notify any waiting outputstream that there is now space
-	    // to write.
-	    notifyAll();
-	    return total;
-	  }
+        if (len == 0 || in == -1)
+          {
+            // Notify any waiting outputstream that there is now space
+            // to write.
+            notifyAll();
+            return total;
+          }
       }
   }
   

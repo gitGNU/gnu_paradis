@@ -60,7 +60,7 @@ public class Blackboard
      */
     private Blackboard()
     {
-	// Do nothing
+        // Do nothing
     }
     
     
@@ -72,13 +72,13 @@ public class Blackboard
      */
     public static Blackboard getInstance(final Object name)
     {
-	Blackboard instance;
-	if ((instance = instances.get(name)) == null)
-	    synchronized (instances)
+        Blackboard instance;
+        if ((instance = instances.get(name)) == null)
+            synchronized (instances)
             {   if ((instance = instances.get(name)) == null)
-		    instances.put(name, instance = new Blackboard());
+                    instances.put(name, instance = new Blackboard());
             }
-	return instance;
+        return instance;
     }
     
     
@@ -94,49 +94,49 @@ public class Blackboard
      */
     static
     {
-	THREADED = new ThreadingPolicy()
-	        {   /**
-		     * {@inheritDoc}
-		     */
-		    public Thread createThread(final Runnable runnable)
-		    {   final Thread thread = new Thread(runnable);
-			thread.setDaemon(false);
-			thread.setPriority(5); //normal: 5 of 1..10; corresponding nice value: 0
-			return thread;
-		}   };
-	
-	DAEMON_THREADING = new ThreadingPolicy()
-	        {   /**
-		     * {@inheritDoc}
-		     */
-		    public Thread createThread(final Runnable runnable)
-		    {   final Thread thread = new Thread(runnable);
-			thread.setDaemon(true);
-			thread.setPriority(5); //normal: 5 of 1..10; corresponding nice value: 0
-			return thread;
-		}   };
+        THREADED = new ThreadingPolicy()
+                {   /**
+                     * {@inheritDoc}
+                     */
+                    public Thread createThread(final Runnable runnable)
+                    {   final Thread thread = new Thread(runnable);
+                        thread.setDaemon(false);
+                        thread.setPriority(5); //normal: 5 of 1..10; corresponding nice value: 0
+                        return thread;
+                }   };
+        
+        DAEMON_THREADING = new ThreadingPolicy()
+                {   /**
+                     * {@inheritDoc}
+                     */
+                    public Thread createThread(final Runnable runnable)
+                    {   final Thread thread = new Thread(runnable);
+                        thread.setDaemon(true);
+                        thread.setPriority(5); //normal: 5 of 1..10; corresponding nice value: 0
+                        return thread;
+                }   };
 
-	NICE_THREADING = new ThreadingPolicy()
-	        {   /**
-		     * {@inheritDoc}
-		     */
-		    public Thread createThread(final Runnable runnable)
-		    {   final Thread thread = new Thread(runnable);
-			thread.setDaemon(false);
-			thread.setPriority(2); //below normal: 2 of 1..10; corresponding nice value: 3
-			return thread;
-		}   };
-	
-	NICE_DAEMON_THREADING = new ThreadingPolicy()
-	        {   /**
-		     * {@inheritDoc}
-		     */
-		    public Thread createThread(final Runnable runnable)
-		    {   final Thread thread = new Thread(runnable);
-			thread.setDaemon(true);
-			thread.setPriority(2); //below normal: 2 of 1..10; corresponding nice value: 3
-			return thread;
-		}   };
+        NICE_THREADING = new ThreadingPolicy()
+                {   /**
+                     * {@inheritDoc}
+                     */
+                    public Thread createThread(final Runnable runnable)
+                    {   final Thread thread = new Thread(runnable);
+                        thread.setDaemon(false);
+                        thread.setPriority(2); //below normal: 2 of 1..10; corresponding nice value: 3
+                        return thread;
+                }   };
+        
+        NICE_DAEMON_THREADING = new ThreadingPolicy()
+                {   /**
+                     * {@inheritDoc}
+                     */
+                    public Thread createThread(final Runnable runnable)
+                    {   final Thread thread = new Thread(runnable);
+                        thread.setDaemon(true);
+                        thread.setPriority(2); //below normal: 2 of 1..10; corresponding nice value: 3
+                        return thread;
+                }   };
     }
     
     
@@ -168,7 +168,7 @@ public class Blackboard
      */
     public static interface BlackboardMessage
     {
-	//Marker interface
+        //Marker interface
     }
     
     
@@ -177,59 +177,59 @@ public class Blackboard
      */
     public static class ObserverRegisterMessage implements BlackboardMessage
     {
-	/**
-	 * Constructor
-	 * 
-	 * @param  observer  The observer
-	 * @param  register  {@code true} if the observer is newly registered, {@code false} if newly unregistered
-	 */
-	public ObserverRegisterMessage(final BlackboardObserver observer, final boolean register)
-	{
-	    this.observer = observer;
-	    this.register = register;
-	}
-	
-	
-	
-	/**
-	 * The observer
-	 */
-	private final BlackboardObserver observer;
-	
-	/**
-	 * {@code true} if the observer is newly registered, {@code false} if newly unregistered
-	 */
-	private final boolean register;
-	
-	
-	
-	/**
-	 * Gets the observer
-	 * 
-	 * @return  The observer
-	 */
-	public BlackboardObserver getObserver()
-	{   return this.observer;
-	}
-	
-	/**
-	 * Gets whether the observer is newly registered or newly unregistered 
-	 * 
-	 * @return  {@code true} if the observer is newly registered, {@code false} if newly unregistered
-	 */
-	public boolean getRegister()
-	{   return this.register;
-	}
-	
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public String toString()
-	{   return observer.toString() + (this.register ? " registered" : " unregistered");
-	}
-	
+        /**
+         * Constructor
+         * 
+         * @param  observer  The observer
+         * @param  register  {@code true} if the observer is newly registered, {@code false} if newly unregistered
+         */
+        public ObserverRegisterMessage(final BlackboardObserver observer, final boolean register)
+        {
+            this.observer = observer;
+            this.register = register;
+        }
+        
+        
+        
+        /**
+         * The observer
+         */
+        private final BlackboardObserver observer;
+        
+        /**
+         * {@code true} if the observer is newly registered, {@code false} if newly unregistered
+         */
+        private final boolean register;
+        
+        
+        
+        /**
+         * Gets the observer
+         * 
+         * @return  The observer
+         */
+        public BlackboardObserver getObserver()
+        {   return this.observer;
+        }
+        
+        /**
+         * Gets whether the observer is newly registered or newly unregistered 
+         * 
+         * @return  {@code true} if the observer is newly registered, {@code false} if newly unregistered
+         */
+        public boolean getRegister()
+        {   return this.register;
+        }
+        
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String toString()
+        {   return observer.toString() + (this.register ? " registered" : " unregistered");
+        }
+        
     }
     
     
@@ -238,10 +238,10 @@ public class Blackboard
      */
     public static interface BlackboardObserver
     {
-	/**
-	 * This method is invoked when the a message is pinned on the blackboard
-	 */
-	public void messageBroadcasted(final Blackboard.BlackboardMessage message);
+        /**
+         * This method is invoked when the a message is pinned on the blackboard
+         */
+        public void messageBroadcasted(final Blackboard.BlackboardMessage message);
     }
     
     
@@ -250,13 +250,13 @@ public class Blackboard
      */
     public static interface ThreadingPolicy
     {
-	/**
-	 * Creates a thread according to the policy
-	 *
-	 * @param   runnable  The {@code run} implementation of the thread
-	 * @return            The new thread
-	 */
-	public Thread createThread(final Runnable runnable);
+        /**
+         * Creates a thread according to the policy
+         *
+         * @param   runnable  The {@code run} implementation of the thread
+         * @return            The new thread
+         */
+        public Thread createThread(final Runnable runnable);
     }
     
     
@@ -268,12 +268,12 @@ public class Blackboard
      */
     public void registerObserver(final BlackboardObserver observer)
     {
-	synchronized (this.monitor)
-	{
-	    System.err.println("BLACKBOARD.registerObserver(" + observer + ")");
-	    this.observers.add(observer);
-	    this.broadcastMessage(new ObserverRegisterMessage(observer, true));
-	}
+        synchronized (this.monitor)
+        {
+            System.err.println("BLACKBOARD.registerObserver(" + observer + ")");
+            this.observers.add(observer);
+            this.broadcastMessage(new ObserverRegisterMessage(observer, true));
+        }
     }
     
     
@@ -284,14 +284,14 @@ public class Blackboard
      */
     public void unregisterObserver(final BlackboardObserver observer)
     {
-	synchronized (this.monitor)
-	{
-	    System.err.println("BLACKBOARD.unregisterObserver(" + observer + ")");
-	    this.observers.remove(observer);
-	    this.observationThreading.remove(observer);
-	    this.observationPriorities.remove(observer);
-	    this.broadcastMessage(new ObserverRegisterMessage(observer, false));
-	}
+        synchronized (this.monitor)
+        {
+            System.err.println("BLACKBOARD.unregisterObserver(" + observer + ")");
+            this.observers.remove(observer);
+            this.observationThreading.remove(observer);
+            this.observationPriorities.remove(observer);
+            this.broadcastMessage(new ObserverRegisterMessage(observer, false));
+        }
     }
     
     
@@ -309,7 +309,7 @@ public class Blackboard
     @SuppressWarnings("unchecked")
     public void registerThreadingPolicy(final BlackboardObserver observer, final Class<? extends BlackboardMessage> messageType, final ThreadingPolicy policy)
     {
-	registerThreadingPolicy(observer, policy, messageType);
+        registerThreadingPolicy(observer, policy, messageType);
     }
     
     
@@ -324,17 +324,17 @@ public class Blackboard
     @SuppressWarnings("unchecked")
     public void registerThreadingPolicy(final BlackboardObserver observer, final ThreadingPolicy policy, final Class<? extends BlackboardMessage>... messageTypes)
     {
-	synchronized (this.monitor)
-	{
-	    HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = this.observationThreading.get(observer);
-	    if (map == null)
-	    {
-		map = new HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy>();
-		this.observationThreading.put(observer, map);
-	    }
-	    for (final Class<? extends BlackboardMessage> messageType : messageTypes)
-		map.put(messageType, policy);
-	}
+        synchronized (this.monitor)
+        {
+            HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = this.observationThreading.get(observer);
+            if (map == null)
+            {
+                map = new HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy>();
+                this.observationThreading.put(observer, map);
+            }
+            for (final Class<? extends BlackboardMessage> messageType : messageTypes)
+                map.put(messageType, policy);
+        }
     }
     
     
@@ -349,17 +349,17 @@ public class Blackboard
     @SuppressWarnings("unchecked")
     public void registerPriority(final BlackboardObserver observer, final int nice, final Class<? extends BlackboardMessage>... messageTypes)
     {
-	synchronized (this.monitor)
-	{
-	    HashMap<Class<? extends BlackboardMessage>, Integer> map = this.observationPriorities.get(observer);
-	    if (map == null)
-	    {
-		map = new HashMap<Class<? extends BlackboardMessage>, Integer>();
-		this.observationPriorities.put(observer, map);
-	    }
-	    for (final Class<? extends BlackboardMessage> messageType : messageTypes)
-		map.put(messageType, Integer.valueOf(nice));
-	}
+        synchronized (this.monitor)
+        {
+            HashMap<Class<? extends BlackboardMessage>, Integer> map = this.observationPriorities.get(observer);
+            if (map == null)
+            {
+                map = new HashMap<Class<? extends BlackboardMessage>, Integer>();
+                this.observationPriorities.put(observer, map);
+            }
+            for (final Class<? extends BlackboardMessage> messageType : messageTypes)
+                map.put(messageType, Integer.valueOf(nice));
+        }
     }
     
     
@@ -370,64 +370,64 @@ public class Blackboard
      */
     public void broadcastMessage(final BlackboardMessage message)
     {
-	synchronized (this.monitor)
-	{
-	    System.err.println("BLACKBOARD.broadcastMessage(" + message.toString() + ")");
-	    final PriorityQueue<Integer> priorities = new PriorityQueue<Integer>();
-	    final HashMap<Integer, Vector<BlackboardObserver>> prioObservers = new HashMap<>();
-	    final HashSet<Integer> regdPrioes = new HashSet<Integer>();
-	    
-	    for (final BlackboardObserver observer : this.observers)
-	    {
-		final HashMap<Class<? extends BlackboardMessage>, Integer> map = observationPriorities.get(observer);
-		Integer priority = Integer.valueOf(0);
-		if (map != null)
-		{
-		    Integer tmp;
-		    if      ((tmp = map.get(message.getClass())) != null)  priority = tmp;
-		    else if ((tmp = map.get(null)) != null)                priority = tmp;
-		}
-		if (regdPrioes.contains(priority) == false)
-		{
-		    priorities.add(priority);
-		    regdPrioes.add(priority);
-		}
-		Vector<BlackboardObserver> vector = prioObservers.get(priority);
-		if (vector == null)
-		    prioObservers.put(priority, vector = new Vector<BlackboardObserver>());
-		vector.add(observer);
-	    }
-	    
-	    for (Integer priority; (priority = priorities.poll()) != null;) // iterator messes up order
-		for (final BlackboardObserver observer : prioObservers.get(priority))
-		{
-		    System.err.println("BLACKBOARD.broadcastMessage() ==> " + observer.toString());
-		    final ThreadingPolicy policy;
-		    final Runnable runnable = new Runnable()
-			    {
-				/**
-				 * {@inheritDoc}
-				 */
-				public void run()
-				{   observer.messageBroadcasted(message);
-				}
-			    };
-		
-		    final HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = observationThreading.get(observer);
-		
-		    if (map == null)
-			policy = null;
-		    else if (map.containsKey(message.getClass()))
-			policy = map.get(message.getClass());
-		    else
-			continue;
-		
-		    if (policy == null)  runnable.run();
-		    else                 (new Thread(runnable)).start();
-		}
-	    
-	    System.err.println("BLACKBOARD.broadcastMessage() <<<<");
-	}
+        synchronized (this.monitor)
+        {
+            System.err.println("BLACKBOARD.broadcastMessage(" + message.toString() + ")");
+            final PriorityQueue<Integer> priorities = new PriorityQueue<Integer>();
+            final HashMap<Integer, Vector<BlackboardObserver>> prioObservers = new HashMap<>();
+            final HashSet<Integer> regdPrioes = new HashSet<Integer>();
+            
+            for (final BlackboardObserver observer : this.observers)
+            {
+                final HashMap<Class<? extends BlackboardMessage>, Integer> map = observationPriorities.get(observer);
+                Integer priority = Integer.valueOf(0);
+                if (map != null)
+                {
+                    Integer tmp;
+                    if      ((tmp = map.get(message.getClass())) != null)  priority = tmp;
+                    else if ((tmp = map.get(null)) != null)                priority = tmp;
+                }
+                if (regdPrioes.contains(priority) == false)
+                {
+                    priorities.add(priority);
+                    regdPrioes.add(priority);
+                }
+                Vector<BlackboardObserver> vector = prioObservers.get(priority);
+                if (vector == null)
+                    prioObservers.put(priority, vector = new Vector<BlackboardObserver>());
+                vector.add(observer);
+            }
+            
+            for (Integer priority; (priority = priorities.poll()) != null;) // iterator messes up order
+                for (final BlackboardObserver observer : prioObservers.get(priority))
+                {
+                    System.err.println("BLACKBOARD.broadcastMessage() ==> " + observer.toString());
+                    final ThreadingPolicy policy;
+                    final Runnable runnable = new Runnable()
+                            {
+                                /**
+                                 * {@inheritDoc}
+                                 */
+                                public void run()
+                                {   observer.messageBroadcasted(message);
+                                }
+                            };
+                
+                    final HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = observationThreading.get(observer);
+                
+                    if (map == null)
+                        policy = null;
+                    else if (map.containsKey(message.getClass()))
+                        policy = map.get(message.getClass());
+                    else
+                        continue;
+                
+                    if (policy == null)  runnable.run();
+                    else                 (new Thread(runnable)).start();
+                }
+            
+            System.err.println("BLACKBOARD.broadcastMessage() <<<<");
+        }
     }
     
 }

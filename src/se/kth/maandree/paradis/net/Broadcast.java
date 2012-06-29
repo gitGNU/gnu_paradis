@@ -37,7 +37,7 @@ public class Broadcast implements Cast
      */
     public Broadcast(final UUID sender, final String senderAddress)
     {
-	this(sender, new UUID[] { sender }, senderAddress);
+        this(sender, new UUID[] { sender }, senderAddress);
     }
     
     /**
@@ -49,10 +49,10 @@ public class Broadcast implements Cast
      */
     protected Broadcast(final UUID sender, final UUID[] received, final String senderAddress)
     {
-	this.sender = sender;
-	this.received = received;
-	this.receivedCount = received.length;
-	this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
+        this.sender = sender;
+        this.received = received;
+        this.receivedCount = received.length;
+        this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
     }
     
     
@@ -86,36 +86,36 @@ public class Broadcast implements Cast
      */
     public static class BroadcastTransferProtocol implements TransferProtocol<Broadcast>
     {
-	//Has default constructor
-	
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public Broadcast read(final TransferInputStream stream) throws IOException
-	{   return new Broadcast(stream.readObject(UUID.class),
-				 stream.readObject(UUID[].class),
-				 stream.readObject(String.class));
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public void write(final Broadcast data, final TransferOutputStream stream) throws IOException
-	{
-	    if (data.receivedCount != data.received.length)
-	    {
-		final UUID[] tmp = new UUID[data.receivedCount];
-		System.arraycopy(data.received, 0, tmp, 0, data.receivedCount);
-		data.received = tmp;
-	    }
-	    stream.writeObject(data.sender);
-	    stream.writeObject(data.received);
-	    stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
-	}
-	
+        //Has default constructor
+        
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Broadcast read(final TransferInputStream stream) throws IOException
+        {   return new Broadcast(stream.readObject(UUID.class),
+                                 stream.readObject(UUID[].class),
+                                 stream.readObject(String.class));
+        }
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void write(final Broadcast data, final TransferOutputStream stream) throws IOException
+        {
+            if (data.receivedCount != data.received.length)
+            {
+                final UUID[] tmp = new UUID[data.receivedCount];
+                System.arraycopy(data.received, 0, tmp, 0, data.receivedCount);
+                data.received = tmp;
+            }
+            stream.writeObject(data.sender);
+            stream.writeObject(data.received);
+            stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
+        }
+        
     }
     
     
@@ -125,20 +125,20 @@ public class Broadcast implements Cast
      */
     public void addReceived(final UUID uuid)
     {
-	int pos = Arrays.binarySearch(this.received, 0, this.receivedCount, uuid);
-	if (pos >= 0)
-	    return;
-	pos = ~pos;
-	
-	if (this.receivedCount == this.received.length)
-	{
-	    final UUID[] tmp = new UUID[this.receivedCount << 1];
-	    System.arraycopy(this.received, 0, tmp, 0, this.received.length);
-	    this.received = tmp;
-	}
-	
-	System.arraycopy(this.received, pos, this.received, pos + 1, this.receivedCount - pos);
-	this.received[pos] = uuid;
+        int pos = Arrays.binarySearch(this.received, 0, this.receivedCount, uuid);
+        if (pos >= 0)
+            return;
+        pos = ~pos;
+        
+        if (this.receivedCount == this.received.length)
+        {
+            final UUID[] tmp = new UUID[this.receivedCount << 1];
+            System.arraycopy(this.received, 0, tmp, 0, this.received.length);
+            this.received = tmp;
+        }
+        
+        System.arraycopy(this.received, pos, this.received, pos + 1, this.receivedCount - pos);
+        this.received[pos] = uuid;
     }
     
     

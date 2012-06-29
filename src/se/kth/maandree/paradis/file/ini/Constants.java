@@ -62,7 +62,7 @@ class Constants
      */
     private Constants()
     {
-	assert false : "You may not create instances of this class [Constants].";
+        assert false : "You may not create instances of this class [Constants].";
     }
     
 }

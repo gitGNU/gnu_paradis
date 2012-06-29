@@ -37,7 +37,7 @@ public class HubChat
      */
     private HubChat()
     {
-	assert false : "You may not create instances of this class [HubChat].";
+        assert false : "You may not create instances of this class [HubChat].";
     }
     
     
@@ -49,77 +49,77 @@ public class HubChat
      */
     public static void main(final String... args) throws Exception
     {
-	final int port = Toolkit.getRandomPortUDP();
-	System.out.println("Alive status: " + Toolkit.getAliveStatus());
-	System.out.println("Local IP: " + Toolkit.getLocalIP());
-	System.out.println("Public IP: " + Toolkit.getPublicIP());
-	System.out.println("UDP port: " + port);
-	
-	final User localUser = new User(new UUID(),
-					"nopony",
-					"127.0.0.1",
-					"127.0.0.1",
-					port,
-					new String[0],
-					new UUID(),
-					new byte[0],
-					new UUID[0],
-					new long[0],
-					new String[0],
-					new String[0],
-					new String[0],
-					new int[0],
-					new String[0][],
-					new byte[0][]);
-	
-	TransferProtocolRegister.register(String.class, "chat message");
-	final PacketFactory factory = new PacketFactory(localUser, false, false, (short)16);
-	
-	final Scanner sc = new Scanner(System.in);
-	final Hub hub = new Hub(port, localUser);
-	
-	final Thread thread = new Thread()
-	        {   public void run()
-		    {   for (;;)
-			{   final Packet packet = hub.receive();
-			    if (packet == null)
-			    {   return;
-			    }
-			    System.out.print(packet.message);
-		}   }   };
-	
-	thread.setDaemon(true);
-	thread.start();
-	
-	for (String line;;)
-	    if ((line = sc.nextLine()).isEmpty())
-	    {
-		hub.close();
-		return;
-	    }
-	    else if (line.charAt(0) == '>')
-		connect(hub, line.substring(1));
-	    else
-		hub.send(factory.createBroadcast(line + '\n', "chat message"));
+        final int port = Toolkit.getRandomPortUDP();
+        System.out.println("Alive status: " + Toolkit.getAliveStatus());
+        System.out.println("Local IP: " + Toolkit.getLocalIP());
+        System.out.println("Public IP: " + Toolkit.getPublicIP());
+        System.out.println("UDP port: " + port);
+        
+        final User localUser = new User(new UUID(),
+                                        "nopony",
+                                        "127.0.0.1",
+                                        "127.0.0.1",
+                                        port,
+                                        new String[0],
+                                        new UUID(),
+                                        new byte[0],
+                                        new UUID[0],
+                                        new long[0],
+                                        new String[0],
+                                        new String[0],
+                                        new String[0],
+                                        new int[0],
+                                        new String[0][],
+                                        new byte[0][]);
+        
+        TransferProtocolRegister.register(String.class, "chat message");
+        final PacketFactory factory = new PacketFactory(localUser, false, false, (short)16);
+        
+        final Scanner sc = new Scanner(System.in);
+        final Hub hub = new Hub(port, localUser);
+        
+        final Thread thread = new Thread()
+                {   public void run()
+                    {   for (;;)
+                        {   final Packet packet = hub.receive();
+                            if (packet == null)
+                            {   return;
+                            }
+                            System.out.print(packet.message);
+                }   }   };
+        
+        thread.setDaemon(true);
+        thread.start();
+        
+        for (String line;;)
+            if ((line = sc.nextLine()).isEmpty())
+            {
+                hub.close();
+                return;
+            }
+            else if (line.charAt(0) == '>')
+                connect(hub, line.substring(1));
+            else
+                hub.send(factory.createBroadcast(line + '\n', "chat message"));
     }
     
     private static void connect(final Hub hub, final String remote) throws IOException
     {
-	final InetAddress remoteAddress;
-	final int remotePort;
-	
-	if (remote.startsWith("[") && remote.contains("]:"))
-	{
-	    remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
-	    remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
-	}
-	else
-	{
-	    remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
-	    remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
-	}
-	
-	hub.connect(remoteAddress, remotePort);
+        final InetAddress remoteAddress;
+        final int remotePort;
+        
+        if (remote.startsWith("[") && remote.contains("]:"))
+        {
+            remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
+            remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
+        }
+        else
+        {
+            remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
+            remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
+        }
+        
+        hub.connect(remoteAddress, remotePort);
     }
     
 }

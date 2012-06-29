@@ -39,7 +39,7 @@ public class InterfaceChat
      */
     private InterfaceChat()
     {
-	assert false : "You may not create instances of this class [InterfaceChat].";
+        assert false : "You may not create instances of this class [InterfaceChat].";
     }
     
     
@@ -51,80 +51,80 @@ public class InterfaceChat
      */
     public static void main(final String... args) throws Exception
     {
-	final int port = Toolkit.getRandomPortUDP();
-	System.out.println("Alive status: " + Toolkit.getAliveStatus());
-	System.out.println("Local IP: " + Toolkit.getLocalIP());
-	System.out.println("Public IP: " + Toolkit.getPublicIP());
-	System.out.println("UDP port: " + port);
-	
-	final User localUser = new User(new UUID(),
-					"nopony",
-					"127.0.0.1",
-					"127.0.0.1",
-					port,
-					new String[0],
-					new UUID(),
-					new byte[0],
-					new UUID[0],
-					new long[0],
-					new String[0],
-					new String[0],
-					new String[0],
-					new int[0],
-					new String[0][],
-					new byte[0][]);
-	
-	TransferProtocolRegister.register(String.class, "chat message");
-	final PacketFactory factory = new PacketFactory(localUser, false, false, (short)16);
-	
-	final Scanner sc = new Scanner(System.in);
-	final Interface intrf = new Interface(port, localUser);
-	
-	Blackboard.getInstance(null).registerObserver(new Blackboard.BlackboardObserver()
-	        {
-		    /**
-		     * {@inheritDoc}
-		     */
-		    public void messageBroadcasted(final Blackboard.BlackboardMessage message)
-		    {
-			if (message instanceof PacketReceived)
-			{
-			    final Packet packet = ((PacketReceived)message).packet;
-			    if (packet.messageType.equals("chat message"))
-				System.out.print(packet.message);
-			}
-		    }
-		});
-	
-	for (String line;;)
-	    if ((line = sc.nextLine()).isEmpty())
-	    {
-		intrf.close();
-		return;
-	    }
-	    else if (line.charAt(0) == '>')
-		connect(intrf, line.substring(1));
-	    else
-		Blackboard.getInstance(null).broadcastMessage(new SendPacket(factory.createBroadcast(line + '\n', "chat message")));
+        final int port = Toolkit.getRandomPortUDP();
+        System.out.println("Alive status: " + Toolkit.getAliveStatus());
+        System.out.println("Local IP: " + Toolkit.getLocalIP());
+        System.out.println("Public IP: " + Toolkit.getPublicIP());
+        System.out.println("UDP port: " + port);
+        
+        final User localUser = new User(new UUID(),
+                                        "nopony",
+                                        "127.0.0.1",
+                                        "127.0.0.1",
+                                        port,
+                                        new String[0],
+                                        new UUID(),
+                                        new byte[0],
+                                        new UUID[0],
+                                        new long[0],
+                                        new String[0],
+                                        new String[0],
+                                        new String[0],
+                                        new int[0],
+                                        new String[0][],
+                                        new byte[0][]);
+        
+        TransferProtocolRegister.register(String.class, "chat message");
+        final PacketFactory factory = new PacketFactory(localUser, false, false, (short)16);
+        
+        final Scanner sc = new Scanner(System.in);
+        final Interface intrf = new Interface(port, localUser);
+        
+        Blackboard.getInstance(null).registerObserver(new Blackboard.BlackboardObserver()
+                {
+                    /**
+                     * {@inheritDoc}
+                     */
+                    public void messageBroadcasted(final Blackboard.BlackboardMessage message)
+                    {
+                        if (message instanceof PacketReceived)
+                        {
+                            final Packet packet = ((PacketReceived)message).packet;
+                            if (packet.messageType.equals("chat message"))
+                                System.out.print(packet.message);
+                        }
+                    }
+                });
+        
+        for (String line;;)
+            if ((line = sc.nextLine()).isEmpty())
+            {
+                intrf.close();
+                return;
+            }
+            else if (line.charAt(0) == '>')
+                connect(intrf, line.substring(1));
+            else
+                Blackboard.getInstance(null).broadcastMessage(new SendPacket(factory.createBroadcast(line + '\n', "chat message")));
     }
     
     private static void connect(final Interface intrf, final String remote) throws IOException
     {
-	final InetAddress remoteAddress;
-	final int remotePort;
-	
-	if (remote.startsWith("[") && remote.contains("]:"))
-	{
-	    remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
-	    remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
-	}
-	else
-	{
-	    remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
-	    remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
-	}
-	
-	Blackboard.getInstance(null).broadcastMessage(new MakeConnection(remoteAddress, remotePort));
+        final InetAddress remoteAddress;
+        final int remotePort;
+        
+        if (remote.startsWith("[") && remote.contains("]:"))
+        {
+            remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
+            remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));;
+        }
+        else
+        {
+            remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
+            remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
+        }
+        
+        Blackboard.getInstance(null).broadcastMessage(new MakeConnection(remoteAddress, remotePort));
     }
     
 }

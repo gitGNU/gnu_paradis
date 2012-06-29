@@ -60,7 +60,7 @@ class DataFixer
      */
     private DataFixer()
     {
-	assert false : "You may not create instances of this class [DataFixer].";
+        assert false : "You may not create instances of this class [DataFixer].";
     }
     
     
@@ -76,7 +76,7 @@ class DataFixer
         {
             String[] lines = iniData.filetext.split(LINE_ENDING);
             String text = "";
-	    
+            
             for (int index = 0; index < lines.length; index++)
                 if (lines[index].length() > 0)
                 {
@@ -84,13 +84,13 @@ class DataFixer
                         text += LINE_ENDING;
                     text += lines[index] + LINE_ENDING;
                 }
-	    
+            
             while (text.startsWith(LINE_ENDING))
                 text = text.substring(LINE_ENDING.length(), text.length());
-	    
+            
             while (text.endsWith(LINE_ENDING))
                 text = text.substring(0, text.length() - LINE_ENDING.length());
-	    
+            
             iniData.filetext = text;
         }
     }
@@ -107,10 +107,10 @@ class DataFixer
             String from = iniData.filetext.replace("\r\n", "\n")
                                           .replace("\r", "\n")
                                           .replace("\n", LINE_ENDING);
-	    
+            
             iniData.signature = "";
             boolean signatureEnded = false;
-	    
+            
             for (int i = 0, n = from.length(); i < n;)
                 if (signatureEnded == false)
                 {
@@ -160,7 +160,7 @@ class DataFixer
             
             iniData.filetext = buf;
         }
-	
+        
         String[] lines = iniData.filetext.split(LINE_ENDING);
         for (int i = 0; i < lines.length; i++)
         {
@@ -174,7 +174,7 @@ class DataFixer
                 final String KEY_ENDING_B = KeyEnding.DEFAULT_UNSPACED.getValue();
                 final String KEY_ENDING_C = KeyEnding.  COLON         .getValue();
                 final String KEY_ENDING_D = KeyEnding.  COLON_UNSPACED.getValue();
-		
+                
                 int sep0 = lines[i].indexOf(KEY_ENDING_A);
                 int sep1 = lines[i].indexOf(KEY_ENDING_B);
                 int sep2 = lines[i].indexOf(KEY_ENDING_C);
@@ -199,7 +199,7 @@ class DataFixer
                 }
             }
         }
-	
+        
         {
             iniData.filetext = "";
             for (int i = 0, n = lines.length; i < n; i++)

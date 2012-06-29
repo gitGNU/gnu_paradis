@@ -36,11 +36,11 @@ class IntArrayTransferProtocol implements TransferProtocol<int[]>
      */
     public int[] read(final TransferInputStream stream) throws IOException
     {
-	final int len = stream.readLen();
-	final int[] rc = new int[len];
-	for (int i = 0; i < len; i++)
-	    rc[i] = stream.readInt();
-	return rc;
+        final int len = stream.readLen();
+        final int[] rc = new int[len];
+        for (int i = 0; i < len; i++)
+            rc[i] = stream.readInt();
+        return rc;
     }
     
     
@@ -49,9 +49,9 @@ class IntArrayTransferProtocol implements TransferProtocol<int[]>
      */
     public void write(final int[] data, final TransferOutputStream stream) throws IOException
     {
-	stream.writeLen(data.length);
-	for (int i = 0, n = data.length; i < n; i++)
-	    stream.writeInt(data[i]);
+        stream.writeLen(data.length);
+        for (int i = 0, n = data.length; i < n; i++)
+            stream.writeInt(data[i]);
     }
     
 }

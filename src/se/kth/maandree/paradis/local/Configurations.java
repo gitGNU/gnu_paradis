@@ -38,7 +38,7 @@ public class Configurations
      */
     private Configurations()
     {
-	assert false : "You may not create instances of this class [Configurations].";
+        assert false : "You may not create instances of this class [Configurations].";
     }
     
     
@@ -56,17 +56,17 @@ public class Configurations
      */
     static
     {
-	String content = "";
-	if ((new File(FILE)).exists())
-	    try
-	    {   content = readFile(FILE);
-	    }
-	    catch (final Throwable ignore)
-	    {   //Ignore
-	    }
-	
-	conf = new INI(FILE, content);
-	conf.refreshContentTree();
+        String content = "";
+        if ((new File(FILE)).exists())
+            try
+            {   content = readFile(FILE);
+            }
+            catch (final Throwable ignore)
+            {   //Ignore
+            }
+        
+        conf = new INI(FILE, content);
+        conf.refreshContentTree();
     }
     
     
@@ -80,7 +80,7 @@ public class Configurations
      */
     public static String getSetting(final String hive, final String key)
     {
-	return conf.getKeyValue(hive, key);
+        return conf.getKeyValue(hive, key);
     }
     
     
@@ -93,7 +93,7 @@ public class Configurations
      */
     public static void setSetting(final String hive, final String key, final String value)
     {
-	conf.createKey(hive, key, value, true);
+        conf.createKey(hive, key, value, true);
     }
     
     
@@ -106,8 +106,8 @@ public class Configurations
      */
     public static void defaultSetting(final String hive, final String key, final String defaultValue)
     {
-	if (getSetting(hive, key) == null)
-	    setSetting(hive, key, defaultValue);
+        if (getSetting(hive, key) == null)
+            setSetting(hive, key, defaultValue);
     }
     
     
@@ -118,21 +118,21 @@ public class Configurations
      */
     public static void save() throws IOException
     {
-	OutputStream os = null;
-	try
-	{
-	    os = new BufferedOutputStream(new FileOutputStream(new File(FILE)));
-	    os.write(conf.getSaveString().getBytes("UTF-8"));
-	    os.flush();
-	}
-	finally
-	{   if (os != null)
-		try
-		{   os.close();
-		}
-		catch (final Throwable ignore)
-		{   //Ignore
-	}	}
+        OutputStream os = null;
+        try
+        {
+            os = new BufferedOutputStream(new FileOutputStream(new File(FILE)));
+            os.write(conf.getSaveString().getBytes("UTF-8"));
+            os.flush();
+        }
+        finally
+        {   if (os != null)
+                try
+                {   os.close();
+                }
+                catch (final Throwable ignore)
+                {   //Ignore
+        }       }
     }
     
     
@@ -146,50 +146,50 @@ public class Configurations
      */
     private static String readFile(final String file) throws IOException
     {
-	final String text;
-	
-	InputStream is = null;
-	try
-	{
-	    is = new BufferedInputStream(new FileInputStream(new File(file)));
-	    
-	    final Vector<byte[]> bufs = new Vector<byte[]>();
-	    int size = 0;
-	    
-	    for (int av; (av = is.available()) > 0;)
-	    {
-		byte[] buf = new byte[av];
-		av = is.read(buf, 0, av);
-		if (av < buf.length)
-		{
-		    final byte[] nbuf = new byte[av];
-		    System.arraycopy(buf, 0, nbuf, 0, av);
-		    buf = nbuf;
-		}
-		size += av;
-		bufs.add(buf);
-	    }
-	    
-	    final byte[] full = new byte[size];
-	    int ptr = 0;
-	    for (final byte[] buf : bufs)
-	    {
-		System.arraycopy(buf, 0, full, ptr, buf.length);
-		ptr += buf.length;
-	    }
-	    
-	    text = new String(full, "UTF-8");
-	}
-	finally
-	{   if (is != null)
-		try
-		{   is.close();
-		}
-		catch (final Throwable ignore)
-		{   //Ignore
-	}	}
-	
-	return text;
+        final String text;
+        
+        InputStream is = null;
+        try
+        {
+            is = new BufferedInputStream(new FileInputStream(new File(file)));
+            
+            final Vector<byte[]> bufs = new Vector<byte[]>();
+            int size = 0;
+            
+            for (int av; (av = is.available()) > 0;)
+            {
+                byte[] buf = new byte[av];
+                av = is.read(buf, 0, av);
+                if (av < buf.length)
+                {
+                    final byte[] nbuf = new byte[av];
+                    System.arraycopy(buf, 0, nbuf, 0, av);
+                    buf = nbuf;
+                }
+                size += av;
+                bufs.add(buf);
+            }
+            
+            final byte[] full = new byte[size];
+            int ptr = 0;
+            for (final byte[] buf : bufs)
+            {
+                System.arraycopy(buf, 0, full, ptr, buf.length);
+                ptr += buf.length;
+            }
+            
+            text = new String(full, "UTF-8");
+        }
+        finally
+        {   if (is != null)
+                try
+                {   is.close();
+                }
+                catch (final Throwable ignore)
+                {   //Ignore
+        }       }
+        
+        return text;
     }
     
 }

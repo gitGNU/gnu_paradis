@@ -33,7 +33,7 @@ public class Properties
      */
     private Properties()
     {
-	assert false : "You may not create instances of this class [Properties].";
+        assert false : "You may not create instances of this class [Properties].";
     }
     
     
@@ -47,21 +47,21 @@ public class Properties
          * Ignore all line breaks
          */
         IGNORE,
-	
-	/**
-	 * Stop parsing at first line break
-	 */
-	BREAK,
-	
-	/**
-	 * Parse line breaks as any other character
-	 */
-	READ,
-	
-	/**
-	 * Convert line breaks to blank spaces
-	 */
-	SPACE,
+        
+        /**
+         * Stop parsing at first line break
+         */
+        BREAK,
+        
+        /**
+         * Parse line breaks as any other character
+         */
+        READ,
+        
+        /**
+         * Convert line breaks to blank spaces
+         */
+        SPACE,
     }
     
     
@@ -73,10 +73,10 @@ public class Properties
      */
     public static String getHome()
     {
-	String home;
-	if ((home = System.getenv().get("HOME")) == null)
-	    return System.getProperty("user.home");
-	return home;
+        String home;
+        if ((home = System.getenv().get("HOME")) == null)
+            return System.getProperty("user.home");
+        return home;
     }
     
     
@@ -87,7 +87,7 @@ public class Properties
      */
     public static String getUser()
     {
-	return System.getProperty("user.name");
+        return System.getProperty("user.name");
     }
     
     
@@ -98,8 +98,8 @@ public class Properties
      */
     public static String getFileSeparator()
     {
-	String rc = System.getProperty("file.separator");
-	return rc == null ? "/" : rc;
+        String rc = System.getProperty("file.separator");
+        return rc == null ? "/" : rc;
     }
     
     
@@ -110,8 +110,8 @@ public class Properties
      */
     public static String getPathSeparator()
     {
-	String rc = System.getProperty("path.separator");
-	return rc == null ? ":" : rc;
+        String rc = System.getProperty("path.separator");
+        return rc == null ? ":" : rc;
     }
     
     
@@ -122,7 +122,7 @@ public class Properties
      */
     public static String getEditor()
     {
-	return getEnvironmentVariable("EDITOR");
+        return getEnvironmentVariable("EDITOR");
     }
     
     
@@ -133,7 +133,7 @@ public class Properties
      */
     public static String getPager()
     {
-	return getEnvironmentVariable("PAGER");
+        return getEnvironmentVariable("PAGER");
     }
     
     
@@ -144,7 +144,7 @@ public class Properties
      */
     public static String[] getBinaryPaths()
     {
-	return getEnvironmentVariable("PATH").split(getPathSeparator());
+        return getEnvironmentVariable("PATH").split(getPathSeparator());
     }
     
     
@@ -156,7 +156,7 @@ public class Properties
      */
     public static String getEnvironmentVariable(final String variable)
     {
-	return System.getenv().get(variable);
+        return System.getenv().get(variable);
     }
     
     
@@ -167,7 +167,7 @@ public class Properties
      */
     public static String[] getClassPaths()
     {
-	return System.getProperty("java.class.path").split(getPathSeparator());
+        return System.getProperty("java.class.path").split(getPathSeparator());
     }
     
     
@@ -178,7 +178,7 @@ public class Properties
      */
     public static String getCurrentWorkingDirectory()
     {
-	return System.getProperty("user.dir");
+        return System.getProperty("user.dir");
     }
     
     
@@ -189,7 +189,7 @@ public class Properties
      */
     public static String getTerminal()
     {
-	return getEnvironmentVariable("TERM");
+        return getEnvironmentVariable("TERM");
     }
     
     
@@ -203,7 +203,7 @@ public class Properties
     @requires("coreutils")
     public static int getTerminalWidth()
     {
-	return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
+        return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
     }
     
     
@@ -217,7 +217,7 @@ public class Properties
     @requires("coreutils")
     public static int getTerminalHeight()
     {
-	return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
+        return Integer.parseInt(execSystemProperty(LineRule.BREAK, "stty", "size").split(" ")[0]);
     }
     
     
@@ -231,12 +231,12 @@ public class Properties
     @requires("coreutils")
     public static String getSTTYSettings()
     {
-	String[] data = execSystemProperty(LineRule.SPACE, "stty", "-a").split(";");
-	String rc = data[data.length - 1];
-	while (rc.startsWith(" "))  rc = rc.substring(1);
-	while (rc  .endsWith(" "))  rc = rc.substring(0, rc.length() - 1);
-	while (rc.contains("  "))   rc = rc.replace("  ", " ");
-	return rc;
+        String[] data = execSystemProperty(LineRule.SPACE, "stty", "-a").split(";");
+        String rc = data[data.length - 1];
+        while (rc.startsWith(" "))  rc = rc.substring(1);
+        while (rc  .endsWith(" "))  rc = rc.substring(0, rc.length() - 1);
+        while (rc.contains("  "))   rc = rc.replace("  ", " ");
+        return rc;
     }
     
     
@@ -250,41 +250,41 @@ public class Properties
     public static String execSystemProperty(final LineRule lineRule, final String... cmd)
     {
         try
-	{
-	    byte[] buf = new byte[64];
-	    int ptr = 0;
+        {
+            byte[] buf = new byte[64];
+            int ptr = 0;
             
-	    final ProcessBuilder procBuilder = new ProcessBuilder(cmd);
-	    procBuilder.redirectInput(ProcessBuilder.Redirect.from((new File("/dev/stdout")).getCanonicalFile()));
-	    final Process process = procBuilder.start();
-	    final InputStream stream = process.getInputStream();
+            final ProcessBuilder procBuilder = new ProcessBuilder(cmd);
+            procBuilder.redirectInput(ProcessBuilder.Redirect.from((new File("/dev/stdout")).getCanonicalFile()));
+            final Process process = procBuilder.start();
+            final InputStream stream = process.getInputStream();
             
-	    for (int d; (d = stream.read()) != -1; )
-	    {
-		if (d == '\n')
-		    if      (lineRule == LineRule.BREAK)   break;
-		    else if (lineRule == LineRule.IGNORE)  continue;
-		    else if (lineRule == LineRule.SPACE)   d = ' ';
+            for (int d; (d = stream.read()) != -1; )
+            {
+                if (d == '\n')
+                    if      (lineRule == LineRule.BREAK)   break;
+                    else if (lineRule == LineRule.IGNORE)  continue;
+                    else if (lineRule == LineRule.SPACE)   d = ' ';
                 
-		if (ptr == buf.length)
-		{
-		    final byte[] nbuf = new byte[ptr + 64];
-		    System.arraycopy(buf, 0, nbuf, 0, ptr);
-		    buf = nbuf;
-		}
-		buf[ptr++] = (byte)d;
-	    }
+                if (ptr == buf.length)
+                {
+                    final byte[] nbuf = new byte[ptr + 64];
+                    System.arraycopy(buf, 0, nbuf, 0, ptr);
+                    buf = nbuf;
+                }
+                buf[ptr++] = (byte)d;
+            }
             
-	    process.waitFor();
-	    if (process.exitValue() != 0)
-		return null;
+            process.waitFor();
+            if (process.exitValue() != 0)
+                return null;
             
-	    return new String(buf, 0, ptr, "UTF-8");
-	}
+            return new String(buf, 0, ptr, "UTF-8");
+        }
         catch (final Throwable err)
-	{
-	    return null;
-	}
+        {
+            return null;
+        }
     }
 
 }

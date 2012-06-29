@@ -87,26 +87,26 @@ public class UDPSocket
      */
     protected UDPSocket(final int localPort, final InetAddress remoteAddress, final int remotePort, final UDPServer server)
     {
-	this.localPort = localPort;
-	this.remoteAddress = remoteAddress;
-	this.remotePort = remotePort;
-	this.server = server;
-	
-	try
-	{
-	    final PipedInputStream _inputStream = new PipedInputStream();
-	    final PipedOutputStream _outputStream = new PipedOutputStream();
-	    
-	    this.outputStreamReader = new TransferInputStream(new PipedInputStream(_outputStream));
-	    this.inputStreamFeeder = new TransferOutputStream(new PipedOutputStream(_inputStream));
-	    
-	    this.inputStream = new TransferInputStream(_inputStream);
-	    this.outputStream = new TransferOutputStream(_outputStream);
-	}
-	catch (final IOException err)
-	{
-	    throw new IOError(err);
-	}
+        this.localPort = localPort;
+        this.remoteAddress = remoteAddress;
+        this.remotePort = remotePort;
+        this.server = server;
+        
+        try
+        {
+            final PipedInputStream _inputStream = new PipedInputStream();
+            final PipedOutputStream _outputStream = new PipedOutputStream();
+            
+            this.outputStreamReader = new TransferInputStream(new PipedInputStream(_outputStream));
+            this.inputStreamFeeder = new TransferOutputStream(new PipedOutputStream(_inputStream));
+            
+            this.inputStream = new TransferInputStream(_inputStream);
+            this.outputStream = new TransferOutputStream(_outputStream);
+        }
+        catch (final IOException err)
+        {
+            throw new IOError(err);
+        }
     }
     
     
@@ -204,41 +204,41 @@ public class UDPSocket
      */
     protected void send(final DatagramPacket packet) throws IOException
     {
-	if (packet.getData().length == packet.getLength())
-	{
-	    final int len = packet.getLength() + 1;
-	    final byte[] data = new byte[len];
-	    System.arraycopy(packet.getData(), packet.getOffset(), data, 1, len - 1);
-	    packet.setData(data, 0, len);
-	}
-	else
-	{
-	    System.arraycopy(packet.getData(), packet.getOffset(), packet.getData(), packet.getOffset() + 1, packet.getLength());
-	    packet.setLength(packet.getLength() + 1);
-	}
-	
-	packet.getData()[packet.getOffset()] = START_OF_TEXT;
-	
-	this.waiting = true;
-	synchronized (this.server.outMonitor)
-	{   this.server.socket.send(packet);
-	}
-	
-	synchronized (this.transmissionMonitor)
-	{   try
-	    {   this.transmissionMonitor.wait(TIME_OUT);
-		if (this.waiting)
-		{   this.waiting = false;
-		    synchronized (this.errors)
-		    {   this.errors.offerLast(new ConnectException("Timed out, receiver is probabily dead."));
-			this.errors.notifyAll();
-		    }
-		}
-	    }
-	    catch (final InterruptedException ignore)
-	    {   //ignore
-	    }
-	}
+        if (packet.getData().length == packet.getLength())
+        {
+            final int len = packet.getLength() + 1;
+            final byte[] data = new byte[len];
+            System.arraycopy(packet.getData(), packet.getOffset(), data, 1, len - 1);
+            packet.setData(data, 0, len);
+        }
+        else
+        {
+            System.arraycopy(packet.getData(), packet.getOffset(), packet.getData(), packet.getOffset() + 1, packet.getLength());
+            packet.setLength(packet.getLength() + 1);
+        }
+        
+        packet.getData()[packet.getOffset()] = START_OF_TEXT;
+        
+        this.waiting = true;
+        synchronized (this.server.outMonitor)
+        {   this.server.socket.send(packet);
+        }
+        
+        synchronized (this.transmissionMonitor)
+        {   try
+            {   this.transmissionMonitor.wait(TIME_OUT);
+                if (this.waiting)
+                {   this.waiting = false;
+                    synchronized (this.errors)
+                    {   this.errors.offerLast(new ConnectException("Timed out, receiver is probabily dead."));
+                        this.errors.notifyAll();
+                    }
+                }
+            }
+            catch (final InterruptedException ignore)
+            {   //ignore
+            }
+        }
     }
     
     
@@ -251,46 +251,46 @@ public class UDPSocket
      */
     protected void receive(final DatagramPacket packet) throws IOException
     {
-	final byte signal = packet.getData()[packet.getOffset()];
-	
-	if (signal == START_OF_TEXT)
-	{
-	    synchronized (this.server.outMonitor)
-	    {   this.server.socket.send(new DatagramPacket(new byte[] { END_OF_TEXT }, 0, 1, this.remoteAddress, this.remotePort));
-	    }
-	    this.inputStreamFeeder.write(packet.getData(), packet.getOffset() + 1, packet.getLength() - 1);
-	    this.inputStreamFeeder.flush();
-	}
-	else if (signal == END_OF_TEXT)
-	{
-	    if (this.waiting)
-		synchronized (this.transmissionMonitor)
-	        {   this.waiting = false;
-		    this.transmissionMonitor.notify();
-		}
-	}
-	else if (signal == ENQUIRY)
-	{
-	    boolean ok = false;
-	    try
-	    {   final String remote = new String(packet.getData(), packet.getOffset() + 1, packet.getLength() - 1, "UTF-8");
-		ok = remote.equals(Program.PACKAGE + (char)END_OF_TRANSMISSION);
-	    }
-	    catch (final Throwable err)
-	    {   ok = false;
-	    }
-	    synchronized (this.server.outMonitor)
-	    {   this.server.socket.send(new DatagramPacket(new byte[] { ok ? ACKNOWLEDGE : NEGATIVE_ACKNOWLEDGE }, 0, 1, this.remoteAddress, this.remotePort));
-	    }
-	}
-	else if (signal == BELL)
-	    return;
-	
-	if (this.ackWaiting)
-	    synchronized (this.enquiryMonitor)
-	    {   this.ackWaiting = (signal == NEGATIVE_ACKNOWLEDGE);
-		this.enquiryMonitor.notify();
-	    }
+        final byte signal = packet.getData()[packet.getOffset()];
+        
+        if (signal == START_OF_TEXT)
+        {
+            synchronized (this.server.outMonitor)
+            {   this.server.socket.send(new DatagramPacket(new byte[] { END_OF_TEXT }, 0, 1, this.remoteAddress, this.remotePort));
+            }
+            this.inputStreamFeeder.write(packet.getData(), packet.getOffset() + 1, packet.getLength() - 1);
+            this.inputStreamFeeder.flush();
+        }
+        else if (signal == END_OF_TEXT)
+        {
+            if (this.waiting)
+                synchronized (this.transmissionMonitor)
+                {   this.waiting = false;
+                    this.transmissionMonitor.notify();
+                }
+        }
+        else if (signal == ENQUIRY)
+        {
+            boolean ok = false;
+            try
+            {   final String remote = new String(packet.getData(), packet.getOffset() + 1, packet.getLength() - 1, "UTF-8");
+                ok = remote.equals(Program.PACKAGE + (char)END_OF_TRANSMISSION);
+            }
+            catch (final Throwable err)
+            {   ok = false;
+            }
+            synchronized (this.server.outMonitor)
+            {   this.server.socket.send(new DatagramPacket(new byte[] { ok ? ACKNOWLEDGE : NEGATIVE_ACKNOWLEDGE }, 0, 1, this.remoteAddress, this.remotePort));
+            }
+        }
+        else if (signal == BELL)
+            return;
+        
+        if (this.ackWaiting)
+            synchronized (this.enquiryMonitor)
+            {   this.ackWaiting = (signal == NEGATIVE_ACKNOWLEDGE);
+                this.enquiryMonitor.notify();
+            }
     }
     
     
@@ -306,26 +306,26 @@ public class UDPSocket
      */
     public boolean isAlive() throws IOException
     {
-	ackWaiting = true;
-	synchronized (this.server.outMonitor)
-	{   final byte[] data = ((char)ENQUIRY + Program.PACKAGE + (char)END_OF_TRANSMISSION).getBytes("UTF-8");
-	    this.server.socket.send(new DatagramPacket(data, 0, data.length, this.remoteAddress, this.remotePort));
-	}
-	
-	synchronized (this.enquiryMonitor)
-	{   try
-	    {   this.enquiryMonitor.wait(TIME_OUT);
-		if (this.ackWaiting)
-		{   this.ackWaiting = false;
-		    return false;
-		}
-	    }
-	    catch (final InterruptedException ignore)
-	    {   //ignore
-	    }
-	}
-	
-	return true;
+        ackWaiting = true;
+        synchronized (this.server.outMonitor)
+        {   final byte[] data = ((char)ENQUIRY + Program.PACKAGE + (char)END_OF_TRANSMISSION).getBytes("UTF-8");
+            this.server.socket.send(new DatagramPacket(data, 0, data.length, this.remoteAddress, this.remotePort));
+        }
+        
+        synchronized (this.enquiryMonitor)
+        {   try
+            {   this.enquiryMonitor.wait(TIME_OUT);
+                if (this.ackWaiting)
+                {   this.ackWaiting = false;
+                    return false;
+                }
+            }
+            catch (final InterruptedException ignore)
+            {   //ignore
+            }
+        }
+        
+        return true;
     }
     
     

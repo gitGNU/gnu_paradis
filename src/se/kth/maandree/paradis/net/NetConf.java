@@ -38,7 +38,7 @@ public class NetConf
      */
     private NetConf()
     {
-	assert false : "You may not create instances of this class [NetConf].";
+        assert false : "You may not create instances of this class [NetConf].";
     }
     
     
@@ -48,7 +48,7 @@ public class NetConf
      */
     static
     {
-	createDefaults();
+        createDefaults();
     }
     
     
@@ -58,10 +58,10 @@ public class NetConf
      */
     public static void createDefaults()
     {
-	Configurations.defaultSetting(HIVE, "timeout", "4");
-	Configurations.defaultSetting(HIVE, "connections", "100");
-	Configurations.defaultSetting(HIVE, "delaytime", "5000");
-	Configurations.defaultSetting(HIVE, "delatlimit", "20");
+        Configurations.defaultSetting(HIVE, "timeout", "4");
+        Configurations.defaultSetting(HIVE, "connections", "100");
+        Configurations.defaultSetting(HIVE, "delaytime", "5000");
+        Configurations.defaultSetting(HIVE, "delatlimit", "20");
     }
     
     
@@ -72,37 +72,37 @@ public class NetConf
      */
     public static int getTimeout()
     {
-	final String value = Configurations.getSetting(HIVE, "timeout");
-	int rc = 0;
-	try
-	{   rc = Integer.parseInt(value);
-	}
-	catch (final Throwable err)
-	{   System.err.println("Unparsable value for timeout setting: " + value);
-	    System.err.println("Timeout set to default: 4");
-	    setTimeout(rc = 4);
-	}
-	if (rc <= 0)
-	{   System.err.println("Non-positive timeout is not allowed: " + value);
-	    System.err.println("Timeout set to default: 4");
-	    setTimeout(rc = 4);
-	}
-	else if (rc >= 1000)
-	{   System.err.println("Timeout is extremely high: " + value);
-	    System.err.println("Timeout set to default: 4");
-	    setTimeout(rc = 4);
-	}
-	else if (rc > 60)
-	{   System.err.println("Timeout is too high for system: " + value);
-	    System.err.println("Timeout set to default: 4");
-	    setTimeout(rc = 4);
-	}
-	else if (rc >= 20)
-	{   System.err.println("Timeout is very high: " + value);
-	    System.err.println("Timeout set to default: 4");
-	    setTimeout(rc = 4);
-	}
-	return rc;
+        final String value = Configurations.getSetting(HIVE, "timeout");
+        int rc = 0;
+        try
+        {   rc = Integer.parseInt(value);
+        }
+        catch (final Throwable err)
+        {   System.err.println("Unparsable value for timeout setting: " + value);
+            System.err.println("Timeout set to default: 4");
+            setTimeout(rc = 4);
+        }
+        if (rc <= 0)
+        {   System.err.println("Non-positive timeout is not allowed: " + value);
+            System.err.println("Timeout set to default: 4");
+            setTimeout(rc = 4);
+        }
+        else if (rc >= 1000)
+        {   System.err.println("Timeout is extremely high: " + value);
+            System.err.println("Timeout set to default: 4");
+            setTimeout(rc = 4);
+        }
+        else if (rc > 60)
+        {   System.err.println("Timeout is too high for system: " + value);
+            System.err.println("Timeout set to default: 4");
+            setTimeout(rc = 4);
+        }
+        else if (rc >= 20)
+        {   System.err.println("Timeout is very high: " + value);
+            System.err.println("Timeout set to default: 4");
+            setTimeout(rc = 4);
+        }
+        return rc;
     }
     
     /**
@@ -112,7 +112,7 @@ public class NetConf
      */
     public static void setTimeout(final int value)
     {
-	Configurations.setSetting(HIVE, "timeout", Integer.toString(value));
+        Configurations.setSetting(HIVE, "timeout", Integer.toString(value));
     }
     
     
@@ -123,27 +123,27 @@ public class NetConf
      */
     public static int getConnections()
     {
-	final String value = Configurations.getSetting(HIVE, "connections");
-	int rc = 0;
-	try
-	{   rc = Integer.parseInt(value);
-	}
-	catch (final Throwable err)
-	{   System.err.println("Unparsable value for number of connections setting: " + value);
-	    System.err.println("Number of connections to default: 100");
-	    setConnections(rc = 100);
-	}
-	if (rc <= 0)
-	{   System.err.println("Non-positive of connections is not allowed: " + value);
-	    System.err.println("Number of connections set to default: 100");
-	    setConnections(rc = 100);
-	}
-	else if (rc > 1200)
-	{   System.err.println("Number of connections is very high: " + value);
-	    System.err.println("Number of connections set to default: 100");
-	    setConnections(rc = 100);
-	}
-	return rc;
+        final String value = Configurations.getSetting(HIVE, "connections");
+        int rc = 0;
+        try
+        {   rc = Integer.parseInt(value);
+        }
+        catch (final Throwable err)
+        {   System.err.println("Unparsable value for number of connections setting: " + value);
+            System.err.println("Number of connections to default: 100");
+            setConnections(rc = 100);
+        }
+        if (rc <= 0)
+        {   System.err.println("Non-positive of connections is not allowed: " + value);
+            System.err.println("Number of connections set to default: 100");
+            setConnections(rc = 100);
+        }
+        else if (rc > 1200)
+        {   System.err.println("Number of connections is very high: " + value);
+            System.err.println("Number of connections set to default: 100");
+            setConnections(rc = 100);
+        }
+        return rc;
     }
     
     /**
@@ -153,7 +153,7 @@ public class NetConf
      */
     public static void setConnections(final int value)
     {
-	Configurations.setSetting(HIVE, "connections", Integer.toString(value));
+        Configurations.setSetting(HIVE, "connections", Integer.toString(value));
     }
     
     
@@ -164,37 +164,37 @@ public class NetConf
      */
     public static int getDelayTime()
     {
-	final String value = Configurations.getSetting(HIVE, "delaytime");
-	int rc = 0;
-	try
-	{   rc = Integer.parseInt(value);
-	}
-	catch (final Throwable err)
-	{   System.err.println("Unparsable value for save delay setting: " + value);
-	    System.err.println("Save delay set to default: 5000");
-	    setDelayTime(rc = 5000);
-	}
-	if (rc <= 0)
-	{   System.err.println("Non-positive save delay is not allowed: " + value);
-	    System.err.println("Save delay set to default: 5000");
-	    setDelayTime(rc = 5000);
-	}
-	else if (rc < 500)
-	{   System.err.println("Save delay is extremely low: " + value);
-	    System.err.println("Save delay set to default: 5000");
-	    setDelayTime(rc = 5000);
-	}
-	else if (rc > 60000)
-	{   System.err.println("Save delay is too high for system: " + value);
-	    System.err.println("Save delay set to default: 5000");
-	    setDelayTime(rc = 5000);
-	}
-	else if (rc >= 30000)
-	{   System.err.println("Save delay is very high: " + value);
-	    System.err.println("Save delay set to default: 5000");
-	    setDelayTime(rc = 5000);
-	}
-	return rc;
+        final String value = Configurations.getSetting(HIVE, "delaytime");
+        int rc = 0;
+        try
+        {   rc = Integer.parseInt(value);
+        }
+        catch (final Throwable err)
+        {   System.err.println("Unparsable value for save delay setting: " + value);
+            System.err.println("Save delay set to default: 5000");
+            setDelayTime(rc = 5000);
+        }
+        if (rc <= 0)
+        {   System.err.println("Non-positive save delay is not allowed: " + value);
+            System.err.println("Save delay set to default: 5000");
+            setDelayTime(rc = 5000);
+        }
+        else if (rc < 500)
+        {   System.err.println("Save delay is extremely low: " + value);
+            System.err.println("Save delay set to default: 5000");
+            setDelayTime(rc = 5000);
+        }
+        else if (rc > 60000)
+        {   System.err.println("Save delay is too high for system: " + value);
+            System.err.println("Save delay set to default: 5000");
+            setDelayTime(rc = 5000);
+        }
+        else if (rc >= 30000)
+        {   System.err.println("Save delay is very high: " + value);
+            System.err.println("Save delay set to default: 5000");
+            setDelayTime(rc = 5000);
+        }
+        return rc;
     }
     
     /**
@@ -204,7 +204,7 @@ public class NetConf
      */
     public static void setDelayTime(final int value)
     {
-	Configurations.setSetting(HIVE, "delaytime", Integer.toString(value));
+        Configurations.setSetting(HIVE, "delaytime", Integer.toString(value));
     }
     
     
@@ -215,27 +215,27 @@ public class NetConf
      */
     public static int getDelayLimit()
     {
-	final String value = Configurations.getSetting(HIVE, "delaylimit");
-	int rc = 0;
-	try
-	{   rc = Integer.parseInt(value);
-	}
-	catch (final Throwable err)
-	{   System.err.println("Unparsable value for save delay limit setting: " + value);
-	    System.err.println("Save delay limit set to default: 20");
-	    setDelayLimit(rc = 20);
-	}
-	if (rc <= 0)
-	{   System.err.println("Non-positive save delay limit is not allowed: " + value);
-	    System.err.println("Save delay limit set to default: 20");
-	    setDelayLimit(rc = 20);
-	}
-	else if (rc > 1000)
-	{   System.err.println("Save delay limit is extremely high: " + value);
-	    System.err.println("Save delay limit set to default: 20");
-	    setDelayLimit(rc = 20);
-	}
-	return rc;
+        final String value = Configurations.getSetting(HIVE, "delaylimit");
+        int rc = 0;
+        try
+        {   rc = Integer.parseInt(value);
+        }
+        catch (final Throwable err)
+        {   System.err.println("Unparsable value for save delay limit setting: " + value);
+            System.err.println("Save delay limit set to default: 20");
+            setDelayLimit(rc = 20);
+        }
+        if (rc <= 0)
+        {   System.err.println("Non-positive save delay limit is not allowed: " + value);
+            System.err.println("Save delay limit set to default: 20");
+            setDelayLimit(rc = 20);
+        }
+        else if (rc > 1000)
+        {   System.err.println("Save delay limit is extremely high: " + value);
+            System.err.println("Save delay limit set to default: 20");
+            setDelayLimit(rc = 20);
+        }
+        return rc;
     }
     
     /**
@@ -245,7 +245,7 @@ public class NetConf
      */
     public static void setDelayLimit(final int value)
     {
-	Configurations.setSetting(HIVE, "delaylimit", Integer.toString(value));
+        Configurations.setSetting(HIVE, "delaylimit", Integer.toString(value));
     }
     
 }

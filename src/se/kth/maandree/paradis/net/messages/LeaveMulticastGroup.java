@@ -34,7 +34,7 @@ public class LeaveMulticastGroup implements Blackboard.BlackboardMessage
      */
     public LeaveMulticastGroup(final UUID group)
     {
-	this.group = group;
+        this.group = group;
     }
     
     

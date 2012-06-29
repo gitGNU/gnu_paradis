@@ -45,16 +45,16 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
      */
     public Packet(final UUID uuid, final boolean alsoSendToSelf, final boolean urgent, final short timeToLive, final short packetAge, final Cast cast, final byte[] checksum, final byte[] signature, final Object message, final String messageType)
     {
-	this.uuid           = uuid;
-	this.alsoSendToSelf = alsoSendToSelf;
-	this.urgent         = urgent;
-	this.timeToLive     = timeToLive;
-	this.packetAge      = packetAge;
-	this.cast           = cast;
-	this.checksum       = checksum;
-	this.signature      = signature;
-	this.message        = message;
-	this.messageType    = messageType;
+        this.uuid           = uuid;
+        this.alsoSendToSelf = alsoSendToSelf;
+        this.urgent         = urgent;
+        this.timeToLive     = timeToLive;
+        this.packetAge      = packetAge;
+        this.cast           = cast;
+        this.checksum       = checksum;
+        this.signature      = signature;
+        this.message        = message;
+        this.messageType    = messageType;
     }
     
     
@@ -118,63 +118,63 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
      */
     public static class PacketTransferProtocol implements TransferProtocol<Packet>
     {
-	//Has default constructor
-	
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public Packet read(final TransferInputStream stream) throws IOException
-	{
-	    final UUID uuid = stream.readObject(UUID.class);
-	    final short ttl = stream.readShort();
-	    final short age = stream.readShort();
-	    byte bools = stream.readByte();
-	    final boolean alsoSendToSelf = (bools & 1) != 0;
-	    final boolean urgent = (bools & 2) != 0;
-	    Class<? extends Cast> castClass = null;
-	    if      ((bools & 12) == 0)  castClass = Anycast.class;
-	    else if ((bools & 12) == 4)  castClass = Unicast.class;
-	    else if ((bools & 12) == 8)  castClass = Multicast.class;
-	    else                         castClass = Broadcast.class;
-	    final Cast cast = stream.readObject(castClass);
-	    final byte[] checksum = stream.readObject(byte[].class);
-	    final byte[] signature = stream.readObject(byte[].class);
-	    final String msgType = stream.readObject(String.class);
-	    
-	    final Class<?> msgClass = TransferProtocolRegister.getClassByID(msgType);
-	    if ((msgClass != null) && (msgClass.isArray() == false))
-		stream.readLen(); //skipping
-	    final Object msg = stream.readObject(msgClass == null ? byte[].class : msgClass);
-	    
-	    return new Packet(uuid, alsoSendToSelf, urgent, ttl, age, cast, checksum, signature, msg, msgType);
-	}
+        //Has default constructor
+        
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Packet read(final TransferInputStream stream) throws IOException
+        {
+            final UUID uuid = stream.readObject(UUID.class);
+            final short ttl = stream.readShort();
+            final short age = stream.readShort();
+            byte bools = stream.readByte();
+            final boolean alsoSendToSelf = (bools & 1) != 0;
+            final boolean urgent = (bools & 2) != 0;
+            Class<? extends Cast> castClass = null;
+            if      ((bools & 12) == 0)  castClass = Anycast.class;
+            else if ((bools & 12) == 4)  castClass = Unicast.class;
+            else if ((bools & 12) == 8)  castClass = Multicast.class;
+            else                         castClass = Broadcast.class;
+            final Cast cast = stream.readObject(castClass);
+            final byte[] checksum = stream.readObject(byte[].class);
+            final byte[] signature = stream.readObject(byte[].class);
+            final String msgType = stream.readObject(String.class);
+            
+            final Class<?> msgClass = TransferProtocolRegister.getClassByID(msgType);
+            if ((msgClass != null) && (msgClass.isArray() == false))
+                stream.readLen(); //skipping
+            final Object msg = stream.readObject(msgClass == null ? byte[].class : msgClass);
+            
+            return new Packet(uuid, alsoSendToSelf, urgent, ttl, age, cast, checksum, signature, msg, msgType);
+        }
     
     
-	/**
-	 * {@inheritDoc}
-	 */
-	public void write(final Packet data, final TransferOutputStream stream) throws IOException
-	{
-	    stream.writeObject(data.uuid);
-	    stream.writeShort(data.timeToLive);
-	    stream.writeShort(data.packetAge);
-	    byte bools = 0;
-	    bools |= data.alsoSendToSelf ? 1 : 0;
-	    bools |= data.urgent ? 2 : 0;
-	    bools |= (data.cast instanceof Unicast) ? 4 : 0;
-	    bools |= (data.cast instanceof Multicast) ? 8 : 0;
-	    bools |= (data.cast instanceof Broadcast) ? 12 : 0;
-	    stream.writeByte(bools);
-	    stream.writeObject(data.cast);
-	    stream.writeObject(data.checksum);
-	    stream.writeObject(data.signature);
-	    stream.writeObject(data.messageType);
-	    if (data.message.getClass().isArray() == false)
-		stream.writeLenOf(data.message);
-	    stream.writeObject(data.message);
-	}
+        /**
+         * {@inheritDoc}
+         */
+        public void write(final Packet data, final TransferOutputStream stream) throws IOException
+        {
+            stream.writeObject(data.uuid);
+            stream.writeShort(data.timeToLive);
+            stream.writeShort(data.packetAge);
+            byte bools = 0;
+            bools |= data.alsoSendToSelf ? 1 : 0;
+            bools |= data.urgent ? 2 : 0;
+            bools |= (data.cast instanceof Unicast) ? 4 : 0;
+            bools |= (data.cast instanceof Multicast) ? 8 : 0;
+            bools |= (data.cast instanceof Broadcast) ? 12 : 0;
+            stream.writeByte(bools);
+            stream.writeObject(data.cast);
+            stream.writeObject(data.checksum);
+            stream.writeObject(data.signature);
+            stream.writeObject(data.messageType);
+            if (data.message.getClass().isArray() == false)
+                stream.writeLenOf(data.message);
+            stream.writeObject(data.message);
+        }
     
     }
     
@@ -185,13 +185,13 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
      */
     public boolean equals(final Object other)
     {
-	if ((other == null) || (other instanceof Packet == false))
-	    return false;
-	
-	if (other == this)
-	    return true;
-	
-	return this.uuid.equals(((Packet)other).uuid);
+        if ((other == null) || (other instanceof Packet == false))
+            return false;
+        
+        if (other == this)
+            return true;
+        
+        return this.uuid.equals(((Packet)other).uuid);
     }
     
     

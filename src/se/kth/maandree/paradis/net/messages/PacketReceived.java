@@ -34,7 +34,7 @@ public class PacketReceived implements Blackboard.BlackboardMessage
      */
     public PacketReceived(final Packet packet)
     {
-	this.packet = packet;
+        this.packet = packet;
     }
     
     

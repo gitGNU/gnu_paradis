@@ -32,7 +32,7 @@ class LengthCalculatingStream extends TransferOutputStream
      */
     public LengthCalculatingStream()
     {
-	super(null);
+        super(null);
     }
     
     
@@ -101,32 +101,32 @@ class LengthCalculatingStream extends TransferOutputStream
      */
     public synchronized void writeWChar(final int data) throws IOException
     {
-	if (data < 0x80)
+        if (data < 0x80)
             this.length++;
         else
-	{
-	    int m = 0x100;
-	    int d = data;
-	    int ptr = 0;
-	    int buf = 0;
-	    for (;;)
-	    {
-		m |= m >> 1;
-		buf = d & 63;
-		ptr++;
-		d >>>= 6;
-		if (d == 0)
-		{
-		    m >>= 1;
-		    if ((m & buf) != 0)
-			ptr++;
-		    break;
-		}
-	    }
-	    
-	    while (ptr > 0)
-		this.length++;
-	}
+        {
+            int m = 0x100;
+            int d = data;
+            int ptr = 0;
+            int buf = 0;
+            for (;;)
+            {
+                m |= m >> 1;
+                buf = d & 63;
+                ptr++;
+                d >>>= 6;
+                if (d == 0)
+                {
+                    m >>= 1;
+                    if ((m & buf) != 0)
+                        ptr++;
+                    break;
+                }
+            }
+            
+            while (ptr > 0)
+                this.length++;
+        }
     }
     
     
@@ -151,10 +151,10 @@ class LengthCalculatingStream extends TransferOutputStream
      */
     public synchronized void writeLen(final int data) throws IOException
     {
-	if ((data & 0x7FFF) != 0)
-	    writeShort((short)data);
-	else
-	    writeInt(~data);
+        if ((data & 0x7FFF) != 0)
+            writeShort((short)data);
+        else
+            writeInt(~data);
     }
     
     
@@ -182,9 +182,9 @@ class LengthCalculatingStream extends TransferOutputStream
      */
     public synchronized void writeLenOf(final Object data) throws IOException
     {
-	final int cur = this.length;
-	writeObject(data);
-	writeLen(this.length - cur);
+        final int cur = this.length;
+        writeObject(data);
+        writeLen(this.length - cur);
     }
     
     
@@ -197,16 +197,16 @@ class LengthCalculatingStream extends TransferOutputStream
      */
     public synchronized void writeObject(final Object data) throws IOException
     {
-	if (data instanceof Object[])
-	{
-	    int len;
-	    final Object[] array = (Object[])data;
-	    writeLen(len = array.length);
-	    for (int i = 0; i < len; i++)
-		writeObject(array[i]);
-	}
-	else
-	    TransferProtocolRegister.write(data, this);
+        if (data instanceof Object[])
+        {
+            int len;
+            final Object[] array = (Object[])data;
+            writeLen(len = array.length);
+            for (int i = 0; i < len; i++)
+                writeObject(array[i]);
+        }
+        else
+            TransferProtocolRegister.write(data, this);
     }
     
 }

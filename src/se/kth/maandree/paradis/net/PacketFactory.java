@@ -35,11 +35,11 @@ public class PacketFactory
      */
     public PacketFactory(final User localUser, final boolean alsoSendToSelf, final boolean urgent, final short timeToLive)
     {
-	this.localUser      = localUser;
-	this.alsoSendToSelf = alsoSendToSelf;
-	this.urgent         = urgent;
-	this.timeToLive     = timeToLive;
-	this.address        = localUser.getAddress();
+        this.localUser      = localUser;
+        this.alsoSendToSelf = alsoSendToSelf;
+        this.urgent         = urgent;
+        this.timeToLive     = timeToLive;
+        this.address        = localUser.getAddress();
     }
     
     

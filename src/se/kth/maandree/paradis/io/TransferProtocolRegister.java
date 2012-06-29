@@ -34,7 +34,7 @@ public class TransferProtocolRegister
      */
     private TransferProtocolRegister()
     {
-	assert false : "You may not create instances of this class [TransferProtocolRegister].";
+        assert false : "You may not create instances of this class [TransferProtocolRegister].";
     }
     
     
@@ -61,21 +61,21 @@ public class TransferProtocolRegister
      */
     static
     {
-	register(   String.class, new       StringTransferProtocol());
-	register(boolean[].class, new BooleanArrayTransferProtocol());
-	register(   byte[].class, new    ByteArrayTransferProtocol());
-	register(    int[].class, new     IntArrayTransferProtocol());
-	register(  short[].class, new   ShortArrayTransferProtocol());
-	register(   long[].class, new    LongArrayTransferProtocol());
-	register(   char[].class, new    CharArrayTransferProtocol());
-	
-	register(     UUID.class, new      UUID.     UUIDTransferProtocol());
-	register(  Anycast.class, new   Anycast.  AnycastTransferProtocol());
-	register(  Unicast.class, new   Unicast.  UnicastTransferProtocol());
-	register(Multicast.class, new Multicast.MulticastTransferProtocol());
-	register(Broadcast.class, new Broadcast.BroadcastTransferProtocol());
-	register(   Packet.class, new    Packet.   PacketTransferProtocol());
-	register(     User.class, new      User.     UserTransferProtocol());
+        register(   String.class, new       StringTransferProtocol());
+        register(boolean[].class, new BooleanArrayTransferProtocol());
+        register(   byte[].class, new    ByteArrayTransferProtocol());
+        register(    int[].class, new     IntArrayTransferProtocol());
+        register(  short[].class, new   ShortArrayTransferProtocol());
+        register(   long[].class, new    LongArrayTransferProtocol());
+        register(   char[].class, new    CharArrayTransferProtocol());
+        
+        register(     UUID.class, new      UUID.     UUIDTransferProtocol());
+        register(  Anycast.class, new   Anycast.  AnycastTransferProtocol());
+        register(  Unicast.class, new   Unicast.  UnicastTransferProtocol());
+        register(Multicast.class, new Multicast.MulticastTransferProtocol());
+        register(Broadcast.class, new Broadcast.BroadcastTransferProtocol());
+        register(   Packet.class, new    Packet.   PacketTransferProtocol());
+        register(     User.class, new      User.     UserTransferProtocol());
     }
     
     
@@ -88,7 +88,7 @@ public class TransferProtocolRegister
      */
     public static void register(final Class<?> objectClass, final String classID)
     {   synchronized (monitor)
-	{   classes.put(classID, objectClass);
+        {   classes.put(classID, objectClass);
     }   }
     
     
@@ -100,7 +100,7 @@ public class TransferProtocolRegister
      */
     public static Class<?> getClassByID(final String classID)
     {   synchronized (monitor)
-	{   return classes.get(classID);
+        {   return classes.get(classID);
     }   }
     
     
@@ -112,7 +112,7 @@ public class TransferProtocolRegister
      */
     public static <T> void register(final Class<T> objectClass, final TransferProtocol<T> protocol)
     {   synchronized (monitor)
-	{   protocols.put(objectClass, protocol);
+        {   protocols.put(objectClass, protocol);
     }   }
     
     
@@ -128,12 +128,12 @@ public class TransferProtocolRegister
     @SuppressWarnings("unchecked")
     static <T> T read(final Class<T> type, final TransferInputStream stream) throws IOException
     {
-	final TransferProtocol<T> protocol;
-	synchronized (monitor)
-	{   protocol = (TransferProtocol<T>)(protocols.get(type));
-	}
-	
-	return protocol.read(stream);
+        final TransferProtocol<T> protocol;
+        synchronized (monitor)
+        {   protocol = (TransferProtocol<T>)(protocols.get(type));
+        }
+        
+        return protocol.read(stream);
     }
     
     
@@ -148,12 +148,12 @@ public class TransferProtocolRegister
     @SuppressWarnings("unchecked")
     static <T> void write(final T data, final TransferOutputStream stream) throws IOException
     {
-	final TransferProtocol<T> protocol;
-	synchronized (monitor)
-	{   protocol = (TransferProtocol<T>)(protocols.get(data.getClass()));
-	}
-	
-	protocol.write(data, stream);
+        final TransferProtocol<T> protocol;
+        synchronized (monitor)
+        {   protocol = (TransferProtocol<T>)(protocols.get(data.getClass()));
+        }
+        
+        protocol.write(data, stream);
     }
     
 }

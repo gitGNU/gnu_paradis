@@ -36,8 +36,8 @@ public class Anycast implements Cast
      */
     public Anycast(final UUID sender, final String senderAddress)
     {
-	this.sender = sender;
-	this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
+        this.sender = sender;
+        this.senderAddress = senderAddress == null ? null : senderAddress.isEmpty() ? null : senderAddress;
     }
     
     
@@ -61,27 +61,27 @@ public class Anycast implements Cast
      */
     public static class AnycastTransferProtocol implements TransferProtocol<Anycast>
     {
-	//Has default constructor
-	
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public Anycast read(final TransferInputStream stream) throws IOException
-	{   return new Anycast(stream.readObject(UUID.class),
-			       stream.readObject(String.class));
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public void write(final Anycast data, final TransferOutputStream stream) throws IOException
-	{   stream.writeObject(data.sender);
-	    stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
-	}
-	
+        //Has default constructor
+        
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Anycast read(final TransferInputStream stream) throws IOException
+        {   return new Anycast(stream.readObject(UUID.class),
+                               stream.readObject(String.class));
+        }
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void write(final Anycast data, final TransferOutputStream stream) throws IOException
+        {   stream.writeObject(data.sender);
+            stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
+        }
+        
     }
     
     

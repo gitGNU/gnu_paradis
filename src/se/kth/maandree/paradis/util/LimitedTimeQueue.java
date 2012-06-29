@@ -31,7 +31,7 @@ public class LimitedTimeQueue<E> extends TimeQueue<E>
      */
     public LimitedTimeQueue()
     {
-	this(10_000, 10 * 60_000);
+        this(10_000, 10 * 60_000);
     }
     
     /**
@@ -42,8 +42,8 @@ public class LimitedTimeQueue<E> extends TimeQueue<E>
      */
     public LimitedTimeQueue(final int limit, final int age)
     {
-	super(age);
-	this.limit = limit;
+        super(age);
+        this.limit = limit;
     }
     
     
@@ -60,20 +60,20 @@ public class LimitedTimeQueue<E> extends TimeQueue<E>
      */
     public void offer(final E element)
     {
-	final long time = System.currentTimeMillis();
-	synchronized (this)
-	{
-	    if (this.elements.size() == limit)
-	    {
-		this.elements.pollFirst();
-		this.times.pollFirst();
-	    }
-	    
-	    this.elements.offerLast(element);
-	    this.times.offerLast(Long.valueOf(time));
-	    
-	    this.notifyAll();
-	}
+        final long time = System.currentTimeMillis();
+        synchronized (this)
+        {
+            if (this.elements.size() == limit)
+            {
+                this.elements.pollFirst();
+                this.times.pollFirst();
+            }
+            
+            this.elements.offerLast(element);
+            this.times.offerLast(Long.valueOf(time));
+            
+            this.notifyAll();
+        }
     }
     
 }

@@ -55,7 +55,7 @@ public class PluginHandler
      */
     private PluginHandler()
     {
-	assert false : "You may not create instances of this class [PluginHandler].";
+        assert false : "You may not create instances of this class [PluginHandler].";
     }
     
     
@@ -108,37 +108,37 @@ public class PluginHandler
     {
         boolean yes = activePlugins.contains(pluginInstances.get(plugin));
         if (yes == false)
-	{
+        {
             try
-	    {
-		String data = readFile(PLUGINS_FILE) + "\n";
-		StringBuilder buf = new StringBuilder();
-		String pluginClass = pluginFiles.get(plugin);
-		
-		loop:
-		    for (int i = 0, n = data.length(); i < n; i++)
-		    {
-			char chr = data.charAt(i);
-			switch (chr)
-		        {
-			    case '\n':
-				if (buf.toString().equals(pluginClass))
-				{   yes = true;
-				    break loop;
-				}
-				buf = new StringBuilder();
-				break;
-			    default:
-				buf.append(chr);
-				break;
-			}
-		    }
-	    }
+            {
+                String data = readFile(PLUGINS_FILE) + "\n";
+                StringBuilder buf = new StringBuilder();
+                String pluginClass = pluginFiles.get(plugin);
+                
+                loop:
+                    for (int i = 0, n = data.length(); i < n; i++)
+                    {
+                        char chr = data.charAt(i);
+                        switch (chr)
+                        {
+                            case '\n':
+                                if (buf.toString().equals(pluginClass))
+                                {   yes = true;
+                                    break loop;
+                                }
+                                buf = new StringBuilder();
+                                break;
+                            default:
+                                buf.append(chr);
+                                break;
+                        }
+                    }
+            }
             catch (final Throwable err)
-	    {
-		//TODO report error
-	    }
-	}
+            {
+                //TODO report error
+            }
+        }
         return yes;
     }
     
@@ -152,46 +152,46 @@ public class PluginHandler
     public static void setActive(final int plugin, final boolean active)
     {
         if (isActive(plugin) ^ active)
-	{
-	    if (active)  activePlugins.add   (pluginInstances.get(plugin));
-	    else         activePlugins.remove(pluginInstances.get(plugin));
-	    
-	    for (;;)
+        {
+            if (active)  activePlugins.add   (pluginInstances.get(plugin));
+            else         activePlugins.remove(pluginInstances.get(plugin));
+            
+            for (;;)
                 try
-		{
-		    String data = "";
-		    for (final PluginV1 p : activePlugins)
-		    {
-			int indexOf = pluginInstances.indexOf(p);
-			String pluginFile = pluginFiles.get(indexOf);
-			data += pluginFile + "\n";
-		    }
-		    
-		    if (data.length() > 0)
-			data = data.substring(0, data.length() - "\n".length());
-		    
-		    OutputStream os = null;
-		    try
-		    {   os = new BufferedOutputStream(new FileOutputStream(new File(PLUGINS_FILE)));
-			os.write(data.getBytes("UTF-8"));
-			os.flush();
-		    }
-		    finally
-		    {   if (os != null)
-			    try
-			    {    os.close();
-			    }
-			    catch (final Throwable ignore)
-			    {    //Ignore
-		    }       }
-		    
-		    break;
-		}
+                {
+                    String data = "";
+                    for (final PluginV1 p : activePlugins)
+                    {
+                        int indexOf = pluginInstances.indexOf(p);
+                        String pluginFile = pluginFiles.get(indexOf);
+                        data += pluginFile + "\n";
+                    }
+                    
+                    if (data.length() > 0)
+                        data = data.substring(0, data.length() - "\n".length());
+                    
+                    OutputStream os = null;
+                    try
+                    {   os = new BufferedOutputStream(new FileOutputStream(new File(PLUGINS_FILE)));
+                        os.write(data.getBytes("UTF-8"));
+                        os.flush();
+                    }
+                    finally
+                    {   if (os != null)
+                            try
+                            {    os.close();
+                            }
+                            catch (final Throwable ignore)
+                            {    //Ignore
+                    }       }
+                    
+                    break;
+                }
                 catch (final Throwable err)
-		{
-		    //TODO report error
-		}
-	}
+                {
+                    //TODO report error
+                }
+        }
     }
     
     
@@ -200,24 +200,24 @@ public class PluginHandler
      */
     public static void findPlugins()
     {
-	final String fs;
+        final String fs;
         final String dir = PLUGIN_DIR + (fs = Properties.getFileSeparator());
-	
+        
         String[] files = (new File(PLUGIN_DIR)).list();
         for (final String file : files)
             if (file.toLowerCase().endsWith(".jar"))
                 try
-		{
-		    String name = dir + file;
-		    name = name.substring(name.lastIndexOf(fs) + fs.length());
-		    name = name.substring(0, name.length() - ".jar".length());
-		    
-		    pluginInstances.add(getPluginInstance(name));
-		    pluginFiles.add(name);
-		}
+                {
+                    String name = dir + file;
+                    name = name.substring(name.lastIndexOf(fs) + fs.length());
+                    name = name.substring(0, name.length() - ".jar".length());
+                    
+                    pluginInstances.add(getPluginInstance(name));
+                    pluginFiles.add(name);
+                }
                 catch (final Exception err)
-		{   //Do nothing
-		}
+                {   //Do nothing
+                }
     }
     
     
@@ -230,25 +230,25 @@ public class PluginHandler
      */
     private static PluginV1 getPluginInstance(final String name) throws Exception
     {
-	final String dir = PLUGIN_DIR + Properties.getFileSeparator();
-	
-	String file = dir + name + ".jar";
-	URLClassLoader sysLoader = (URLClassLoader)(ClassLoader.getSystemClassLoader());
-	Class<URLClassLoader> sysclass = URLClassLoader.class;
-	
-	Method method = sysclass.getDeclaredMethod("addURL", URL.class);
-	method.setAccessible(true);
-	method.invoke(sysLoader, (new File(file)).toURI().toURL());
-	
-	String path = file;
-	URL url = (new File(path)).toURI().toURL();
-	
-	URLClassLoader klassLoader = new URLClassLoader(new URL[]{url});
-	
-	@SuppressWarnings("unchecked")
-	Class<PluginV1> klass = (Class<PluginV1>)(klassLoader.loadClass(name + "." + PLUGIN_CLASS_NAME));
-	
-	return klass.newInstance();
+        final String dir = PLUGIN_DIR + Properties.getFileSeparator();
+        
+        String file = dir + name + ".jar";
+        URLClassLoader sysLoader = (URLClassLoader)(ClassLoader.getSystemClassLoader());
+        Class<URLClassLoader> sysclass = URLClassLoader.class;
+        
+        Method method = sysclass.getDeclaredMethod("addURL", URL.class);
+        method.setAccessible(true);
+        method.invoke(sysLoader, (new File(file)).toURI().toURL());
+        
+        String path = file;
+        URL url = (new File(path)).toURI().toURL();
+        
+        URLClassLoader klassLoader = new URLClassLoader(new URL[]{url});
+        
+        @SuppressWarnings("unchecked")
+        Class<PluginV1> klass = (Class<PluginV1>)(klassLoader.loadClass(name + "." + PLUGIN_CLASS_NAME));
+        
+        return klass.newInstance();
     }
     
     
@@ -261,14 +261,14 @@ public class PluginHandler
     public static void startPlugins()
     {
         try
-	{   for (int i = 0, n = getPluginCount(); i < n; i++)
-		if (isActive(i))
-		    getPlugin(i).initialize();
-	}
+        {   for (int i = 0, n = getPluginCount(); i < n; i++)
+                if (isActive(i))
+                    getPlugin(i).initialize();
+        }
         catch (final Throwable err)
-	{
-	    //TODO report error
-	}
+        {
+            //TODO report error
+        }
     }
     
     
@@ -282,50 +282,50 @@ public class PluginHandler
      */
     private static String readFile(final String file) throws IOException
     {
-	final String text;
-	
-	InputStream is = null;
-	try
-	{
-	    is = new BufferedInputStream(new FileInputStream(new File(file)));
-	    
-	    final Vector<byte[]> bufs = new Vector<byte[]>();
-	    int size = 0;
-	    
-	    for (int av; (av = is.available()) > 0;)
-	    {
-		byte[] buf = new byte[av];
-		av = is.read(buf, 0, av);
-		if (av < buf.length)
-		{
-		    final byte[] nbuf = new byte[av];
-		    System.arraycopy(buf, 0, nbuf, 0, av);
-		    buf = nbuf;
-		}
-		size += av;
-		bufs.add(buf);
-	    }
-	    
-	    final byte[] full = new byte[size];
-	    int ptr = 0;
-	    for (final byte[] buf : bufs)
-	    {
-		System.arraycopy(buf, 0, full, ptr, buf.length);
-		ptr += buf.length;
-	    }
-	    
-	    text = new String(full, "UTF-8");
-	}
-	finally
-	{   if (is != null)
-		try
-		{   is.close();
-		}
-		catch (final Throwable ignore)
-		{   //Ignore
-	}	}
-	
-	return text;
+        final String text;
+        
+        InputStream is = null;
+        try
+        {
+            is = new BufferedInputStream(new FileInputStream(new File(file)));
+            
+            final Vector<byte[]> bufs = new Vector<byte[]>();
+            int size = 0;
+            
+            for (int av; (av = is.available()) > 0;)
+            {
+                byte[] buf = new byte[av];
+                av = is.read(buf, 0, av);
+                if (av < buf.length)
+                {
+                    final byte[] nbuf = new byte[av];
+                    System.arraycopy(buf, 0, nbuf, 0, av);
+                    buf = nbuf;
+                }
+                size += av;
+                bufs.add(buf);
+            }
+            
+            final byte[] full = new byte[size];
+            int ptr = 0;
+            for (final byte[] buf : bufs)
+            {
+                System.arraycopy(buf, 0, full, ptr, buf.length);
+                ptr += buf.length;
+            }
+            
+            text = new String(full, "UTF-8");
+        }
+        finally
+        {   if (is != null)
+                try
+                {   is.close();
+                }
+                catch (final Throwable ignore)
+                {   //Ignore
+        }       }
+        
+        return text;
     }
     
 }

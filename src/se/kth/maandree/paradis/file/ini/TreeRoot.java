@@ -45,7 +45,7 @@ class TreeRoot implements Serializable
     {
         this.removeOnRead = removeOnRead;
         this.ini = ini;
-	
+        
         final String[] hivenames = ini.getHives();
         for (int i = 0; i < hivenames.length; i++)
             if (getHive(hivenames[i]) == null)
@@ -90,7 +90,7 @@ class TreeRoot implements Serializable
         for (Hive hive : this.hives)
             if (hive.getName().toLowerCase().equals(name.toLowerCase()))
                 return hive;
-	
+        
         return null;
     }
     
@@ -118,7 +118,7 @@ class TreeRoot implements Serializable
     {
         if (getHive(hive) == null)
             newHive(hive).setHive(new String[0]);
-	
+        
         Hive foundHive = getHive(hive);
         if ((value != null) && (foundHive.getKey(key) == null))
             foundHive.newKey(key, value);
@@ -139,20 +139,20 @@ class TreeRoot implements Serializable
     {
         if ((key == null) || (hive == null))
             return null;
-	
+        
         Hive hHive = getHive(hive);
         if (hHive == null)
             return null;
-	
+        
         Key kKey = hHive.getKey(key);
         if (kKey == null)
             return null;
-	
+        
         final String rc = kKey.getValue();
-	
+        
         if (this.removeOnRead)
             hHive.keys.remove(kKey);
-	
+        
         return rc;
     }
     

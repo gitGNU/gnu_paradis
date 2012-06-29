@@ -35,7 +35,7 @@ public class Validator
      */
     private Validator()
     {
-	assert false : "You may not create instances of this class [Validator].";
+        assert false : "You may not create instances of this class [Validator].";
     }
     
     
@@ -58,26 +58,26 @@ public class Validator
             this.warnings   = warnings;
             this.errors     = errors;
         }
-	
-	
-	
+        
+        
+        
         /**
          * Suggested content
          */
         public final String suggestion;
-	
+        
         /**
          * Warnings
          */
         public final ArrayList<Warnings> warnings;
-	
+        
         /**
          * Errors
          */
         public final ArrayList<Errors> errors;
-	
-	
-	
+        
+        
+        
         /**
          * Possible Warnings
          */
@@ -87,33 +87,33 @@ public class Validator
              * Comment on key line
              */
             CommentedKey,
-	    
+            
             /**
              * Comment on hive line
              */
             CommentedHive,
-	    
+            
             /**
              * Two (or more) hive have same name
              */
             DuplicateHiveDefinition,
-	    
+            
             /**
              * Two (or more) key, in same hive name, have same name
              */
             DuplicateKeyDefinition,
-	    
+            
             /**
              * Escaped line break
              */
             EscapedLineBreak,
-	    
+            
             /**
              * Empty line, not all parsers support this
              */
             EmptyLine,
         }
-	
+        
         /**
          * Possible Errors
          */
@@ -123,22 +123,22 @@ public class Validator
              * Key missing value
              */
             UnvaluedKey,
-	    
+            
             /**
              * Key outside hive
              */
             UnhivedKey,
-	    
+            
             /**
              * Hive definition surrunded with spaces
              */
             HiveSurrounedWithSpaces,
-	    
+            
             /**
              * Unnamed hive
              */
             UnnamedHive,
-	    
+            
             /**
              * Unnamed key
              */
@@ -158,29 +158,29 @@ public class Validator
     {
         if (content == null)
             throw new NullPointerException();
-	
+        
         {
             HashMap<String, ArrayList<String>> hives = new HashMap<String, ArrayList<String>>();
-	    
+            
             ArrayList<ValidationResult.Warnings> warnings = new ArrayList<ValidationResult.Warnings>();
             ArrayList<ValidationResult.Errors>   errors   = new ArrayList<ValidationResult.Errors>();
-	    
+            
             fillLists(hives, warnings, errors, content);
-	    
+            
             String rc = "";
             {
                 if (hives.containsKey(""))
                     for (String line : hives.get(""))
                         rc += line + "\n";
-		
+                
                 String[] keys = hives.keySet().toArray(new String[0]);
                 if (keys != null)
                     for (String key : keys)
                     {
                         if (key.equals(""))  continue;
-			
+                        
                         ArrayList<String> defininedKeys = new ArrayList<String>();
-			
+                        
                         rc += key + "\n";
                         for (String line : hives.get(key))
                         {
@@ -204,7 +204,7 @@ public class Validator
                                     else
                                         value += chr;
                                 }
-				
+                                
                                 if (comment != null)
                                 {   warnings.add(ValidationResult.Warnings.CommentedKey);
                                     rc += comment + "\n";
@@ -228,16 +228,16 @@ public class Validator
                                         else
                                             keyname += chr;
                                     }
-				    
+                                    
                                     if (keyname.length() > 0)
                                     {   if (keyname.equals(value))
                                         {   errors.add(ValidationResult.Errors.UnvaluedKey);
                                             rc += ";";
                                         }
                                         else if (defininedKeys.contains(keyname.toUpperCase()))
-					    warnings.add(ValidationResult.Warnings.DuplicateKeyDefinition);
-					else
-					    defininedKeys.add(keyname.toUpperCase());
+                                            warnings.add(ValidationResult.Warnings.DuplicateKeyDefinition);
+                                        else
+                                            defininedKeys.add(keyname.toUpperCase());
                                         rc += value;
                                     }
                                     else
@@ -265,12 +265,12 @@ public class Validator
     {
         if (text == null)
             return null;
-	
+        
         String rc = text;
         {
             while (rc.startsWith(" ") || rc.startsWith("\t") || rc.startsWith("\r") || rc.startsWith("\n"))
                 rc = rc.substring(1, rc.length());
-	    
+            
             while (rc.endsWith(" ")   || rc.endsWith("\t")   || rc.endsWith("\r")   || rc.endsWith("\n"))
                 rc = rc.substring(0, rc.length() - 1);
         }
@@ -286,15 +286,15 @@ public class Validator
      * @param  content   The content
      */
     private static void fillLists(final HashMap<String, ArrayList<String>> hives,
-				  final ArrayList<ValidationResult.Warnings> warnings,
-				  final ArrayList<ValidationResult.Errors> errors,
-				  final String content)
+                                  final ArrayList<ValidationResult.Warnings> warnings,
+                                  final ArrayList<ValidationResult.Errors> errors,
+                                  final String content)
     {
         ArrayList<String> lines;
         {
             String str = content.replace("\r\n", "\n").replace("\r", "\n");
             lines = new ArrayList<String>();
-	    
+            
             String buf = "";
             boolean comment = false;
             for (int i = 0, n = str.length(); i < n; i++)
@@ -329,14 +329,14 @@ public class Validator
             }
             lines.add(buf);
         }
-	
+        
         String hive = null;
-	
+        
         for (String line : lines)
             if (trim(line).length() == 0)
-		warnings.add(ValidationResult.Warnings.EmptyLine);
+                warnings.add(ValidationResult.Warnings.EmptyLine);
             else if (trim(line).startsWith("["))
-		hive = hiveStart(hives, warnings, errors, line, hive);
+                hive = hiveStart(hives, warnings, errors, line, hive);
             else if (hive == null)
             {   if ((line.startsWith(";") || line.startsWith("#")) == false)
                 {   line = ";" + line;
@@ -370,8 +370,8 @@ public class Validator
                                     final ArrayList<ValidationResult.Errors> errors,
                                     final String line, final String hive)
     {
-	String _hive = hive; 
-	
+        String _hive = hive; 
+        
         boolean comments = false;
         for (int i = 0, n = line.length(); i < n; i++)
             if ((line.charAt(i) == ';') || (line.charAt(i) == '#'))
@@ -381,28 +381,28 @@ public class Validator
             }
             else if (line.charAt(i) == '\\')
                 i++;
-	
+        
         if (comments)
             if (trim(line).endsWith("]"))
             {   if (trim(line).equals(line) == false)
                     errors.add(ValidationResult.Errors.HiveSurrounedWithSpaces);
-		
+                
                 if (hives.containsKey(trim(line).toUpperCase()))
                     warnings.add(ValidationResult.Warnings.DuplicateHiveDefinition);
                 else
                     hives.put(trim(line).toUpperCase(), new ArrayList<String>());
-		
+                
                 _hive = trim(line).toUpperCase();
-		
+                
                 if (_hive.equals("[]"))
                     errors.add(ValidationResult.Errors.UnnamedHive);
             }
             else if (_hive == null)
             {   errors.add(ValidationResult.Errors.UnhivedKey);
-		
+                
                 if (hives.containsKey("") == false)
                     hives.put("", new ArrayList<String>());
-		
+                
                 ArrayList<String> array = hives.get("");
                 array.add(";" + line);
             }
@@ -420,15 +420,15 @@ public class Validator
                 {   comment = line.substring(i, n);
                     break;
                 }
-		
+                
                 valued += line.charAt(i);
-		
+                
                 if (line.charAt(i) == '\\')
                 {   i++;
                     valued += line.charAt(i);
                 }
             }
-	    
+            
             {
                 if (hives.containsKey(_hive == null ? "" : _hive) == false)
                     hives.put(_hive == null ? "" : _hive, new ArrayList<String>());
@@ -436,38 +436,38 @@ public class Validator
                 ArrayList<String> array = hives.get(_hive == null ? "" : _hive);
                 array.add(comment);
             }
-	    
+            
             if (trim(valued).endsWith("]"))
             {
                 warnings.add(ValidationResult.Warnings.CommentedHive);
-		
+                
                 if (trim(valued).equals(valued) == false)
                     errors.add(ValidationResult.Errors.HiveSurrounedWithSpaces);
-		
+                
                 if (hives.containsKey(trim(valued).toUpperCase()))
                     warnings.add(ValidationResult.Warnings.DuplicateHiveDefinition);
                 else
                     hives.put(trim(valued).toUpperCase(), new ArrayList<String>());
-		
+                
                 _hive = trim(valued).toUpperCase();
-		
+                
                 if (_hive.equals("[]"))
                     errors.add(ValidationResult.Errors.UnnamedHive);
             }
             else if (_hive == null)
             {
                 errors.add(ValidationResult.Errors.UnhivedKey);
-		
+                
                 if (hives.containsKey("") == false)
                     hives.put("", new ArrayList<String>());
-		
+                
                 ArrayList<String> array = hives.get("");
                 array.add(";" + valued + comment);
             }
             else
             {
                 warnings.add(ValidationResult.Warnings.CommentedKey);
-		
+                
                 ArrayList<String> array = hives.get(_hive);
                 array.add(valued);
             }

@@ -34,7 +34,7 @@ public class JoinMulticastGroup implements Blackboard.BlackboardMessage
      */
     public JoinMulticastGroup(final UUID group)
     {
-	this.group = group;
+        this.group = group;
     }
     
     

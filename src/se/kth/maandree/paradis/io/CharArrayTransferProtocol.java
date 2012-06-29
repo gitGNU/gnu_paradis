@@ -36,11 +36,11 @@ class CharArrayTransferProtocol implements TransferProtocol<char[]>
      */
     public char[] read(final TransferInputStream stream) throws IOException
     {
-	final int len = stream.readLen();
-	final char[] rc = new char[len];
-	for (int i = 0; i < len; i++)
-	    rc[i] = (char)(stream.readShort());
-	return rc;
+        final int len = stream.readLen();
+        final char[] rc = new char[len];
+        for (int i = 0; i < len; i++)
+            rc[i] = (char)(stream.readShort());
+        return rc;
     }
     
     
@@ -49,9 +49,9 @@ class CharArrayTransferProtocol implements TransferProtocol<char[]>
      */
     public void write(final char[] data, final TransferOutputStream stream) throws IOException
     {
-	stream.writeLen(data.length);
-	for (int i = 0, n = data.length; i < n; i++)
-	    stream.writeShort((short)(data[i]));
+        stream.writeLen(data.length);
+        for (int i = 0, n = data.length; i < n; i++)
+            stream.writeShort((short)(data[i]));
     }
     
 }

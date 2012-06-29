@@ -36,11 +36,11 @@ class ByteArrayTransferProtocol implements TransferProtocol<byte[]>
      */
     public byte[] read(final TransferInputStream stream) throws IOException
     {
-	final int len = stream.readLen();
-	final byte[] rc = new byte[len];
-	for (int i = 0; i < len; i++)
-	    rc[i] = stream.readByte();
-	return rc;
+        final int len = stream.readLen();
+        final byte[] rc = new byte[len];
+        for (int i = 0; i < len; i++)
+            rc[i] = stream.readByte();
+        return rc;
     }
     
     
@@ -49,9 +49,9 @@ class ByteArrayTransferProtocol implements TransferProtocol<byte[]>
      */
     public void write(final byte[] data, final TransferOutputStream stream) throws IOException
     {
-	stream.writeLen(data.length);
-	for (int i = 0, n = data.length; i < n; i++)
-	    stream.writeByte(data[i]);
+        stream.writeLen(data.length);
+        for (int i = 0, n = data.length; i < n; i++)
+            stream.writeByte(data[i]);
     }
     
 }

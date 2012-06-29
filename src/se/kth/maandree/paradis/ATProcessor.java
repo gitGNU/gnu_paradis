@@ -44,115 +44,115 @@ public class ATProcessor extends AbstractProcessor
     @Override
     public boolean process(Set<? extends TypeElement> typeElements, RoundEnvironment roundEnv)
     {
-	final ArrayList<String> reqs = new ArrayList<String>();
-	
-	System.out.print("\033[1;30m");
+        final ArrayList<String> reqs = new ArrayList<String>();
+        
+        System.out.print("\033[1;30m");
         checkElements(roundEnv.getRootElements(), reqs);
-	System.out.print("\033[21;39m");
-	
-	if (reqs.isEmpty() == false)
-	{
-	    int cnames = 0;
-	    final String[] names = new String[reqs.size()];
-	    final HashSet<String> name = new HashSet<String>();
-	    final HashMap<String, String> low = new HashMap<String, String>();
-	    final HashMap<String, String> high = new HashMap<String, String>();
-	    
-	    for (final String req : reqs)
-	    {
-		String r = req;
-		r = r.replace("=<", "<");
-		r = r.replace("<=", "<");
-		r = r.replace(">=", ">");
-		r = r.replace("=>", ">");
-		
-		String p = r;
-		p = p.replace("<", "\0<\0");
-		p = p.replace("=", "\0>\0"); //yes, >
-		p = p.replace(">", "\0>\0");
-		
-		final String[] parts = p.split("\0");
-		if (name.contains(parts[parts.length == 5 ? 3 : 0]) == false)
-		    name.add(names[cnames++] = parts[parts.length == 5 ? 3 : 0]);
-		
-		String nhigh = null;
-		String nlow = null;
-		
-		if (parts.length == 3)
-		{
-		    if (parts[1].equals(">"))
-			nlow = parts[2];
-		    else if (parts[1].equals("<"))
-			nhigh = parts[2];
-		    else
-		    {
-			System.out.println("\033[31mUnparsable: " + req + "\033[39m");
-			continue;
-		    }
-		}
-		else if (parts.length == 5)
-		{
-		    if (parts[1].equals(">"))
-			nhigh = parts[0];
-		    else if (parts[1].equals("<"))
-			nlow = parts[0];
-		    else
-		    {
-			System.out.println("\033[31mUnparsable: " + req + "\033[39m");
-			continue;
-		    }
-		    
-		    if (parts[3].equals(">"))
-			nlow = parts[4];
-		    else if (parts[3].equals("<"))
-			nhigh = parts[4];
-		    else
-		    {
-			System.out.println("\033[31mUnparsable: " + req + "\033[39m");
-			continue;
-		    }
-		    
-		    if ((nlow == null) || (nhigh == null) || isGreater(nlow, nhigh))
-		    {
-			nlow = nhigh = null;
-			System.out.println("\033[31mUnparsable: " + req + "\033[39m");
-			continue;
-		    }
-		}
-		else if (parts.length != 1)
-		{
-		    System.out.println("\033[31mUnparsable: " + req + "\033[39m");
-		    continue;
-		}
-		
-		if ((nlow != null) && isLess(nlow, low.get(parts[parts.length == 5 ? 3 : 0])))
-		    low.put(parts[parts.length == 5 ? 3 : 0], nlow);
-		
-		if ((nhigh != null) && isGreater(nhigh, high.get(parts[parts.length == 5 ? 3 : 0])))
-		    high.put(parts[parts.length == 5 ? 3 : 0], nhigh);
-	    }
-	    
-	    Arrays.sort(names, 0, cnames);
-	    
-	    System.out.println("\033[34mDependencies:");
-	    
-	    for (final String pkg : names)
-	    {
-		if (pkg == null)
-		    break;
-		
-		final String plow = low.get(pkg);
-		final String phigh = high.get(pkg);
-		
-		if ((plow != null) && (phigh != null))  System.out.println("  " + plow + " <= " + pkg + " <= " + phigh);
-		else if (plow != null)                  System.out.println("  " + pkg + " >= " + plow);
-		else if (phigh != null)                 System.out.println("  " + pkg + " <= " + phigh);
-		else                                    System.out.println("  " + pkg);
-	    }
-	    
-	    System.out.println("\033[39m");
-	}
-	
+        System.out.print("\033[21;39m");
+        
+        if (reqs.isEmpty() == false)
+        {
+            int cnames = 0;
+            final String[] names = new String[reqs.size()];
+            final HashSet<String> name = new HashSet<String>();
+            final HashMap<String, String> low = new HashMap<String, String>();
+            final HashMap<String, String> high = new HashMap<String, String>();
+            
+            for (final String req : reqs)
+            {
+                String r = req;
+                r = r.replace("=<", "<");
+                r = r.replace("<=", "<");
+                r = r.replace(">=", ">");
+                r = r.replace("=>", ">");
+                
+                String p = r;
+                p = p.replace("<", "\0<\0");
+                p = p.replace("=", "\0>\0"); //yes, >
+                p = p.replace(">", "\0>\0");
+                
+                final String[] parts = p.split("\0");
+                if (name.contains(parts[parts.length == 5 ? 3 : 0]) == false)
+                    name.add(names[cnames++] = parts[parts.length == 5 ? 3 : 0]);
+                
+                String nhigh = null;
+                String nlow = null;
+                
+                if (parts.length == 3)
+                {
+                    if (parts[1].equals(">"))
+                        nlow = parts[2];
+                    else if (parts[1].equals("<"))
+                        nhigh = parts[2];
+                    else
+                    {
+                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        continue;
+                    }
+                }
+                else if (parts.length == 5)
+                {
+                    if (parts[1].equals(">"))
+                        nhigh = parts[0];
+                    else if (parts[1].equals("<"))
+                        nlow = parts[0];
+                    else
+                    {
+                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        continue;
+                    }
+                    
+                    if (parts[3].equals(">"))
+                        nlow = parts[4];
+                    else if (parts[3].equals("<"))
+                        nhigh = parts[4];
+                    else
+                    {
+                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        continue;
+                    }
+                    
+                    if ((nlow == null) || (nhigh == null) || isGreater(nlow, nhigh))
+                    {
+                        nlow = nhigh = null;
+                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        continue;
+                    }
+                }
+                else if (parts.length != 1)
+                {
+                    System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                    continue;
+                }
+                
+                if ((nlow != null) && isLess(nlow, low.get(parts[parts.length == 5 ? 3 : 0])))
+                    low.put(parts[parts.length == 5 ? 3 : 0], nlow);
+                
+                if ((nhigh != null) && isGreater(nhigh, high.get(parts[parts.length == 5 ? 3 : 0])))
+                    high.put(parts[parts.length == 5 ? 3 : 0], nhigh);
+            }
+            
+            Arrays.sort(names, 0, cnames);
+            
+            System.out.println("\033[34mDependencies:");
+            
+            for (final String pkg : names)
+            {
+                if (pkg == null)
+                    break;
+                
+                final String plow = low.get(pkg);
+                final String phigh = high.get(pkg);
+                
+                if ((plow != null) && (phigh != null))  System.out.println("  " + plow + " <= " + pkg + " <= " + phigh);
+                else if (plow != null)                  System.out.println("  " + pkg + " >= " + plow);
+                else if (phigh != null)                 System.out.println("  " + pkg + " <= " + phigh);
+                else                                    System.out.println("  " + pkg);
+            }
+            
+            System.out.println("\033[39m");
+        }
+        
         return true;
     }
     
@@ -165,81 +165,81 @@ public class ATProcessor extends AbstractProcessor
      */
     private boolean isGreater(final String a, final String b)
     {
-	if (b == null)
-	    return true;
-	
-	final String[] A, B;
-	
-	{
-	    final String x = a;
-	    final char[] cs = new char[x.length() << 1];
-	    int ptr = 0;
-	    char c = '1';
-	    for (int i = 0, n = x.length(); i < n; i++)
-	    {
-		if ((c != '.') && ((c < '0') || ('9' < c)))
-		    cs[ptr++] = '.';
-		
-		c = x.charAt(i);
-		
-		if ((c != '.') && ((c < '0') || ('9' < c)))
-		    cs[ptr++] = '.';
-		cs[ptr++] = c;
-	    }
-	    A = (new String(cs, 0, ptr)).split(".");
-	}
-	{
-	    final String x = b;
-	    final char[] cs = new char[x.length() << 1];
-	    int ptr = 0;
-	    char c = '1';
-	    for (int i = 0, n = x.length(); i < n; i++)
-	    {
-		if ((c != '.') && ((c < '0') || ('9' < c)))
-		    cs[ptr++] = '.';
-		
-		c = x.charAt(i);
-		
-		if ((c != '.') && ((c < '0') || ('9' < c)))
-		    cs[ptr++] = '.';
-	 	cs[ptr++] = c;
-	    }
-	    B = (new String(cs, 0, ptr)).split(".");
-	}
-	
-	for (int i = 0, n = A.length < B.length ? A.length : B.length; i < n; i++)
+        if (b == null)
+            return true;
+        
+        final String[] A, B;
+        
         {
-	    if (A[i].equals(B[i]))
-		continue;
-	    
-	    //Code by exception, it is not good, but I can't bother the check the names for the wanted methods
-	    try
-	    {
-		return Integer.parseInt(A[i]) > Integer.parseInt(B[i]);
-	    }
-	    catch (final Throwable err)
-	    {
-		try
-		{
-		    Integer.parseInt(A[i]);
-		}
-		catch (final Throwable ierr)
-		{
-		    return true;
-		}
-		try
-		{
-		    Integer.parseInt(B[i]);
-		}
-		catch (final Throwable ierr)
-		{
-		    return false;
-		}
-		return A[i].compareTo(B[i]) > 0;
-	    }
-	}
-	
-	return A.length > B.length;
+            final String x = a;
+            final char[] cs = new char[x.length() << 1];
+            int ptr = 0;
+            char c = '1';
+            for (int i = 0, n = x.length(); i < n; i++)
+            {
+                if ((c != '.') && ((c < '0') || ('9' < c)))
+                    cs[ptr++] = '.';
+                
+                c = x.charAt(i);
+                
+                if ((c != '.') && ((c < '0') || ('9' < c)))
+                    cs[ptr++] = '.';
+                cs[ptr++] = c;
+            }
+            A = (new String(cs, 0, ptr)).split(".");
+        }
+        {
+            final String x = b;
+            final char[] cs = new char[x.length() << 1];
+            int ptr = 0;
+            char c = '1';
+            for (int i = 0, n = x.length(); i < n; i++)
+            {
+                if ((c != '.') && ((c < '0') || ('9' < c)))
+                    cs[ptr++] = '.';
+                
+                c = x.charAt(i);
+                
+                if ((c != '.') && ((c < '0') || ('9' < c)))
+                    cs[ptr++] = '.';
+                cs[ptr++] = c;
+            }
+            B = (new String(cs, 0, ptr)).split(".");
+        }
+        
+        for (int i = 0, n = A.length < B.length ? A.length : B.length; i < n; i++)
+        {
+            if (A[i].equals(B[i]))
+                continue;
+            
+            //Code by exception, it is not good, but I can't bother the check the names for the wanted methods
+            try
+            {
+                return Integer.parseInt(A[i]) > Integer.parseInt(B[i]);
+            }
+            catch (final Throwable err)
+            {
+                try
+                {
+                    Integer.parseInt(A[i]);
+                }
+                catch (final Throwable ierr)
+                {
+                    return true;
+                }
+                try
+                {
+                    Integer.parseInt(B[i]);
+                }
+                catch (final Throwable ierr)
+                {
+                    return false;
+                }
+                return A[i].compareTo(B[i]) > 0;
+            }
+        }
+        
+        return A.length > B.length;
     }
     
     /**
@@ -251,9 +251,9 @@ public class ATProcessor extends AbstractProcessor
      */
     private boolean isLess(final String a, final String b)
     {
-	if (b == null)
-	    return true;
-	return isGreater(b, a);
+        if (b == null)
+            return true;
+        return isGreater(b, a);
     }
     
     /**
@@ -269,12 +269,12 @@ public class ATProcessor extends AbstractProcessor
             requires reqs = elem.getAnnotation(requires.class);
             if (reqs != null)
             {
-		System.out.println(elem + " requires:");
-		for (final String req : reqs.value())
-		{
-		    System.out.println("  " + req);
-		    reqout.add(req);
-		}
+                System.out.println(elem + " requires:");
+                for (final String req : reqs.value())
+                {
+                    System.out.println("  " + req);
+                    reqout.add(req);
+                }
             }
             checkElements(elem.getEnclosedElements(), elem + ".", reqout);
         }
@@ -294,17 +294,17 @@ public class ATProcessor extends AbstractProcessor
             requires reqs = elem.getAnnotation(requires.class);
             if (reqs != null)
             {
-		System.out.println(parent + elem + " requires:");
-		for (final String req : reqs.value())
-		{
-		    System.out.println("  " + req);
-		    reqout.add(req);
-		}
+                System.out.println(parent + elem + " requires:");
+                for (final String req : reqs.value())
+                {
+                    System.out.println("  " + req);
+                    reqout.add(req);
+                }
             }
-	    if (elem.getClass().toString().endsWith("$ClassSymbol"))
-		checkElements(elem.getEnclosedElements(), elem + ".", reqout);
-	    else
-		checkElements(elem.getEnclosedElements(), parent + elem + ".", reqout);
+            if (elem.getClass().toString().endsWith("$ClassSymbol"))
+                checkElements(elem.getEnclosedElements(), elem + ".", reqout);
+            else
+                checkElements(elem.getEnclosedElements(), parent + elem + ".", reqout);
         }
     }
 }

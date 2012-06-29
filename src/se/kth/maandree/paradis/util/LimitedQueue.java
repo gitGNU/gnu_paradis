@@ -34,7 +34,7 @@ public class LimitedQueue<E>
      */
     public LimitedQueue()
     {
-	this(10_000);
+        this(10_000);
     }
     
     /**
@@ -44,7 +44,7 @@ public class LimitedQueue<E>
      */
     public LimitedQueue(final int limit)
     {
-	this.limit = limit;
+        this.limit = limit;
     }
     
     
@@ -67,13 +67,13 @@ public class LimitedQueue<E>
      */
     public void offer(final E element)
     {
-	synchronized (this)
-	{
-	    if (this.elements.size() == limit)
-		this.elements.pollFirst();
-	    
-	    this.elements.offerLast(element);
-	}
+        synchronized (this)
+        {
+            if (this.elements.size() == limit)
+                this.elements.pollFirst();
+            
+            this.elements.offerLast(element);
+        }
     }
     
 }

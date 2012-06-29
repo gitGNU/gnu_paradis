@@ -34,7 +34,7 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public TransferOutputStream(final OutputStream next)
     {
-	super(new BufferedOutputStream(next));
+        super(new BufferedOutputStream(next));
     }
     
     
@@ -55,7 +55,7 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeBoolean(final boolean data) throws IOException
     {
-	this.write(data ? 1 : 0);
+        this.write(data ? 1 : 0);
     }
     
     
@@ -68,7 +68,7 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeByte(final byte data) throws IOException
     {
-	this.write((int)data & 255);
+        this.write((int)data & 255);
     }
     
     
@@ -81,8 +81,8 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeShort(final short data) throws IOException
     {
-	this.write((data >>> 8) & 255);
-	this.write(data & 255);
+        this.write((data >>> 8) & 255);
+        this.write(data & 255);
     }
     
     
@@ -95,7 +95,7 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeChar(final char data) throws IOException
     {
-	writeWChar((int)data);
+        writeWChar((int)data);
     }
     
     
@@ -108,32 +108,32 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeWChar(final int data) throws IOException
     {
-	if (data < 0x80)
+        if (data < 0x80)
             this.write(data);
         else
-	{
-	    int m = 0x100;
-	    int d = data;
-	    int ptr = 0;
-	    for (;;)
-	    {
-		m |= m >> 1;
-		this.wcharbuf[ptr++] = d & 63;
-		d >>>= 6;
-		if (d == 0)
-		{
-		    m >>= 1;
-		    if ((m & this.wcharbuf[ptr - 1]) == 0)
-			this.wcharbuf[ptr - 1] |= (m << 1) & 0xFF;
-		    else
-			this.wcharbuf[ptr++] = m;
-		    break;
-		}
-	    }
-	    
-	    while (ptr > 0)
-		this.write(this.wcharbuf[--ptr]);
-	}
+        {
+            int m = 0x100;
+            int d = data;
+            int ptr = 0;
+            for (;;)
+            {
+                m |= m >> 1;
+                this.wcharbuf[ptr++] = d & 63;
+                d >>>= 6;
+                if (d == 0)
+                {
+                    m >>= 1;
+                    if ((m & this.wcharbuf[ptr - 1]) == 0)
+                        this.wcharbuf[ptr - 1] |= (m << 1) & 0xFF;
+                    else
+                        this.wcharbuf[ptr++] = m;
+                    break;
+                }
+            }
+            
+            while (ptr > 0)
+                this.write(this.wcharbuf[--ptr]);
+        }
     }
     
     
@@ -146,10 +146,10 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeInt(final int data) throws IOException
     {
-	this.write((data >>> 24) & 255);
-	this.write((data >>> 16) & 255);
-	this.write((data >>> 8) & 255);
-	this.write(data & 255);
+        this.write((data >>> 24) & 255);
+        this.write((data >>> 16) & 255);
+        this.write((data >>> 8) & 255);
+        this.write(data & 255);
     }
     
     
@@ -162,10 +162,10 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeLen(final int data) throws IOException
     {
-	if ((data & 0x7FFF) != 0)
-	    writeShort((short)data);
-	else
-	    writeInt(~data);
+        if ((data & 0x7FFF) != 0)
+            writeShort((short)data);
+        else
+            writeInt(~data);
     }
     
     
@@ -178,14 +178,14 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeLong(final long data) throws IOException
     {
-	this.write((int)((data >>> 56) & 255));
-	this.write((int)((data >>> 48) & 255));
-	this.write((int)((data >>> 40) & 255));
-	this.write((int)((data >>> 32) & 255));
-	this.write((int)((data >>> 24) & 255));
-	this.write((int)((data >>> 16) & 255));
-	this.write((int)((data >>> 8) & 255));
-	this.write((int)(data & 255));
+        this.write((int)((data >>> 56) & 255));
+        this.write((int)((data >>> 48) & 255));
+        this.write((int)((data >>> 40) & 255));
+        this.write((int)((data >>> 32) & 255));
+        this.write((int)((data >>> 24) & 255));
+        this.write((int)((data >>> 16) & 255));
+        this.write((int)((data >>> 8) & 255));
+        this.write((int)(data & 255));
     }
     
     
@@ -201,9 +201,9 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeLenOf(final Object data) throws IOException
     {
-	final LengthCalculatingStream lcs = new LengthCalculatingStream();
-	lcs.writeObject(data);
-	writeLen(lcs.length);
+        final LengthCalculatingStream lcs = new LengthCalculatingStream();
+        lcs.writeObject(data);
+        writeLen(lcs.length);
     }
     
     
@@ -216,16 +216,16 @@ public class TransferOutputStream extends FilterOutputStream
      */
     public synchronized void writeObject(final Object data) throws IOException
     {
-	if (data instanceof Object[])
-	{
-	    int len;
-	    final Object[] array = (Object[])data;
-	    writeLen(len = array.length);
-	    for (int i = 0; i < len; i++)
-		writeObject(array[i]);
-	}
-	else
-	    TransferProtocolRegister.write(data, this);
+        if (data instanceof Object[])
+        {
+            int len;
+            final Object[] array = (Object[])data;
+            writeLen(len = array.length);
+            for (int i = 0; i < len; i++)
+                writeObject(array[i]);
+        }
+        else
+            TransferProtocolRegister.write(data, this);
     }
     
 }

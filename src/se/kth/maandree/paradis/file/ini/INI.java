@@ -69,9 +69,9 @@ public class INI implements INIInterface
         this.iniData.commentNotation = commentNotation.getValue();
         this.iniData.lastEntryOverrides = lastEntryOverrides;
         this.iniData.filetext = content;
-	
+        
         this.iniData.filename = filename;
-	
+        
         prefixText();
     }
     
@@ -107,7 +107,7 @@ public class INI implements INIInterface
     private INI(final INI orginal)
     {
         this.iniData = new INIData();
-	
+        
         this.iniData.keyEnding = orginal.iniData.keyEnding;
         this.iniData.commentNotation = orginal.iniData.commentNotation;
         this.iniData.lastEntryOverrides = orginal.iniData.lastEntryOverrides;
@@ -127,7 +127,7 @@ public class INI implements INIInterface
         /** * Default value, but unspaced "="    */ DEFAULT_UNSPACED ( "=" ),
         /** * An alternate value                 */ COLON            (" : "),
         /** * An alternate value missing spacing */ COLON_UNSPACED   ( ":" );
-	
+        
         
         
         /**
@@ -139,14 +139,14 @@ public class INI implements INIInterface
         {
             this.value = value;
         }
-	
+        
         
         
         /**
          * The value
          */
         private String value;
-	
+        
         
         
         /**
@@ -168,7 +168,7 @@ public class INI implements INIInterface
     {
         /** * The default value, semicolon ";" */ DEFAULT (";"),
         /** * An alternate value, square "#"   */ SQUARE  ("#");
-	
+        
         
         
         /**
@@ -180,14 +180,14 @@ public class INI implements INIInterface
         {
             this.value = value;
         }
-	
+        
         
         
         /**
          * The value
          */
         private String value;
-	
+        
         
         
         /**
@@ -199,7 +199,7 @@ public class INI implements INIInterface
         {
             return this.value;
         }
-	
+        
     }
     
     
@@ -228,12 +228,12 @@ public class INI implements INIInterface
         finally
         {
             if (objstream != null)
-		try
-		{   objstream.close();
-		}
-		catch (final Throwable ignore)
-		{   //ignore
-		}
+                try
+                {   objstream.close();
+                }
+                catch (final Throwable ignore)
+                {   //ignore
+                }
         }
     }
     
@@ -253,12 +253,12 @@ public class INI implements INIInterface
         finally
         {
             if (objstream != null)
-		try
-		{   objstream.close();
-		}
-		catch (final Throwable ignore)
-		{   //ignore
-		}
+                try
+                {   objstream.close();
+                }
+                catch (final Throwable ignore)
+                {   //ignore
+                }
         }
     }
     
@@ -281,12 +281,12 @@ public class INI implements INIInterface
         finally
         {
             if (objstream != null)
-		try
-		{   objstream.close();
-		}
-		catch (final Throwable ignore)
-		{   //ignore
-		}
+                try
+                {   objstream.close();
+                }
+                catch (final Throwable ignore)
+                {   //ignore
+                }
         }
     }
     
@@ -498,19 +498,19 @@ public class INI implements INIInterface
         String ehive = hive;
         if (escape)
             ehive = Escaper.escape(ehive);
-	
+        
         String text = this.iniData.filetext;
-	
+        
         String tmp0 = LINE_ENDING + text.toUpperCase() + LINE_ENDING;
         String tmp1 = LINE_ENDING + HIVE_START + ehive.toUpperCase() + HIVE_END + LINE_ENDING;
-	
+        
         if (tmp0.replace(tmp1, "").equals(tmp0)) // if (Hive does not exist)
         {
             text += (text.length() > 0 ? LINE_ENDING : "") + HIVE_START + ehive.toUpperCase() + HIVE_END; //Add the hive if it not exists.
             if (this.iniData.treeRoot != null)
             this.iniData.treeRoot.newHive(Escaper.unescape(ehive.toUpperCase()));
         }
-	
+        
         this.iniData.filetext = text;
     }
     
@@ -534,7 +534,7 @@ public class INI implements INIInterface
             if (evalue != null)
                 evalue = Escaper.escape(evalue);
         }
-	
+        
         if (evalue != null)
         {
             if (getKeyValue(ehive, ekey, false) == null)
@@ -542,7 +542,7 @@ public class INI implements INIInterface
                 createHive(ehive, false);   //Creates the hive if it not exists.
                 String text = this.iniData.filetext;
                 String[] lines = split(text, LINE_ENDING);
-		
+                
                 text = "";
                 for (int index = 0; index < lines.length; index++)
                 {
@@ -551,16 +551,16 @@ public class INI implements INIInterface
                         text += ekey + this.iniData.keyEnding + evalue + LINE_ENDING;   //Adds the key.
                 }
                 text = text.substring(0, text.length() - LINE_ENDING.length());  //Removes the extra line.
-		
+                
                 this.iniData.filetext = text;    //Stores the ini-data.
             }
-	    
+            
             else if (getKeyValue(ehive, ekey, false).equals(evalue) == false)
             {
                 String text = this.iniData.filetext; //Reads the ini-file.
                 String[] lines = split(text, LINE_ENDING);  //Gets the ini-file's lines.
                 boolean inside = false;
-		
+                
                 text = "";
                 for (int i = 0; i < lines.length; i++)
                     if (lines[i].toLowerCase().equals(HIVE_START + ehive.toLowerCase() + HIVE_END))
@@ -582,7 +582,7 @@ public class INI implements INIInterface
                         text += lines[i] + LINE_ENDING;    //Stores the line into the memory
                     }
                 text = text.substring(0, text.length() - LINE_ENDING.length());  //Removes the extra line.
-		
+                
                 this.iniData.filetext = text;    //Stores the ini-data.
             }
         }
@@ -591,7 +591,7 @@ public class INI implements INIInterface
             String text = this.iniData.filetext; //Reads the ini-file.
             String[] lines = split(text, LINE_ENDING);  //Gets the ini-file's lines.
             boolean inside = false;
-	    
+            
             text = "";
             for (int i = 0; i < lines.length; i++)
             {
@@ -612,11 +612,11 @@ public class INI implements INIInterface
                 //else: delete the key
             }
             text = text.substring(0, text.length() - LINE_ENDING.length());  //Removes the extra line.
-	    
+            
             this.iniData.filetext = text;    //Stores the ini-data.
         }
-	
-	
+        
+        
         if (this.iniData.treeRoot != null)
             this.iniData.treeRoot.createKey(hive, key, value);
     }
@@ -631,17 +631,17 @@ public class INI implements INIInterface
         {
             String[] lines = split(this.iniData.filetext, LINE_ENDING);
             String text = "";
-	    
+            
             for (int index = 0; index < lines.length; index++)
                 if (lines[index].startsWith(HIVE_START) & lines[index].endsWith(HIVE_END))
                     text += lines[index].substring(HIVE_START.length(), lines[index].length() - HIVE_END.length()) + LINE_ENDING; //Stores the hive name.
-	    
+            
             if (text.isEmpty())
                 return new String[0];
-	    
+            
             return Escaper.unescape(split(text.substring(0, text.length() - LINE_ENDING.length()), LINE_ENDING));  //Returns all hives.
         }
-	
+        
         return new String[0];
     }
     
@@ -657,19 +657,19 @@ public class INI implements INIInterface
         String ehive = hive;
         if (escape)
             ehive = Escaper.escape(ehive);
-	
+        
         if (this.iniData.filetext.length() > 0)    //True if the ini-file exists.
         {
             String[] lines = split(this.iniData.filetext, LINE_ENDING); 
             String text = "";
             boolean inside = false;
-	    
+            
             int startLine = 0;
             if (this.iniData.lastEntryOverrides)
                 for (int index = startLine; index < lines.length; index++) 
                     if (lines[index].toLowerCase().equals(HIVE_START + ehive.toLowerCase() + HIVE_END))   //True if currect hive.
                         startLine = index;
-	    
+            
             for (int index = startLine; index < lines.length; index++)
                 if (lines[index].toLowerCase().equals(HIVE_START + ehive.toLowerCase() + HIVE_END))   //True if currect hive.
                     inside = true;
@@ -677,13 +677,13 @@ public class INI implements INIInterface
                     inside = false;
                 else if (inside && !(lines[index].startsWith(this.iniData.commentNotation)))
                     text += lines[index] + LINE_ENDING;
-	    
+            
             if (text.length() == 0)
                 return new String[0];   //Returns zero strings if the ini-file is empty.
             
             return split(text.substring(0, text.length() - LINE_ENDING.length()), LINE_ENDING);  //Returns all keys.
         }
-	
+        
         return new String[0];   //Returns zero strings if the ini-file not exists.
     }
     
@@ -699,12 +699,12 @@ public class INI implements INIInterface
         String ehive = hive;
         if (escape)
             ehive = Escaper.escape(ehive);
-	
+        
         if (this.iniData.filetext.length() > 0)
         {
             String[] lines = getHiveKeys(ehive, false);
             String text = "";
-	    
+            
             for (int index = 0; index < lines.length; index++) 
                 if ((lines[index].length() > 0) && !(lines[index].startsWith(this.iniData.commentNotation)))
                 {
@@ -712,10 +712,10 @@ public class INI implements INIInterface
                     len = (len < 0) ? lines[index].length() : len;
                     text += lines[index].substring(0, len) + LINE_ENDING;
                 }
-	    
+            
             if (text.length() > 0)
                 return new String[0];   //Returns zero strings if the ini-file is empty.
-	    
+            
             return Escaper.unescape(split(text.substring(0, text.length() - LINE_ENDING.length()), LINE_ENDING));  //Returns all keys.
         }
         return new String[0];   //Returns zero strings if the ini-file not exists.
@@ -737,12 +737,12 @@ public class INI implements INIInterface
             uhive = Escaper.unescape(uhive);
             ukey = Escaper.unescape(ukey);
         }
-	
+        
         String rc = null;
         
         if (this.iniData.treeRoot != null)
             rc = this.iniData.treeRoot.getKey(uhive, ukey);
-	
+        
         if (rc == null)
             rc = getKeyValue(getHiveKeys(hive, escape), key, escape);
         
@@ -762,9 +762,9 @@ public class INI implements INIInterface
         String ekey = key;
         if (escape)
             ekey = Escaper.escape(ekey);
-	
+        
         String rc = null;   //Sets 'null' as value if the key don't exists.
-	
+        
         for (int index = 0; index < hiveKeys.length; index++)
             if (hiveKeys[index].toLowerCase().startsWith(ekey.toLowerCase() + this.iniData.keyEnding))
             {
@@ -772,7 +772,7 @@ public class INI implements INIInterface
                 if ((this.iniData.lastEntryOverrides) == false)
                     break;
             }
-	
+        
         return Escaper.unescape(rc);
     }
     

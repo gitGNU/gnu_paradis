@@ -34,13 +34,13 @@ public class UUID implements Comparable<UUID>
      */
     public UUID()
     {
-	final long _high = System.nanoTime();
-	final long _lowhigh = (long)(System.getProperty("user.name").hashCode()) << 32L;
-	final long _lowmid = (long)(counter++) << 24L;
-	final long _lowlow = (long)(random.nextInt() >>> 8);
-	
-	this.high = _high;
-	this.low = _lowhigh | _lowmid | _lowlow;
+        final long _high = System.nanoTime();
+        final long _lowhigh = (long)(System.getProperty("user.name").hashCode()) << 32L;
+        final long _lowmid = (long)(counter++) << 24L;
+        final long _lowlow = (long)(random.nextInt() >>> 8);
+        
+        this.high = _high;
+        this.low = _lowhigh | _lowmid | _lowlow;
     }
     
     /**
@@ -51,9 +51,9 @@ public class UUID implements Comparable<UUID>
      */
     protected UUID(final long high, final long low)
     {
-	this.high = high;
-	this.low = low;
-	counter++;
+        this.high = high;
+        this.low = low;
+        counter++;
     }
     
     
@@ -87,25 +87,25 @@ public class UUID implements Comparable<UUID>
      */
     public static class UUIDTransferProtocol implements TransferProtocol<UUID>
     {
-	//Has default constructor
-	
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public UUID read(final TransferInputStream stream) throws IOException
-	{   return new UUID(stream.readLong(), stream.readLong());
-	}
+        //Has default constructor
+        
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public UUID read(final TransferInputStream stream) throws IOException
+        {   return new UUID(stream.readLong(), stream.readLong());
+        }
     
     
-	/**
-	 * {@inheritDoc}
-	 */
-	public void write(final UUID data, final TransferOutputStream stream) throws IOException
-	{   stream.writeLong(data.high);
-	    stream.writeLong(data.low);
-	}
+        /**
+         * {@inheritDoc}
+         */
+        public void write(final UUID data, final TransferOutputStream stream) throws IOException
+        {   stream.writeLong(data.high);
+            stream.writeLong(data.low);
+        }
     
     }
     
@@ -117,13 +117,13 @@ public class UUID implements Comparable<UUID>
      */
     public boolean equals(final Object other)
     {
-	if ((other == null) || (other instanceof UUID == false))
-	    return false;
-	
-	if (other == this)
-	    return true;
-	
-	return (this.high == ((UUID)other).high) && (this.low == ((UUID)other).low);
+        if ((other == null) || (other instanceof UUID == false))
+            return false;
+        
+        if (other == this)
+            return true;
+        
+        return (this.high == ((UUID)other).high) && (this.low == ((UUID)other).low);
     }
     
     
@@ -132,9 +132,9 @@ public class UUID implements Comparable<UUID>
      */
     public int hashCode()
     {
-	long par = this.high ^ this.low;
-	par ^= par >> 32L;
-	return (int)par;
+        long par = this.high ^ this.low;
+        par ^= par >> 32L;
+        return (int)par;
     }
     
     
@@ -143,10 +143,10 @@ public class UUID implements Comparable<UUID>
      */
     public int compareTo(final UUID other)
     {
-	if (this.high == other.high)
-	    return this.low < other.low ? -1 : this.low > other.low ? 1 : 0;
-	
-	return this.high < other.high ? -1 : this.high > other.high ? 1 : 0;
+        if (this.high == other.high)
+            return this.low < other.low ? -1 : this.low > other.low ? 1 : 0;
+        
+        return this.high < other.high ? -1 : this.high > other.high ? 1 : 0;
     }
     
     
@@ -155,16 +155,16 @@ public class UUID implements Comparable<UUID>
      */
     public String toString()
     {
-	String rc0 = "0000000" + Long.toString(this.high >> 32L, 16);
-	String rc1 = "0000000" + Long.toString(this.high, 16);
-	String rc2 = "0000000" + Long.toString(this.low >> 32L, 16);
-	String rc3 = "0000000" + Long.toString(this.low, 16);
-	rc0 = rc0.substring(rc0.length() - 8);
-	rc1 = rc1.substring(rc1.length() - 8);
-	rc2 = rc2.substring(rc2.length() - 8);
-	rc3 = rc3.substring(rc3.length() - 8);
-	
-	return rc0 + "-" + rc1.substring(0, 4) + "-" + rc1.substring(4) + "-" + rc2.substring(0, 4) + "-" + rc2.substring(4) + rc3;
+        String rc0 = "0000000" + Long.toString(this.high >> 32L, 16);
+        String rc1 = "0000000" + Long.toString(this.high, 16);
+        String rc2 = "0000000" + Long.toString(this.low >> 32L, 16);
+        String rc3 = "0000000" + Long.toString(this.low, 16);
+        rc0 = rc0.substring(rc0.length() - 8);
+        rc1 = rc1.substring(rc1.length() - 8);
+        rc2 = rc2.substring(rc2.length() - 8);
+        rc3 = rc3.substring(rc3.length() - 8);
+        
+        return rc0 + "-" + rc1.substring(0, 4) + "-" + rc1.substring(4) + "-" + rc2.substring(0, 4) + "-" + rc2.substring(4) + rc3;
     }
     
 }
