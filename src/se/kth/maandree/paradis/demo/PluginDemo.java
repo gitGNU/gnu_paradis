@@ -57,9 +57,9 @@ public class PluginDemo
 		else if (line.startsWith("active "))
 		    System.out.println(PluginHandler.isActive(Integer.parseInt(line.substring("active ".length()))));
 		else if (line.startsWith("activate "))
-		    PluginHandler.setActive(Integer.parseInt(line.substring("active ".length())), true);
+		    PluginHandler.setActive(Integer.parseInt(line.substring("activate ".length())), true);
 		else if (line.startsWith("deactivate "))
-		    PluginHandler.setActive(Integer.parseInt(line.substring("active ".length())), false);
+		    PluginHandler.setActive(Integer.parseInt(line.substring("deactivate ".length())), false);
                 else if (line.equals("find"))
 		{
 		    final Vector<Integer> indices = PluginHandler.findPlugins();
