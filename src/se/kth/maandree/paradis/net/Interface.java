@@ -45,7 +45,12 @@ public class Interface implements Blackboard.BlackboardObserver
 	final Blackboard blackboard;
 	(blackboard = Blackboard.getInstance(null)).registerObserver(this);
 	
-	final Thread receiveThread = new Thread()
+	this.hub = new Hub(localPort, localUser);
+	
+	this.localPort = this.hub.localPort;
+	this.localUser = this.hub.localUser;
+	
+	final Thread receiveThread = new Thread("Network interface packet receiver")
 	        {
 		    /**
 		     * {@inheritDoc}
@@ -61,7 +66,7 @@ public class Interface implements Blackboard.BlackboardObserver
 	receiveThread.setDaemon(true);
 	receiveThread.start();
 	
-	final Thread connectionCacheThread = new Thread()
+	final Thread connectionCacheThread = new Thread("Network interface connection cache")
 	        {
 		    /**
 		     * {@inheritDoc}
@@ -76,6 +81,8 @@ public class Interface implements Blackboard.BlackboardObserver
 				synchronized (Interface.this.connectionCacheQueue)
 				{
 				    Interface.this.connectionCacheQueue.wait();
+				    if (Interface.this.closed)
+					break;
 				    int times = 0;
 				    for (;;)
 				    {
@@ -112,11 +119,6 @@ public class Interface implements Blackboard.BlackboardObserver
 	
 	connectionCacheThread.setDaemon(false);
 	connectionCacheThread.start();
-	
-	this.hub = new Hub(localPort, localUser);
-	
-	this.localPort = this.hub.localPort;
-	this.localUser = this.hub.localUser;
     }
     
     
@@ -158,7 +160,7 @@ public class Interface implements Blackboard.BlackboardObserver
      * 
      * @return  The next packet in the inbox
      */
-    private Packet receive()
+    Packet receive()
     {
 	final Packet packet = this.hub.receive();
 	final Cast cast = packet.cast;
@@ -174,13 +176,13 @@ public class Interface implements Blackboard.BlackboardObserver
 	System.err.println("Receiving packet from: " + address);
 	
 	if (address != null)
-	{   synchronized (connectionCacheQueue)
+	{   synchronized (this.connectionCacheQueue)
 	    {   final WrapperReference<String> ref = new WrapperReference<String>(address);
-		if (connectionCacheSet.containsKey(ref) == false)
-		{   connectionCacheSet.put(ref, null);
-		    connectionCacheQueue.offer(ref);
+		if (this.connectionCacheSet.containsKey(ref) == false)
+		{   this.connectionCacheSet.put(ref, null);
+		    this.connectionCacheQueue.offer(ref);
 		}
-		connectionCacheQueue.notifyAll();
+		this.connectionCacheQueue.notifyAll();
 	}   }
 	
 	if ((address != null) && (sender != null))
@@ -269,6 +271,9 @@ public class Interface implements Blackboard.BlackboardObserver
     {   this.hub.close();
 	Blackboard.getInstance(null).unregisterObserver(this);
 	this.closed = true;
+	synchronized (this.connectionCacheQueue)
+        {   this.connectionCacheQueue.notifyAll();
+	}
     }
     
     
