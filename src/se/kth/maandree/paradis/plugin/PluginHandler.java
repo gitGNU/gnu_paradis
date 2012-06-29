@@ -157,7 +157,7 @@ public class PluginHandler
     public static void setActive(final int plugin, final boolean active)
     {
 	if (activePlugins.contains(pluginInstances.get(plugin)) ^ active)
-            if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  pluginInstances.get(plugin).initialize();  }
+            if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  pluginInstances.get(plugin).initialise();  }
 	    else         {  activePlugins.remove(pluginInstances.get(plugin));  pluginInstances.get(plugin).terminate();   }
 	
         if (isActive(plugin) ^ active)

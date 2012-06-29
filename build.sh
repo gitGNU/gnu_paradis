@@ -15,16 +15,22 @@ if [ -d res ]; then
 fi
 
 
-## java compiler if default is for Java 7
+## java compiler and jar creator if default is for Java 7
 [[ $(javac -version 2>&1 | cut -d . -f 2) = '7' ]] &&
     function javacSeven()
     {   javac "$@"
+    } &&
+    function jarSeven()
+    {   jar "$@"
     }
 
-## java compiler if default is not for Java 7
+## java compiler and jar creator if default is not for Java 7
 [[ $(javac -version 2>&1 | cut -d . -f 2) = '7' ]] ||
     function javacSeven()
     {   javac7 "$@"
+    } &&
+    function jarSeven()
+    {   jar "$@"
     }
 
 
@@ -151,7 +157,17 @@ else
     if [[ $paramAnnot = 0 ]]; then
         ## compile paradis
 	( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
-	) | colourise
+	) | colourise &&
+	(
+            ## make plugin files
+	    mkdir -p ~/.paradis/plugins 2>/dev/null
+	    for plugin in $(find bin | grep '/Plugin.class$' | sed -e 's/\/Plugin.class//g' -e 's/bin\///g'); do
+		cd bin
+                jarSeven -cf ~/.paradis/plugins/`echo $plugin | sed -e 's/\//./g'`.jar $(find $plugin | grep '\.class$')
+		cd ..
+	    done
+	    rm -r bin/se/kth/maandree/paradis/plugins
+	)
     else
         ## run annotation processor (and compile paradis)
 	javacSeven -processor se.kth.maandree.paradis.ATProcessor -processorpath bin -implicit:class -cp .:bin$jars $params $(find src | grep '.java$')
