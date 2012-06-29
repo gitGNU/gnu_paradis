@@ -68,6 +68,7 @@ public class Anycast implements Cast
         /**
          * {@inheritDoc}
          */
+        @Override
         public Anycast read(final TransferInputStream stream) throws IOException
         {   return new Anycast(stream.readObject(UUID.class),
                                stream.readObject(String.class));
@@ -77,6 +78,7 @@ public class Anycast implements Cast
         /**
          * {@inheritDoc}
          */
+        @Override
         public void write(final Anycast data, final TransferOutputStream stream) throws IOException
         {   stream.writeObject(data.sender);
             stream.writeObject(data.senderAddress == null ? "" : data.senderAddress);
@@ -89,6 +91,7 @@ public class Anycast implements Cast
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addReceived(final UUID uuid)
     {   //Do nothing
     }
@@ -96,6 +99,7 @@ public class Anycast implements Cast
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasReceived(final UUID uuid)
     {   return false;
     }

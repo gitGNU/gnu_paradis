@@ -37,7 +37,7 @@ public class UUID implements Comparable<UUID>
         final long _high = System.nanoTime();
         final long _lowhigh = (long)(System.getProperty("user.name").hashCode()) << 32L;
         final long _lowmid = (long)(counter++) << 24L;
-        final long _lowlow = (long)(random.nextInt() >>> 8);
+        final long _lowlow = random.nextInt() >>> 8;
         
         this.high = _high;
         this.low = _lowhigh | _lowmid | _lowlow;
@@ -94,6 +94,7 @@ public class UUID implements Comparable<UUID>
         /**
          * {@inheritDoc}
          */
+        @Override
         public UUID read(final TransferInputStream stream) throws IOException
         {   return new UUID(stream.readLong(), stream.readLong());
         }
@@ -102,6 +103,7 @@ public class UUID implements Comparable<UUID>
         /**
          * {@inheritDoc}
          */
+        @Override
         public void write(final UUID data, final TransferOutputStream stream) throws IOException
         {   stream.writeLong(data.high);
             stream.writeLong(data.low);
@@ -115,6 +117,7 @@ public class UUID implements Comparable<UUID>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(final Object other)
     {
         if ((other == null) || (other instanceof UUID == false))
@@ -130,6 +133,7 @@ public class UUID implements Comparable<UUID>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode()
     {
         long par = this.high ^ this.low;
@@ -141,6 +145,7 @@ public class UUID implements Comparable<UUID>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compareTo(final UUID other)
     {
         if (this.high == other.high)
@@ -153,6 +158,7 @@ public class UUID implements Comparable<UUID>
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString()
     {
         String rc0 = "0000000" + Long.toString(this.high >> 32L, 16);

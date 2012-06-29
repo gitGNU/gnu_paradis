@@ -34,6 +34,7 @@ class ShortArrayTransferProtocol implements TransferProtocol<short[]>
     /**
      * {@inheritDoc}
      */
+    @Override
     public short[] read(final TransferInputStream stream) throws IOException
     {
         final int len = stream.readLen();
@@ -47,6 +48,7 @@ class ShortArrayTransferProtocol implements TransferProtocol<short[]>
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final short[] data, final TransferOutputStream stream) throws IOException
     {
         stream.writeLen(data.length);

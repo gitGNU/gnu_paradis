@@ -243,8 +243,9 @@ public class Properties
     /**
      * Gets or sets system properties by invoking another program
      * 
-     * @param  lineRule  What to do with line breaks
-     * @param  cmd       The command to run, {@code null} on error
+     * @param   lineRule  What to do with line breaks
+     * @param   cmd       The command to run, {@code null} on error
+     * @return            The data returned by the invoked program 
      */
     @requires("java-runtime>=7")
     public static String execSystemProperty(final LineRule lineRule, final String... cmd)

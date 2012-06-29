@@ -17,6 +17,7 @@
  */
 package se.kth.maandree.paradis.plugin;
 import se.kth.maandree.paradis.local.Properties; //Explicit
+import se.kth.maandree.paradis.*;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -228,6 +229,7 @@ public class PluginHandler
      * @return             The plug-in as an instance
      * @throws  Exception  If the plug-in can't be loaded
      */
+    @requires("java-runtime>=7")
     private static PluginV1 getPluginInstance(final String name) throws Exception
     {
         final String dir = PLUGIN_DIR + Properties.getFileSeparator();
@@ -243,12 +245,13 @@ public class PluginHandler
         String path = file;
         URL url = (new File(path)).toURI().toURL();
         
-        URLClassLoader klassLoader = new URLClassLoader(new URL[]{url});
-        
-        @SuppressWarnings("unchecked")
-        Class<PluginV1> klass = (Class<PluginV1>)(klassLoader.loadClass(name + "." + PLUGIN_CLASS_NAME));
-        
-        return klass.newInstance();
+        try (URLClassLoader klassLoader = new URLClassLoader(new URL[]{url}))
+        {
+            @SuppressWarnings("unchecked")
+            Class<PluginV1> klass = (Class<PluginV1>)(klassLoader.loadClass(name + "." + PLUGIN_CLASS_NAME));
+            
+            return klass.newInstance();
+        }
     }
     
     

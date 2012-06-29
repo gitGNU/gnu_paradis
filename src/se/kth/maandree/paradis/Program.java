@@ -69,71 +69,82 @@ public class Program
      */
     public static void main(final String... args)
     {
-        final Scanner sc = new Scanner(System.in);
-        while (sc.hasNextLine())
-        {
-            final String line = sc.nextLine();
-            if (line.isEmpty())
-                continue;
-            
-            if (line.equals("help"))
+        Scanner sc = null;
+        try
+        {   sc = new Scanner(System.in);
+            while (sc.hasNextLine())
             {
-                System.out.println("COMMANDS:     DESCRIPTIONS:");
-                System.out.println("help          Leads here...");
-                System.out.println("show c        Show copyright notice.");
-                System.out.println("show w        Show warranty notice.");
-                System.out.println("show l        Show licenses.");
-                System.out.println("version       Print version information about this program.");
-                System.out.println("credits       Shows the credits of this program and all aktiv plug-ins.");
-            }
-            else if (line.equals("show c"))
-            {
-                System.out.println("Paradis — Ever growing network for parallell and distributed computing.");
-                System.out.println("Copyright © 2012  Mattias Andrée");
-                System.out.println();
-                System.out.println("This program is free software: you can redistribute it and/or modify");
-                System.out.println("it under the terms of the GNU Affero General Public License as published by");
-                System.out.println("the Free Software Foundation, either version 3 of the License, or");
-                System.out.println("(at your option) any later version.");
-                System.out.println();
-                System.out.println("You should have received a copy of the GNU Affero General Public License");
-                System.out.println("along with this program.  If not, see <http://www.gnu.org/licenses/>.");
-            }
-            else if (line.equals("show w"))
-            {
-                System.out.println("This program is distributed in the hope that it will be useful,");
-                System.out.println("but WITHOUT ANY WARRANTY; without even the implied warranty of");
-                System.out.println("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the");
-                System.out.println("GNU Affero General Public License for more details.");
-            }
-            else if (line.equals("show l"))
-            {
-                final String pager = Properties.getPager();
+                final String line = sc.nextLine();
+                if (line.isEmpty())
+                    continue;
                 
-                if      ((new File("res/LICENSE.AGPL3+colour")).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3+colour");
-                else if ((new File("res/LICENSE.AGPL3"       )).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3");
-                else                                                       Pager.pageFile(pager, "GNU Affero General Public License v3", "LICENSE.AGPL3");
-                
-                if      ((new File("res/LICENSE.GPL2+colour")).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2+colour");
-                else if ((new File("res/LICENSE.GPL2"       )).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2");
-                else                                                      Pager.pageFile(pager, "GNU General Public License v2", "LICENSE.GPL2");
+                if (line.equals("help"))
+                {
+                    System.out.println("COMMANDS:     DESCRIPTIONS:");
+                    System.out.println("help          Leads here...");
+                    System.out.println("show c        Show copyright notice.");
+                    System.out.println("show w        Show warranty notice.");
+                    System.out.println("show l        Show licenses.");
+                    System.out.println("version       Print version information about this program.");
+                    System.out.println("credits       Shows the credits of this program and all aktiv plug-ins.");
+                }
+                else if (line.equals("show c"))
+                {
+                    System.out.println("Paradis — Ever growing network for parallell and distributed computing.");
+                    System.out.println("Copyright © 2012  Mattias Andrée");
+                    System.out.println();
+                    System.out.println("This program is free software: you can redistribute it and/or modify");
+                    System.out.println("it under the terms of the GNU Affero General Public License as published by");
+                    System.out.println("the Free Software Foundation, either version 3 of the License, or");
+                    System.out.println("(at your option) any later version.");
+                    System.out.println();
+                    System.out.println("You should have received a copy of the GNU Affero General Public License");
+                    System.out.println("along with this program.  If not, see <http://www.gnu.org/licenses/>.");
+                }
+                else if (line.equals("show w"))
+                {
+                    System.out.println("This program is distributed in the hope that it will be useful,");
+                    System.out.println("but WITHOUT ANY WARRANTY; without even the implied warranty of");
+                    System.out.println("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the");
+                    System.out.println("GNU Affero General Public License for more details.");
+                }
+                else if (line.equals("show l"))
+                {
+                    final String pager = Properties.getPager();
+                    
+                    if      ((new File("res/LICENSE.AGPL3+colour")).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3+colour");
+                    else if ((new File("res/LICENSE.AGPL3"       )).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3");
+                    else                                                       Pager.pageFile(pager, "GNU Affero General Public License v3", "LICENSE.AGPL3");
+                    
+                    if      ((new File("res/LICENSE.GPL2+colour")).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2+colour");
+                    else if ((new File("res/LICENSE.GPL2"       )).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2");
+                    else                                                      Pager.pageFile(pager, "GNU General Public License v2", "LICENSE.GPL2");
+                }
+                else if (line.equals("version"))
+                {
+                    System.out.println("Package:   " + PACKAGE);
+                    System.out.println("Fork path: " + FORK);
+                    System.out.println("Version:   " + VERSION);
+                    System.out.println();
+                    System.out.println("Website:   " + WEBSITE);
+                }
+                else if (line.equals("credits"))
+                {
+                    System.out.println("Paradis — Ever growing network for parallell and distributed computing.");
+                    System.out.println("Copyright © 2012  Mattias Andrée");
+                }
+                else
+                    System.out.println("Unrecognised command.");
             }
-            else if (line.equals("version"))
-            {
-                System.out.println("Package:   " + PACKAGE);
-                System.out.println("Fork path: " + FORK);
-                System.out.println("Version:   " + VERSION);
-                System.out.println();
-                System.out.println("Website:   " + WEBSITE);
-            }
-            else if (line.equals("credits"))
-            {
-                System.out.println("Paradis — Ever growing network for parallell and distributed computing.");
-                System.out.println("Copyright © 2012  Mattias Andrée");
-            }
-            else
-                System.out.println("Unrecognised command.");
         }
+        finally
+        {   if (sc != null)
+                try
+                {    sc.close();
+                }
+                catch (final Throwable ignore)
+                {   //Ignore
+        }       }
     }
     
 }

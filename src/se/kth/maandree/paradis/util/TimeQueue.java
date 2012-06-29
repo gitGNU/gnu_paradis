@@ -25,6 +25,8 @@ import java.util.*;
  * Minimalistic queue with without poll and peek put with self maintained polling,
  * with polling depending on time
  * 
+ * @param  <E>  The type of elements stored in this collection 
+ * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
 public class TimeQueue<E>
@@ -50,6 +52,7 @@ public class TimeQueue<E>
                     /**
                      * {@inheritDoc}
                      */
+                    @Override
                     public void run()
                     {
                         try
@@ -122,6 +125,8 @@ public class TimeQueue<E>
     
     /**
      * Adds a new element to the end of the queue
+     * 
+     * @param  element  The element to add
      */
     public void offer(final E element)
     {

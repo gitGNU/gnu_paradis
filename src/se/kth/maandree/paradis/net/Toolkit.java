@@ -28,6 +28,7 @@ import java.util.*;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
+@requires("java-runtime>=7")
 public class Toolkit
 {
     /**
@@ -49,29 +50,30 @@ public class Toolkit
      */
     public static String getPublicIP() throws IOException
     {
-        final Socket sock = new Socket("checkip.dyndns.org", 80);
-        final InputStream is = new BufferedInputStream(sock.getInputStream());
-        final OutputStream os = new BufferedOutputStream(sock.getOutputStream());
+        try (final Socket sock = new Socket("checkip.dyndns.org", 80))
+        {   final InputStream is = new BufferedInputStream(sock.getInputStream());
+            final OutputStream os = new BufferedOutputStream(sock.getOutputStream());
+                
+            try (final Scanner in = new Scanner(is))
+            {   final PrintStream out = new PrintStream(os);
+                    
+                out.print("GET / HTTP/1.1\r\n");
+                out.print("Host: checkip.dyndns.org\r\n");
+                out.print("\r\n");
+                out.flush();
+                    
+                for (;;)
+                    if (in.nextLine().isEmpty())
+                        break;
+                    
+                String line = in.nextLine();
+                sock.close();
+                line = line.substring(0, line.indexOf("</body>"));
+                line = line.substring(line.lastIndexOf(' ') + 1);
             
-        final Scanner in = new Scanner(is);
-        final PrintStream out = new PrintStream(os);
-            
-        out.print("GET / HTTP/1.1\r\n");
-        out.print("Host: checkip.dyndns.org\r\n");
-        out.print("\r\n");
-        out.flush();
-            
-        for (;;)
-            if (in.nextLine().isEmpty())
-                break;
-            
-        String line = in.nextLine();
-        sock.close();
-            
-        line = line.substring(0, line.indexOf("</body>"));
-        line = line.substring(line.lastIndexOf(' ') + 1);
-        
-        return line;
+                return line;
+            }
+        }
     }
     
     
@@ -181,12 +183,13 @@ public class Toolkit
     public static String[] getNameServers()
     {
         InputStream is = null;
+        Scanner sc = null;
         try
         {
             final Vector<String> rc = new Vector<String>();
             
             is = new BufferedInputStream(new FileInputStream(new File("/etc/resolv.conf")));
-            final Scanner sc = new Scanner(is);
+            sc = new Scanner(is);
             
             while (sc.hasNextLine())
             {
@@ -233,6 +236,13 @@ public class Toolkit
         {   if (is != null)
                 try
                 {   is.close();
+                }
+                catch  (final Throwable ignore)
+                {   //ignore
+                }
+            if (sc != null)
+                try
+                {   sc.close();
                 }
                 catch  (final Throwable ignore)
                 {   //ignore
@@ -298,7 +308,6 @@ public class Toolkit
                 data = data.split("\n")[5].split("[()]")[1];
                 return data.equals("100% loss") == false;
             }
-            else
             {
                 data = data.substring(data.indexOf("\n---") + 1);
                 data = data.substring(data.indexOf('\n') + 1);
@@ -323,10 +332,10 @@ public class Toolkit
      */
     public static int getRandomPortTCP() throws IOException
     {
-        final ServerSocket socket = new ServerSocket(0);
-        final int port = socket.getLocalPort();
-        socket.close();
-        return port;
+        try (final ServerSocket socket = new ServerSocket(0))
+        {   final int port = socket.getLocalPort();
+            return port;
+        }
     }
     
     
@@ -339,10 +348,11 @@ public class Toolkit
      */
     public static int getRandomPortUDP() throws IOException
     {
-        final DatagramSocket socket = new DatagramSocket(0);
-        final int port = socket.getLocalPort();
-        socket.close();
-        return port;
+        try (final DatagramSocket socket = new DatagramSocket(0))
+        {   final int port = socket.getLocalPort();
+            socket.close();
+            return port;
+        }
     }
     
 }
