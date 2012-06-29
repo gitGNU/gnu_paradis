@@ -136,8 +136,7 @@ public class PluginHandler
                     }
             }
             catch (final Throwable err)
-            {
-                //TODO report error
+            {   System.err.println("Problem fetch plugin active status: " + err.toString());
             }
         }
         return yes;
@@ -189,8 +188,7 @@ public class PluginHandler
                     break;
                 }
                 catch (final Throwable err)
-                {
-                    //TODO report error
+                {   System.err.println("Problem with plug-in " + (active ? "activation" : "deactivation") + ": " + err.toString());
                 }
         }
     }
@@ -269,8 +267,7 @@ public class PluginHandler
                     getPlugin(i).initialize();
         }
         catch (final Throwable err)
-        {
-            //TODO report error
+        {   System.err.println("Problem with initial plug-in activation: " + err.toString());
         }
     }
     
