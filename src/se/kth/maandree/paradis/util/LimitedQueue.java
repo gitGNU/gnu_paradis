@@ -16,33 +16,34 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.util;
+import se.kth.maandree.paradis.*;
+
+import java.util.*;
 
 
 /**
- * Minimalistic queue with without poll and peek put with self maintained polling,
- * with polling depending on time and size
+ * Minimalistic queue with without poll and peek put with self maintained polling
+ * with polling depending on size
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class LimitedTimeQueue<E> extends TimeQueue<E>
+public class LimitedQueue<E>
 {
     /**
      * Constructor
      */
-    public LimitedTimeQueue()
+    public LimitedQueue()
     {
-	this(10_000, 10 * 60_000);
+	this(10_000);
     }
     
     /**
      * Contructor
      * 
      * @param  limit  The maximum number of allowed elements
-     * @param  age    How old the oldest element may be, in milli seconds, default is 10 minutes (600'000 milliseconds)
      */
-    public LimitedTimeQueue(final int limit, final int age)
+    public LimitedQueue(final int limit)
     {
-	super(age);
 	this.limit = limit;
     }
     
@@ -53,6 +54,12 @@ public class LimitedTimeQueue<E> extends TimeQueue<E>
      */
     protected int limit;
     
+    /**
+     * Actual queue with content
+     */
+    @requires("java-runtime>=6")
+    protected final ArrayDeque<E> elements = new ArrayDeque<E>();
+    
     
     
     /**
@@ -60,19 +67,12 @@ public class LimitedTimeQueue<E> extends TimeQueue<E>
      */
     public void offer(final E element)
     {
-	final long time = System.currentTimeMillis();
 	synchronized (this)
 	{
 	    if (this.elements.size() == limit)
-	    {
 		this.elements.pollFirst();
-		this.times.pollFirst();
-	    }
 	    
 	    this.elements.offerLast(element);
-	    this.times.offerLast(Long.valueOf(time));
-	    
-	    this.notifyAll();
 	}
     }
     

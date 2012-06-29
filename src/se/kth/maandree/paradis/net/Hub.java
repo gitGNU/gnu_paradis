@@ -32,6 +32,7 @@ import java.util.*;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
+@requires("java-environment>=7")
 public class Hub
 {
     /**
@@ -112,7 +113,7 @@ public class Hub
      *   Synchronise with {@link #sockets} instead of the object.
      * </p>
      */
-    protected final HashMap<UDPSocket, UUID> socketUUIDs = new HashMap<>();
+    public final HashMap<UDPSocket, UUID> socketUUIDs = new HashMap<>();
     
     /**
      * <p>Reverse {@link #socketUUIDs}.</p>
@@ -125,7 +126,6 @@ public class Hub
     /**
      * Set of dead sockets
      */
-    @requires("java-runtime>=6")
     protected final HashSet<UDPSocket> deadSockets = new HashSet<>();
     
     /**

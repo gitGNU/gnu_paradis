@@ -25,7 +25,7 @@ import java.util.*;
  *
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-@requires("java-runtime>=7" /**syntax**/)
+@requires("java-environment>=7")
 public class Blackboard
 {
     /**

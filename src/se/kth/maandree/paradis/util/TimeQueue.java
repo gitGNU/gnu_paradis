@@ -22,7 +22,8 @@ import java.util.*;
 
 
 /**
- * Minimalistic queue with without poll and peek put with self maintained polling
+ * Minimalistic queue with without poll and peek put with self maintained polling,
+ * with polling depending on time
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
@@ -68,7 +69,7 @@ public class TimeQueue<E>
 					continue;
 					
 				    final long time = System.currentTimeMillis() - TimeQueue.this.times.peekFirst().longValue();
-					
+				    
 				    if (time > age)
 				    {   TimeQueue.this.times.pollFirst();
 					TimeQueue.this.elements.pollFirst();
@@ -99,13 +100,13 @@ public class TimeQueue<E>
      * Actual queue with content
      */
     @requires("java-runtime>=6")
-    protected final ArrayDeque<E> elements = new ArrayDeque<>();
+    protected final ArrayDeque<E> elements = new ArrayDeque<E>();
     
     /**
      * Queue with the contents insert times
      */
     @requires("java-runtime>=6")
-    protected final ArrayDeque<Long> times = new ArrayDeque<>();
+    protected final ArrayDeque<Long> times = new ArrayDeque<Long>();
     
     /**
      * Whether cleaning is stopped

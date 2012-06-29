@@ -44,16 +44,27 @@ public class NetConf
     
     
     /**
+     * Class initialiser
+     */
+    static
+    {
+	createDefaults();
+    }
+    
+    
+    
+    /**
      * Create default values for all missing settings
      */
     public static void createDefaults()
     {
 	Configurations.defaultSetting(HIVE, "timeout", "4");
+	Configurations.defaultSetting(HIVE, "connections", "100");
     }
     
     
     /**
-     * Gets the timeout time in seconds
+     * Gets the ping timeout time in seconds
      * 
      * @return  The timeout time
      */
@@ -93,13 +104,54 @@ public class NetConf
     }
     
     /**
-     * Sets the timeout time
+     * Sets the ping timeout time
      * 
      * @param  value  The new timeout time in seconds
      */
     public static void setTimeout(final int value)
     {
 	Configurations.setSetting(HIVE, "timeout", Integer.toString(value));
+    }
+    
+    
+    /**
+     * Gets the ping timeout time in seconds
+     * 
+     * @return  The timeout time
+     */
+    public static int getConnections()
+    {
+	final String value = Configurations.getSetting(HIVE, "connections");
+	int rc = 0;
+	try
+	{   rc = Integer.parseInt(value);
+	}
+	catch (final Throwable err)
+	{   System.err.println("Unparsable value for number of connections setting: " + value);
+	    System.err.println("Number of connections to default: 100");
+	    setTimeout(rc = 100);
+	}
+	if (rc <= 0)
+	{   System.err.println("Negative number of connections is not allowed: " + value);
+	    System.err.println("Number of connections set to default: 100");
+	    setTimeout(rc = 100);
+	}
+	else if (rc > 1200)
+	{   System.err.println("Number of connections is very high: " + value);
+	    System.err.println("Number of connections set to default: 100");
+	    setTimeout(rc = 100);
+	}
+	return rc;
+    }
+    
+    /**
+     * Sets the ping timeout time
+     * 
+     * @param  value  The new timeout time in seconds
+     */
+    public static void setConnections(final int value)
+    {
+	Configurations.setSetting(HIVE, "connections", Integer.toString(value));
     }
     
 }

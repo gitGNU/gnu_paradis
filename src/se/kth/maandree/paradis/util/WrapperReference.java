@@ -19,61 +19,64 @@ package se.kth.maandree.paradis.util;
 
 
 /**
- * Minimalistic queue with without poll and peek put with self maintained polling,
- * with polling depending on time and size
+ * A wrapper reference is a strong reference wrapping another reference, allowing independent non-strong references
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class LimitedTimeQueue<E> extends TimeQueue<E>
+public class WrapperReference<T>
 {
     /**
      * Constructor
-     */
-    public LimitedTimeQueue()
-    {
-	this(10_000, 10 * 60_000);
-    }
-    
-    /**
-     * Contructor
      * 
-     * @param  limit  The maximum number of allowed elements
-     * @param  age    How old the oldest element may be, in milli seconds, default is 10 minutes (600'000 milliseconds)
+     * @param  item  The referenced item
      */
-    public LimitedTimeQueue(final int limit, final int age)
+    public WrapperReference(final T item)
     {
-	super(age);
-	this.limit = limit;
+	this.item = item;
     }
     
     
     
     /**
-     * The maximum number of allowed elements
+     * The referenced item
      */
-    protected int limit;
+    private T item;
     
     
     
     /**
-     * Adds a new element to the end of the queue
+     * Gets the referenced item
+     * 
+     * @return  The referenced item
      */
-    public void offer(final E element)
+    public T get()
     {
-	final long time = System.currentTimeMillis();
-	synchronized (this)
-	{
-	    if (this.elements.size() == limit)
-	    {
-		this.elements.pollFirst();
-		this.times.pollFirst();
-	    }
-	    
-	    this.elements.offerLast(element);
-	    this.times.offerLast(Long.valueOf(time));
-	    
-	    this.notifyAll();
-	}
+	return this.item;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("rawtypes")
+    public boolean equals(final Object other)
+    {
+	if ((other == null) || (other instanceof WrapperReference == false))
+	    return false;
+	if (other == this)
+	    return true;
+	if (this.item == null)
+	    return ((WrapperReference)other).item == null;
+	return this.item.equals(((WrapperReference)other).item);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode()
+    {
+	return this.item == null ? 0 : this.item.hashCode();
     }
     
 }
