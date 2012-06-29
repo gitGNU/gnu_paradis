@@ -64,17 +64,17 @@ public class PluginHandler
     /**
      * The plug-ins instanciated
      */
-    private static ArrayList<PluginV1> pluginInstances = new ArrayList<PluginV1>();
+    private static Vector<PluginV1> pluginInstances = new Vector<PluginV1>();
     
     /**
      * The plug-in files
      */
-    private static ArrayList<String> pluginFiles = new ArrayList<String>();
+    private static Vector<String> pluginFiles = new Vector<String>();
     
     /**
      * The active plug-ins
      */
-    private static ArrayList<PluginV1> activePlugins = new ArrayList<PluginV1>();
+    private static Vector<PluginV1> activePlugins = new Vector<PluginV1>();
     
     
     
