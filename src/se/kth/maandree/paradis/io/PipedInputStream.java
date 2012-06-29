@@ -61,6 +61,7 @@ import java.io.*;
   *
   * @author Aaron M. Renn (arenn@urbanophile.com)
   */
+@SuppressWarnings("all")
 public class PipedInputStream extends InputStream
 {
   /** PipedOutputStream to which this is connected. Null only if this 
