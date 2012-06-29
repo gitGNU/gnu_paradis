@@ -2,10 +2,10 @@ shibboleet
 package management
 tcp + upnp port forwarding
 distributed hash table (¿ do we need this ?)
-encryption + union routing
+encryption
 randomcast
 
 core plugins:
     uuid resolver
     uuid fetcher
-
+    union routing
