@@ -17,7 +17,9 @@
  */
 package se.kth.maandree.paradis.net;
 import se.kth.maandree.paradis.net.messages.*;
+import se.kth.maandree.paradis.local.Properties; //Explicit
 import se.kth.maandree.paradis.util.*;
+import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.io.*;
@@ -32,6 +34,13 @@ import java.util.*;
  */
 public class Interface implements Blackboard.BlackboardObserver
 {
+    /**
+     * The file containing the connection cache
+     */
+    private static final String CONNECTION_CACHE_FILE = "~/.paradis/connections.cache".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    
+    
+    
     /**
      * Constructor
      * 
@@ -66,6 +75,8 @@ public class Interface implements Blackboard.BlackboardObserver
         receiveThread.setDaemon(true);
         receiveThread.start();
         
+	loadConnectionCache();
+	
         final Thread connectionCacheThread = new Thread("Network interface connection cache")
                 {
                     /**
@@ -91,12 +102,12 @@ public class Interface implements Blackboard.BlackboardObserver
                                         if (time + delay > System.currentTimeMillis() + 100)
                                             if (++times <= limit)
                                             {   if (Interface.this.closed)
-                                                {   save();
+                                                {   Interface.this.saveConnectionCache();
                                                     return;
                                                 }
                                                 continue;
                                             }
-                                        save();
+                                        Interface.this.saveConnectionCache();
                                         break;
                                     }
                         }       }
@@ -104,16 +115,8 @@ public class Interface implements Blackboard.BlackboardObserver
                         {   //Ignore
                         }
                         synchronized (Interface.this.connectionCacheQueue)
-                        {   save();
+                        {   Interface.this.saveConnectionCache();
                         }
-                    }
-                    
-                    /**
-                     * Saves the connection cache
-                     */
-                    private void save()
-                    {
-                        //TODO perform actual saving
                     }
                 };
         
@@ -298,6 +301,89 @@ public class Interface implements Blackboard.BlackboardObserver
             catch (final Throwable err)
             {   ((SendPacket)message).error = err;
             }
+    }
+    
+    /**
+     * Saves the connection cache
+     */
+    protected void saveConnectionCache()
+    {
+	TransferOutputStream tos = null;
+	try
+	{   tos = new TransferOutputStream(new FileOutputStream(new File(CONNECTION_CACHE_FILE)));
+	    final Set<WrapperReference<String>> refs = this.connectionCacheSet.keySet();
+	    tos.writeLen(refs.size());
+	    for (final WrapperReference<String> ref : refs)
+		tos.writeObject(ref.get());
+	    tos.flush();
+	}
+	catch (final Throwable err)
+	{   System.err.println("WARNING: unable to save connection cache: " + err.toString());
+	}
+	finally
+	{   if (tos != null)
+		try
+		{   tos.close();
+		}
+		catch (final Throwable ignore)
+		{   //Ignore
+	}	}
+    }
+    
+    /**
+     * Loads the connection cache
+     */
+    protected void loadConnectionCache()
+    {
+	if ((new File(CONNECTION_CACHE_FILE)).exists() == false)
+	    return;
+	String[] cache = null;
+	TransferInputStream tis = null;
+	try
+	{   tis = new TransferInputStream(new FileInputStream(new File(CONNECTION_CACHE_FILE)));
+	    final int count = tis.readLen();
+	    cache = new String[count];
+	    for (int i = 0; i < count; i++)
+		cache[i] = tis.readObject(String.class);
+	}
+	catch (final Throwable err)
+	{   System.err.println("WARNING: unable to load connection cache: " + err.toString());
+	}
+	finally
+	{   if (tis != null)
+		try
+		{   tis.close();
+		}
+		catch (final Throwable ignore)
+		{   //Ignore
+	}	}
+	if (cache != null)
+	    synchronized (this.connectionCacheQueue)
+	    {   for (final String address : cache)
+	        {   final WrapperReference<String> ref = new WrapperReference<String>(address);
+		    this.connectionCacheSet.put(ref, null);
+		    this.connectionCacheQueue.offer(ref);
+		}
+                for (final String address : cache)
+		{
+		    final String _pub = address.substring(0, address.indexOf("/"));
+		    final String _port = address.substring(address.lastIndexOf(':') + 1);
+		    String _loc = address.substring(_pub.length() + 1);
+		    _loc = _loc.substring(0, _loc.length() - _port.length() - 1);
+		    
+		    final int port = Integer.parseInt(_port);
+		    try
+		    {
+			final InetAddress host = _pub.equals(this.localUser.getPublicIP())
+			                         ? InetAddress.getByName(_loc)
+			                         : InetAddress.getByName(_pub);
+			connect(host, port);
+		    }
+		    catch (final Throwable ignore)
+		    {   //Ignore, and do not remove from cache
+		    }
+		}
+	    }
     }
     
 }
