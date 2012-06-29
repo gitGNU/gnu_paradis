@@ -34,7 +34,6 @@ class LongArrayTransferProtocol implements TransferProtocol<long[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public long[] read(final TransferInputStream stream) throws IOException
     {
         final int len = stream.readLen();
@@ -48,7 +47,6 @@ class LongArrayTransferProtocol implements TransferProtocol<long[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final long[] data, final TransferOutputStream stream) throws IOException
     {
         stream.writeLen(data.length);

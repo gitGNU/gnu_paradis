@@ -306,7 +306,7 @@ public class UDPSocket
      */
     public boolean isAlive() throws IOException
     {
-        this.ackWaiting = true;
+        ackWaiting = true;
         synchronized (this.server.outMonitor)
         {   final byte[] data = ((char)ENQUIRY + Program.PACKAGE + (char)END_OF_TRANSMISSION).getBytes("UTF-8");
             this.server.socket.send(new DatagramPacket(data, 0, data.length, this.remoteAddress, this.remotePort));

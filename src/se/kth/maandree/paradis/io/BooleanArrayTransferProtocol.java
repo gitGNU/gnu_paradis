@@ -34,7 +34,6 @@ class BooleanArrayTransferProtocol implements TransferProtocol<boolean[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean[] read(final TransferInputStream stream) throws IOException
     {
         final int len = stream.readLen();
@@ -43,7 +42,7 @@ class BooleanArrayTransferProtocol implements TransferProtocol<boolean[]>
         int n = len >>> 3;
         for (int i = 0; i < n; i++)
         {
-            int d = stream.readByte() & 255;
+            int d = (int)(stream.readByte()) & 255;
             rc[(i << 3) | 0] = (d & 128) != 0;
             rc[(i << 3) | 1] = (d &  64) != 0;
             rc[(i << 3) | 2] = (d &  32) != 0;
@@ -58,7 +57,7 @@ class BooleanArrayTransferProtocol implements TransferProtocol<boolean[]>
         if (n != 0)
         {
             int off = (len >>> 3) + 1;
-            int d = stream.readByte() & 255;
+            int d = (int)(stream.readByte()) & 255;
             if (n > 0)  rc[off | 0] = (d & 128) != 0;
             if (n > 1)  rc[off | 1] = (d &  64) != 0;
             if (n > 2)  rc[off | 2] = (d &  32) != 0;
@@ -76,7 +75,6 @@ class BooleanArrayTransferProtocol implements TransferProtocol<boolean[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final boolean[] data, final TransferOutputStream stream) throws IOException
     {
         stream.writeLen(data.length);

@@ -163,7 +163,7 @@ public class ATProcessor extends AbstractProcessor
      * @param   b  The version sting that should be less
      * @return     Whether the test passed
      */
-    private static boolean isGreater(final String a, final String b)
+    private boolean isGreater(final String a, final String b)
     {
         if (b == null)
             return true;
@@ -249,7 +249,7 @@ public class ATProcessor extends AbstractProcessor
      * @param   b  The version sting that should be greater
      * @return     Whether the test passed
      */
-    private static boolean isLess(final String a, final String b)
+    private boolean isLess(final String a, final String b)
     {
         if (b == null)
             return true;

@@ -101,7 +101,6 @@ public class Multicast implements Cast
         /**
          * {@inheritDoc}
          */
-        @Override
         public Multicast read(final TransferInputStream stream) throws IOException
         {   return new Multicast(stream.readObject(UUID.class),
                                  stream.readObject(UUID[].class),
@@ -113,7 +112,6 @@ public class Multicast implements Cast
         /**
          * {@inheritDoc}
          */
-        @Override
         public void write(final Multicast data, final TransferOutputStream stream) throws IOException
         {
             if (data.receivedCount != data.received.length)
@@ -135,7 +133,6 @@ public class Multicast implements Cast
     /**
      * {@inheritDoc}
      */
-    @Override
     public void addReceived(final UUID uuid)
     {
         int pos = Arrays.binarySearch(this.received, 0, this.receivedCount, uuid);
@@ -158,7 +155,6 @@ public class Multicast implements Cast
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean hasReceived(final UUID uuid)
     {   return Arrays.binarySearch(this.received, 0, this.receivedCount, uuid) >= 0;
     }

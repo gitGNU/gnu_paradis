@@ -388,7 +388,6 @@ public class LocalUser
      * @param   signature  The digital signature of the friend
      * @return             {@code false} iff their was nothing to be done
      */
-    @SuppressWarnings("hiding")
     public static boolean addFriend(final UUID uuid, final String name, final String localIP, final String publicIP, final int port, final String[] dnsNames, final byte[] signature)
     {   int pos = Arrays.binarySearch(friendUUIDs, uuid);
         if (pos >= 0)
@@ -445,7 +444,7 @@ public class LocalUser
      * @param   uuid  The unique identifier if the friend
      * @return        {@code false} iff their was nothing to be done
      */
-    public static boolean removeFriend(@SuppressWarnings("hiding") final UUID uuid)
+    public static boolean removeFriend(final UUID uuid)
     {   int pos = Arrays.binarySearch(friendUUIDs, uuid);
         if (pos < 0)
             return false;

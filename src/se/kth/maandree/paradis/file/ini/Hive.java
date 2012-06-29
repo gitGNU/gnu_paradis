@@ -121,7 +121,7 @@ class Hive implements Serializable
      * @param   name  Name of the desired key
      * @return        The key the matching name, {@code null} if not existing
      */
-    public Key getKey(@SuppressWarnings("hiding") final String name)
+    public Key getKey(final String name)
     {
         for (Key key : this.keys)
             if (key.getName().toLowerCase().equals(name.toLowerCase()))
@@ -137,7 +137,7 @@ class Hive implements Serializable
      * @param   value  Value of the new key
      * @return         The new key
      */
-    public Key newKey(@SuppressWarnings("hiding") final String name, final String value)
+    public Key newKey(final String name, final String value)
     {
         Key key = new Key(name, value);
         this.keys.add(key);

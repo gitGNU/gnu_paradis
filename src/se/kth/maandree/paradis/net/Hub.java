@@ -49,16 +49,15 @@ public class Hub
         assert localUser != null : "Invalid local user: null";
         
         this.server = new UDPServer(localPort);
-        this.localPort = this.server.localPort;
+        this.localPort = server.localPort;
         this.localUser = localUser;
         
         final Thread acceptthread = new Thread("Hub connection accepter")
-                {   @Override
-                    public void run()
+                {   public void run()
                     {   try
                         {   for (;;)
                             {
-                                final UDPSocket socket = Hub.this.server.accept();
+                                final UDPSocket socket = server.accept();
                                 if (socket == null)
                                     return;
                                 Hub.this.hostSocket(socket);
@@ -222,8 +221,6 @@ public class Hub
     
     /**
      * Closes the hub
-     * 
-     * @throws  IOException  On closing error (unlikely) 
      */
     public void close() throws IOException
     {
@@ -273,8 +270,7 @@ public class Hub
         }
         
         final Thread thread = new Thread("Hub connection")
-                {   @Override
-                    public void run()
+                {   public void run()
                     {   for (;;)
                         {   try
                             {
@@ -301,11 +297,11 @@ public class Hub
                                 }
                                 else if (packet.cast instanceof Unicast)
                                 {
-                                    route = !(mine = ((Unicast)(packet.cast)).receiver.equals(Hub.this.localUser.getUUID()));
+                                    route = !(mine = ((Unicast)(packet.cast)).receiver.equals(localUser.getUUID()));
                                 }
                                 else if (packet.cast instanceof Multicast)
                                 {
-                                    mine = Arrays.binarySearch(((Multicast)(packet.cast)).receivers, Hub.this.localUser.getUUID()) >= 0;
+                                    mine = Arrays.binarySearch(((Multicast)(packet.cast)).receivers, localUser.getUUID()) >= 0;
                                     route = (((Multicast)(packet.cast)).receivers.length - (mine ? 1 : 0)) > 0;
                                     
                                     synchronized (Hub.this.multicastGroups)
@@ -473,7 +469,7 @@ public class Hub
                 if (packet.cast.hasReceived(receiver))
                     direct++;
                 else
-                {   final UDPSocket socket = this.uuidSockets.get(receiver);
+                {   final UDPSocket socket = uuidSockets.get(receiver);
                     if (socket != null)
                     {   alreadyListed.add(sendTo[ptr++] = socket);
                         direct++;
@@ -484,7 +480,7 @@ public class Hub
                 for (final UDPSocket socket : this.sockets)
                     if (alreadyListed.contains(socket) == false)
                     {
-                        final UUID uuid = this.socketUUIDs.get(socket);
+                        final UUID uuid = socketUUIDs.get(socket);
                         if (uuid == null)
                             sendTo[ptr++] = socket;
                         else if (packet.cast.hasReceived(uuid) == false)
@@ -527,7 +523,7 @@ public class Hub
         synchronized (this.sockets)
         {   sendTo = new UDPSocket[this.sockets.size()];
             for (final UDPSocket socket : this.sockets)
-            {   final UUID uuid = this.socketUUIDs.get(socket);
+            {   final UUID uuid = socketUUIDs.get(socket);
                 if (uuid == null)
                     sendTo[ptr++] = socket;
                 else if (packet.cast.hasReceived(uuid) == false)

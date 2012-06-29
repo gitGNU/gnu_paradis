@@ -34,7 +34,6 @@ class ByteArrayTransferProtocol implements TransferProtocol<byte[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public byte[] read(final TransferInputStream stream) throws IOException
     {
         final int len = stream.readLen();
@@ -48,7 +47,6 @@ class ByteArrayTransferProtocol implements TransferProtocol<byte[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final byte[] data, final TransferOutputStream stream) throws IOException
     {
         stream.writeLen(data.length);

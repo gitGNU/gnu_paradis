@@ -98,7 +98,6 @@ public class Blackboard
                 {   /**
                      * {@inheritDoc}
                      */
-                    @Override
                     public Thread createThread(final Runnable runnable)
                     {   final Thread thread = new Thread(runnable);
                         thread.setDaemon(false);
@@ -110,7 +109,6 @@ public class Blackboard
                 {   /**
                      * {@inheritDoc}
                      */
-                    @Override
                     public Thread createThread(final Runnable runnable)
                     {   final Thread thread = new Thread(runnable);
                         thread.setDaemon(true);
@@ -122,7 +120,6 @@ public class Blackboard
                 {   /**
                      * {@inheritDoc}
                      */
-                    @Override
                     public Thread createThread(final Runnable runnable)
                     {   final Thread thread = new Thread(runnable);
                         thread.setDaemon(false);
@@ -134,7 +131,6 @@ public class Blackboard
                 {   /**
                      * {@inheritDoc}
                      */
-                    @Override
                     public Thread createThread(final Runnable runnable)
                     {   final Thread thread = new Thread(runnable);
                         thread.setDaemon(true);
@@ -230,9 +226,8 @@ public class Blackboard
         /**
          * {@inheritDoc}
          */
-        @Override
         public String toString()
-        {   return this.observer.toString() + (this.register ? " registered" : " unregistered");
+        {   return observer.toString() + (this.register ? " registered" : " unregistered");
         }
         
     }
@@ -245,8 +240,6 @@ public class Blackboard
     {
         /**
          * This method is invoked when the a message is pinned on the blackboard
-         * 
-         * @param  message  The broadcasted message
          */
         public void messageBroadcasted(final Blackboard.BlackboardMessage message);
     }
@@ -386,7 +379,7 @@ public class Blackboard
             
             for (final BlackboardObserver observer : this.observers)
             {
-                final HashMap<Class<? extends BlackboardMessage>, Integer> map = this.observationPriorities.get(observer);
+                final HashMap<Class<? extends BlackboardMessage>, Integer> map = observationPriorities.get(observer);
                 Integer priority = Integer.valueOf(0);
                 if (map != null)
                 {
@@ -415,13 +408,12 @@ public class Blackboard
                                 /**
                                  * {@inheritDoc}
                                  */
-                                @Override
                                 public void run()
                                 {   observer.messageBroadcasted(message);
                                 }
                             };
                 
-                    final HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = this.observationThreading.get(observer);
+                    final HashMap<Class<? extends BlackboardMessage>, ThreadingPolicy> map = observationThreading.get(observer);
                 
                     if (map == null)
                         policy = null;

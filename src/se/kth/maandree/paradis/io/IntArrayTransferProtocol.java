@@ -34,7 +34,6 @@ class IntArrayTransferProtocol implements TransferProtocol<int[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public int[] read(final TransferInputStream stream) throws IOException
     {
         final int len = stream.readLen();
@@ -48,7 +47,6 @@ class IntArrayTransferProtocol implements TransferProtocol<int[]>
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final int[] data, final TransferOutputStream stream) throws IOException
     {
         stream.writeLen(data.length);

@@ -125,7 +125,6 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
         /**
          * {@inheritDoc}
          */
-        @Override
         public Packet read(final TransferInputStream stream) throws IOException
         {
             final UUID uuid = stream.readObject(UUID.class);
@@ -156,7 +155,6 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
         /**
          * {@inheritDoc}
          */
-        @Override
         public void write(final Packet data, final TransferOutputStream stream) throws IOException
         {
             stream.writeObject(data.uuid);
@@ -185,7 +183,6 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean equals(final Object other)
     {
         if ((other == null) || (other instanceof Packet == false))
@@ -201,7 +198,6 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
     /**
      * {@inheritDoc}
      */
-    @Override
     public int hashCode()
     {   return this.uuid.hashCode();
     }
@@ -210,7 +206,6 @@ public class Packet implements Comparable<Packet>, Blackboard.BlackboardMessage
     /**
      * {@inheritDoc}
      */
-    @Override
     public int compareTo(final Packet other)
     {   return this.uuid.compareTo(other.uuid);
     }

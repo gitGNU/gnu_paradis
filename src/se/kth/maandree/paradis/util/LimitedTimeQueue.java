@@ -22,8 +22,6 @@ package se.kth.maandree.paradis.util;
  * Minimalistic queue with without poll and peek put with self maintained polling,
  * with polling depending on time and size
  * 
- * @param  <E>  The type of elements stored in this collection 
- * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
 public class LimitedTimeQueue<E> extends TimeQueue<E>
@@ -59,16 +57,13 @@ public class LimitedTimeQueue<E> extends TimeQueue<E>
     
     /**
      * Adds a new element to the end of the queue
-     * 
-     * @param  element  The element to add
      */
-    @Override
     public void offer(final E element)
     {
         final long time = System.currentTimeMillis();
         synchronized (this)
         {
-            if (this.elements.size() == this.limit)
+            if (this.elements.size() == limit)
             {
                 this.elements.pollFirst();
                 this.times.pollFirst();

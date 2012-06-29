@@ -25,8 +25,6 @@ import java.util.*;
  * Minimalistic queue with without poll and peek put with self maintained polling
  * with polling depending on size
  * 
- * @param  <E>  The type of elements stored in this collection 
- * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
 public class LimitedQueue<E>
@@ -66,14 +64,12 @@ public class LimitedQueue<E>
     
     /**
      * Adds a new element to the end of the queue
-     * 
-     * @param  element  The element to add
      */
     public void offer(final E element)
     {
         synchronized (this)
         {
-            if (this.elements.size() == this.limit)
+            if (this.elements.size() == limit)
                 this.elements.pollFirst();
             
             this.elements.offerLast(element);

@@ -194,7 +194,7 @@ public class Interface implements Blackboard.BlackboardObserver
                 _loc = _loc.substring(0, _loc.length() - _port.length() - 1);
                 
                 final int port = Integer.parseInt(_port);
-                final InetAddress host = _pub.equals(this.localUser.getPublicIP())
+                final InetAddress host = _pub.equals(localUser.getPublicIP())
                                          ? InetAddress.getByName(_loc)
                                          : InetAddress.getByName(_pub);
                 
@@ -266,8 +266,6 @@ public class Interface implements Blackboard.BlackboardObserver
     
     /**
      * Closes the interface
-     * 
-     * @throws  IOException  On closing error  (unlikely)
      */
     public void close() throws IOException
     {   this.hub.close();
@@ -282,7 +280,6 @@ public class Interface implements Blackboard.BlackboardObserver
     /**
      * {@inheritDoc}
      */
-    @Override
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
         if (message instanceof JoinMulticastGroup)

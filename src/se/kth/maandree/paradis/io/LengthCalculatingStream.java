@@ -51,7 +51,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeBoolean(final boolean data) throws IOException
     {   this.length++;
     }
@@ -64,7 +63,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeByte(final byte data) throws IOException
     {   this.length++;
     }
@@ -77,7 +75,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeShort(final short data) throws IOException
     {   this.length += 2;
     }
@@ -90,9 +87,8 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeChar(final char data) throws IOException
-    {   writeWChar(data);
+    {   writeWChar((int)data);
     }
     
     
@@ -103,7 +99,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeWChar(final int data) throws IOException
     {
         if (data < 0x80)
@@ -142,7 +137,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeInt(final int data) throws IOException
     {   this.length += 4;
     }
@@ -155,7 +149,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeLen(final int data) throws IOException
     {
         if ((data & 0x7FFF) != 0)
@@ -172,7 +165,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeLong(final long data) throws IOException
     {   this.length += 8;
     }
@@ -188,7 +180,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * @see     #writeLen(int)
      * @see     #writeObject(Object)
      */
-    @Override
     public synchronized void writeLenOf(final Object data) throws IOException
     {
         final int cur = this.length;
@@ -204,7 +195,6 @@ class LengthCalculatingStream extends TransferOutputStream
      * 
      * @throws  IOException  Inherited from {@link #write(int)}
      */
-    @Override
     public synchronized void writeObject(final Object data) throws IOException
     {
         if (data instanceof Object[])

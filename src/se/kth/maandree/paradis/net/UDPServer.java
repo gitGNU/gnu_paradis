@@ -39,7 +39,7 @@ public class UDPServer implements Runnable
     public UDPServer(final int localPort) throws IOException
     {
         this.socket = new DatagramSocket(localPort);
-        this.localPort = this.socket.getLocalPort();
+        this.localPort = socket.getLocalPort();
         
         (new Thread(this)).start();
     }
@@ -202,12 +202,11 @@ public class UDPServer implements Runnable
     /**
      * Socket listener routine
      */
-    @Override
     public void run()
     {
-        if (this.runStarted)
+        if (runStarted)
             throw new Error("Excuse me!");
-        this.runStarted = true;
+        runStarted = true;
         
         try
         {

@@ -175,30 +175,17 @@ public class Pager
             
             final Process process = (new ProcessBuilder("/bin/sh", "-c", cmd)).start();
             final InputStream stream = process.getErrorStream();
-            OutputStream out = process.getOutputStream();
-            try
-            {   out.write(text.getBytes("UTF-8"));
-                out.flush();
-                
-                for (;;)
-                    if (stream.read() == -1)
-                        break;
-                
-                process.waitFor();
-            }
-            finally
-            {   try
-                {   out.close();
-                }
-                catch (final Throwable ignore)
-                {   //Ignore
-                }
-                try
-                {   stream.close();
-                }
-                catch (final Throwable ignore)
-                {   //Ignore
-            }   }
+            final OutputStream out = process.getOutputStream();
+            
+            out.write(text.getBytes("UTF-8"));
+            out.flush();
+            out.close();
+            
+            for (;;)
+                if (stream.read() == -1)
+                    break;
+            
+            process.waitFor();
             if (process.exitValue() != 0)
                 throw new Exception();
         }
