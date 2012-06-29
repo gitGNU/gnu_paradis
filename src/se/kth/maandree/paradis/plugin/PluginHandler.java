@@ -157,8 +157,8 @@ public class PluginHandler
     public static void setActive(final int plugin, final boolean active)
     {
 	if (activePlugins.contains(pluginInstances.get(plugin)) ^ active)
-            if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  getPlugin(i).initialize();  }
-	    else         {  activePlugins.remove(pluginInstances.get(plugin));  getPlugin(i).terminate();   }
+            if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  pluginInstances.get(plugin).initialize();  }
+	    else         {  activePlugins.remove(pluginInstances.get(plugin));  pluginInstances.get(plugin).terminate();   }
 	
         if (isActive(plugin) ^ active)
 	    try
@@ -172,7 +172,7 @@ public class PluginHandler
 		    buf.append("\n");
 		}
                 
-		Stirng data = buf.toString();
+		String data = buf.toString();
 		if (data.isEmpty() == false)
 		    data = data.substring(0, data.length() - "\n".length());
 		
@@ -190,8 +190,6 @@ public class PluginHandler
 			catch (final Throwable ignore)
                         {    //Ignore
 		}       }
-                
-		break;
 	    }
 	    catch (final Throwable err)
             {   System.err.println("Problem with plug-in " + (active ? "activation" : "deactivation") + ": " + err.toString());
