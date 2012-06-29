@@ -74,8 +74,8 @@ public class Interface implements Blackboard.BlackboardObserver
 		    @Override
 		    public void run()
 		    {
-			int delay = 5000; //TODO configurable
-			int limit = 10; //TODO configurable
+			int delay = NetConf.getDelayTime();
+			int limit = NetConf.getDelayLimit();
 			try
 			{   while (Interface.this.closed == false)
 				synchronized (Interface.this.connectionCacheQueue)
