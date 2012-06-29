@@ -7,4 +7,5 @@ randomcast
 
 core plugins:
     uuid resolver
+    uuid fetcher
 
