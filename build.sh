@@ -63,15 +63,32 @@ paramDoc=0
 for opt in "$@"; do
     if [[ $opt = '-ecj' ]]; then
 	paramEcj=1
-	if [ -d /opt/java7/jre/lib ]; then
-	    function javacSeven()
-	    {   ecj -bootclasspath `echo $(find /opt/java7/jre/lib | grep .jar$) | sed -e 's/\/opt\/java7\/jre\/lib\//:\/opt\/java7\/jre\/lib\//g' -e 's/ //g' | dd skip=1 bs=1 2>/dev/null` "$@"
+	if [ -f ./ecj.jar ]; then
+	    function _ecj()
+	    {   javaSeven -jar ecj.jar "$@"
 	    }
 	else
-	    function javacSeven()
+	    function _ecj()
 	    {   ecj "$@"
 	    }
 	fi
+	if [ -d /opt/java7/jre/lib ]; then
+	    function javacSeven()
+	    {   _ecj -bootclasspath `echo $(find /opt/java7/jre/lib | grep .jar$) | sed -e 's/\/opt\/java7\/jre\/lib\//:\/opt\/java7\/jre\/lib\//g' -e 's/ //g' | dd skip=1 bs=1 2>/dev/null` "$@"
+	    }
+	else
+	    function javacSeven()
+	    {   _ecj "$@"
+	    }
+	fi
+	errs="-err:conditionAssign,noEffectAssign,enumIdentifier,hashCode"
+	warns=$errs" -warn:allDeadCode,allDeprecation,allOver-ann,all-static-method,assertIdentifier,boxing,charConcat,compareIdentical,constructorName,deadCode,dep-ann,deprecation,"
+	warns+="discouraged,emptyBlock,enumSwitch,fallthrough,fieldHiding,finalBound,finally,forbidden,includeAssertNull,indirectStatic,intfAnnotation,intfNonInherited,intfRedundant,"
+	warns+="localHiding,maskedCatchBlock,null,nullDereference,over-ann,paramAssign,pkgDefaultMethod,raw,semicolon,serial,static-method,static-access,staticReceiver,suppress,"
+	warns+="syncOverride,syntheticAccess,typeHiding,unchecked,unnecessaryElse,unqualifiedField,unusedAllocation,unusedArgument,unusedImport,unusedLabel,unusedLocal,unusedPrivate,"
+	warns+="unusedThrown,uselessTypeCheck,varargsCast,warningToken"
+	#unused: enumSwitchPedantic,nls,specialParamHiding,super,switchDefault,unavoidableGenericProblems,nullAnnot,tasks
+	#sorry: javadoc,resource,unusedTypeArgs
     elif [[ $opt = '-echo' ]]; then
 	paramEcho=1
 	function javacSeven()
@@ -100,7 +117,7 @@ else
             cat
 	elif [[ $paramEcj = 1 ]]; then
 	    if [[ -f "colourpipe.ecj.jar" ]]; then
-		javaSeven -jar colourpipe.ecj.jar
+		sed -e 's/invalid warning token: '\''resource'\''. Ignoring warning and compiling//g' | dd "skip=1" "bs=1" 2>/dev/null | javaSeven -jar colourpipe.ecj.jar
 	    else
 		cat
 	    fi
