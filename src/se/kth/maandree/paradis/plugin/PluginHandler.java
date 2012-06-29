@@ -88,7 +88,7 @@ public class PluginHandler
      * 
      * @return  The count of plug-ins
      */
-    public static int getPluginCount()
+    public static synchronized int getPluginCount()
     {   return pluginInstances.size();
     }
     
@@ -99,7 +99,7 @@ public class PluginHandler
      * @param   index  The index of the plug-in
      * @return         The plug-in
      */
-    public static PluginV1 getPlugin(final int index)
+    public static synchronized PluginV1 getPlugin(final int index)
     {   return pluginInstances.get(index);
     }
     
@@ -110,11 +110,10 @@ public class PluginHandler
      * @param   plugin  The index of the plug-in
      * @return          Whether the plug-in is activated
      */
-    public static boolean isActive(final int plugin)
+    public static synchronized boolean isActive(final int plugin)
     {
         boolean yes = activePlugins.contains(pluginInstances.get(plugin));
-        if (yes == false)
-        {
+        if ((yes == false) && (new File(PLUGINS_FILE)).exists())
             try
             {
                 String data = readFile(PLUGINS_FILE) + "\n";
@@ -143,7 +142,6 @@ public class PluginHandler
             catch (final Throwable err)
             {   System.err.println("Problem fetch plugin active status: " + err.toString());
             }
-        }
         return yes;
     }
     
@@ -154,15 +152,17 @@ public class PluginHandler
      * @param  plugin  The index of the plug-in
      * @param  active  Whether the plug-in should be active
      */
-    public static void setActive(final int plugin, final boolean active)
+    public static synchronized void setActive(final int plugin, final boolean active)
     {
-	if (activePlugins.contains(pluginInstances.get(plugin)) ^ active)
-            if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  pluginInstances.get(plugin).initialise();  }
-	    else         {  activePlugins.remove(pluginInstances.get(plugin));  pluginInstances.get(plugin).terminate();   }
-	
-        if (isActive(plugin) ^ active)
-	    try
-            {
+	try
+        {
+	    final boolean test = activePlugins.contains(pluginInstances.get(plugin)) ^ active;
+	    if (test)
+		if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  pluginInstances.get(plugin).initialise();  }
+		else         {  activePlugins.remove(pluginInstances.get(plugin));  pluginInstances.get(plugin).terminate();   }
+	    
+	    if (test || (isActive(plugin) ^ active))
+	    {
 		StringBuilder buf = new StringBuilder();
 		for (final PluginV1 p : activePlugins)
                 {
@@ -191,9 +191,32 @@ public class PluginHandler
                         {    //Ignore
 		}       }
 	    }
-	    catch (final Throwable err)
-            {   System.err.println("Problem with plug-in " + (active ? "activation" : "deactivation") + ": " + err.toString());
+	}
+	catch (final Throwable err)
+        {   System.err.println("Problem with plug-in " + (active ? "activation" : "deactivation") + ": " + err.toString());
+	}
+    }
+    
+    
+    /**
+     * Updates a plug-in, for this to work, the plug-in cannot be in used and the may but be no external references to it.
+     * 
+     * @param  plugin  The index of the plug-in
+     */
+    public static synchronized void updatePlugin(final int plugin)
+    {
+	try
+	{   {   final PluginV1 _plugin = pluginInstances.get(plugin);
+		if (activePlugins.contains(_plugin))
+		    return;
 	    }
+	    pluginInstances.set(plugin, null);
+	    System.gc();
+	    pluginInstances.set(plugin, getPluginInstance(pluginFiles.get(plugin)));
+	}
+	catch (final Throwable err)
+	{   System.err.println("Problem with plug-in updating: " + err.toString());
+	}
     }
     
     
@@ -202,7 +225,7 @@ public class PluginHandler
      * 
      * @return  A list of indices for new plugins
      */
-    public static Vector<Integer> findPlugins()
+    public static synchronized Vector<Integer> findPlugins()
     {
 	final Vector<Integer> rc = new Vector<Integer>();
 	
@@ -244,18 +267,8 @@ public class PluginHandler
     @requires("java-environment>=7")
     private static PluginV1 getPluginInstance(final String name) throws Exception
     {
-        final String dir = PLUGIN_DIR + Properties.getFileSeparator();
-        
-        String file = dir + name + ".jar";
-        URLClassLoader sysLoader = (URLClassLoader)(ClassLoader.getSystemClassLoader());
-        Class<URLClassLoader> sysclass = URLClassLoader.class;
-        
-        Method method = sysclass.getDeclaredMethod("addURL", URL.class);
-        method.setAccessible(true);
-        method.invoke(sysLoader, (new File(file)).toURI().toURL());
-        
-        String path = file;
-        URL url = (new File(path)).toURI().toURL();
+        final String path = PLUGIN_DIR + Properties.getFileSeparator() + name + ".jar";
+        final URL url = (new File(path)).toURI().toURL();
         
         try (URLClassLoader klassLoader = new URLClassLoader(new URL[]{url}))
         {
@@ -271,7 +284,7 @@ public class PluginHandler
      * Activates all plugins that are already maked as active;
      * it is only useful to run this once, at the beginning.
      */
-    public static void startPlugins()
+    public static synchronized void startPlugins()
     {
 	findPlugins();
         try

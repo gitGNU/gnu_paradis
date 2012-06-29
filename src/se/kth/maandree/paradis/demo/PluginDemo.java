@@ -56,6 +56,8 @@ public class PluginDemo
 		    System.out.println(PluginHandler.getPlugin(Integer.parseInt(line.substring("get ".length()))).getName());
 		else if (line.startsWith("active "))
 		    System.out.println(PluginHandler.isActive(Integer.parseInt(line.substring("active ".length()))));
+		else if (line.startsWith("update "))
+		    PluginHandler.updatePlugin(Integer.parseInt(line.substring("update ".length())));
 		else if (line.startsWith("activate "))
 		    PluginHandler.setActive(Integer.parseInt(line.substring("activate ".length())), true);
 		else if (line.startsWith("deactivate "))
