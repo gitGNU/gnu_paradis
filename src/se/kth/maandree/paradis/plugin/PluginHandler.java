@@ -20,7 +20,6 @@ import se.kth.maandree.paradis.local.Properties; //Explicit
 import se.kth.maandree.paradis.*;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;

@@ -17,6 +17,7 @@
  */
 package se.kth.maandree.paradis.io;
 import se.kth.maandree.paradis.net.*;
+import se.kth.maandree.paradis.plugin.*;
 
 import java.util.HashMap;
 import java.io.*;
@@ -69,13 +70,14 @@ public class TransferProtocolRegister
         register(   long[].class, new    LongArrayTransferProtocol());
         register(   char[].class, new    CharArrayTransferProtocol());
         
-        register(     UUID.class, new      UUID.     UUIDTransferProtocol());
-        register(  Anycast.class, new   Anycast.  AnycastTransferProtocol());
-        register(  Unicast.class, new   Unicast.  UnicastTransferProtocol());
-        register(Multicast.class, new Multicast.MulticastTransferProtocol());
-        register(Broadcast.class, new Broadcast.BroadcastTransferProtocol());
-        register(   Packet.class, new    Packet.   PacketTransferProtocol());
-        register(     User.class, new      User.     UserTransferProtocol());
+        register(       UUID.class, new        UUID.       UUIDTransferProtocol());
+        register(    Anycast.class, new     Anycast.    AnycastTransferProtocol());
+        register(    Unicast.class, new     Unicast.    UnicastTransferProtocol());
+        register(  Multicast.class, new   Multicast.  MulticastTransferProtocol());
+        register(  Broadcast.class, new   Broadcast.  BroadcastTransferProtocol());
+        register(     Packet.class, new      Packet.     PacketTransferProtocol());
+        register(       User.class, new        User.       UserTransferProtocol());
+        register(PackageInfo.class, new PackageInfo.PackageInfoTransferProtocol());
     }
     
     
