@@ -227,6 +227,13 @@ public class Pacman
 	D.put("r", DATABASE_REMOVE);        S.put("r", SYNC_RECURSIVE);   U.put("r", UPGRADE_RECURSIVE);   R.put("u", REMOVE_UNNEEDED);
 	D.put("s", DATABASE_SEARCH);        S.put("s", SYNC_SEARCH);      U.put("s", UPGRADE_SEARCH);
 	                                    S.put("u", SYNC_UPGRADE);     U.put("u", UPGRADE_UPGRADE);
+	
+	Blackboard.getInstance("pacman").registerObserver(new PacmanDatabase());
+	Blackboard.getInstance("pacman").registerObserver(new PacmanSync());
+	Blackboard.getInstance("pacman").registerObserver(new PacmanUpgrade());
+	Blackboard.getInstance("pacman").registerObserver(new PacmanRemove());
+	Blackboard.getInstance("pacman").registerObserver(new PacmanQuery());
+	Blackboard.getInstance("pacman").registerObserver(new PacmanDeptest());
     }
     
     
