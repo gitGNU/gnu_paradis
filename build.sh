@@ -166,7 +166,7 @@ else
                 jarSeven -cf ~/.paradis/plugins/`echo $plugin | sed -e 's/\//./g'`.jar $(find $plugin | grep '\.class$')
 		cd ..
 	    done
-	    rm -r bin/se/kth/maandree/paradis/plugins
+	    rm -r bin/se/kth/maandree/paradis/plugins 2>/dev/null
 	)
     else
         ## run annotation processor (and compile paradis)

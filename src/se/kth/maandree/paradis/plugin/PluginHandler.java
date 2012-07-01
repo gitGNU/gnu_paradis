@@ -46,7 +46,7 @@ public class PluginHandler
     /**
      * The file where the settings are saved
      */
-    private static final String PLUGINS_FILE = "~/.paradis/plugins.dat".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    private static final String PLUGINS_FILE = "~/.paradis/plugins.data".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
     
     
     
