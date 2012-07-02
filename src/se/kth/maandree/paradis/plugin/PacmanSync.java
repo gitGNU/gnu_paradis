@@ -86,6 +86,16 @@ public class PacmanSync implements Blackboard.BlackboardObserver
 	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
 	final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
 	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+	
+	//SYNC_NODEPS
+	//SYNC_ASEXPLICIT
+	//SYNC_FORCE
+	//SYNC_ASDEPS
+	//SYNC_NEEDED
+	//SYNC_DBONLY
+	//SYNC_RECURSIVE
+	//SYNC_SEARCH
+	//SYNC_UPGRADE
     }
     
 }

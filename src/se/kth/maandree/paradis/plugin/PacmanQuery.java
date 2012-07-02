@@ -70,6 +70,11 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
 	    return;
 	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
 	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+	
+	//QUERY_EXPLICIT
+	//QUERY_SEARCH
+	//QUERY_UNREQUIRED
+	//QUERY_UPGRADE
     }
     
 }

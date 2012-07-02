@@ -17,6 +17,7 @@
  */
 package se.kth.maandree.paradis.plugin;
 import se.kth.maandree.paradis.local.Properties; //Explicit
+import se.kth.maandree.paradis.io,*;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
@@ -285,27 +286,6 @@ public class Pacman
     
     
     /**
-     * Expands an array of arrays and elemetns
-     * 
-     * @param   items  An array of arrays and elements
-     * @return         An array of elements
-     */
-    public static String[] expand(final Object... items)
-    {
-	final ArrayList<String> list = new ArrayList<String>();
-	for (final Object item : items)
-	    if (item instanceof String[])
-		for (final String elem : (String[])item)
-		    list.add(elem);
-	    else
-		list.add((String)item);
-	final String[] rc = new String[list.size()];
-	list.toArray(rc);
-	return rc;
-    }
-    
-    
-    /**
      * Invoke the package manager
      * 
      * @param  args  Arguments
@@ -332,7 +312,10 @@ public class Pacman
 		if (masteropt == null)
 		    shortopts = shortoptses.get(masteropt = arg);
 		else
-		    options.add(arg);
+		    if (options.contains(arg))
+			options.add(arg + arg);
+		    else
+			options.add(arg);
 	    else if (arg.startsWith("-") == false)
 		packages.add(arg);
 	    else
@@ -341,10 +324,62 @@ public class Pacman
 		    if (masteropt == null)
 			shortopts = shortoptses.get(masteropt = larg);
 		    else
-			options.add(larg);
+			if (options.contains(arg))
+			    options.add(arg + arg);
+			else
+			    options.add(larg);
 		}
 	
 	Blackboard.getInstance("pacman").broadcastMessage(new PacmanInvoke(masteropt, options, ignores, packages));
+    }
+    
+    
+    
+    /**
+     * Expands an array of arrays and elemetns
+     * 
+     * @param   items  An array of arrays and elements
+     * @return         An array of elements
+     */
+    public static String[] expand(final Object... items)
+    {
+	final ArrayList<String> list = new ArrayList<String>();
+	for (final Object item : items)
+	    if (item instanceof String[])
+		for (final String elem : (String[])item)
+		    list.add(elem);
+	    else
+		list.add((String)item);
+	final String[] rc = new String[list.size()];
+	list.toArray(rc);
+	return rc;
+    }
+    
+    
+    /**
+     * Gets the package information
+     * 
+     * @param   pack  The package's file name
+     * @return        The pacakge information
+     */
+    public static PackageInfo getPackageInfo(final String pack)
+    {
+	TransferInputStream tis = null;
+	try
+	{   tis = new TransferInputStream(new FileInputStream(new File(PACKAGE_DIR + pack)));
+	    return this.readObject(PackageInfo.class);
+	}
+	catch (final Throwable err)
+	{   return null;
+	}
+	finally
+	    {   if (tis != null)
+		    try
+		    {   tis.close();
+		    }
+		    catch (final Throwable ignore)
+		    {   //Ignore
+	    }       }
     }
     
 }

@@ -56,7 +56,6 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
     {
 	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(DEPTEST) == false))
 	    return;
-	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
 	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
     }
     

@@ -82,6 +82,21 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 	    return;
 	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
 	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+	
+	if (options.contains(DATABASE_ADD))
+	{
+	}
+	else if (options.contains(DATABASE_REMOVE))
+	{
+	    //DATABASE_SEARCH
+	}
+	else
+	{
+	    //DATABASE_DEPS | DATABASE_EXPLICIT
+	    //DATABASE_FILES
+	    //DATABASE_INSTALLED | DATABASE_NONINSTALLED
+	    //DATABASE_SEARCH
+	}
     }
     
 }

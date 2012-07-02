@@ -4,8 +4,14 @@
 . run.sh --completion--
 
 
+## package info
+program=paradis
+dirpackage=se.kth.maandree.${program}
+srcpackage=${dirpackage/:/\/}
+
+
 ## create directory for Java binaries
-mkdir bin 2>/dev/null
+mkdir -p bin
 chmod -R 755 bin
 
 
@@ -30,7 +36,7 @@ fi
     {   javac7 "$@"
     } &&
     function jarSeven()
-    {   jar "$@"
+    {   jar7 "$@"
     }
 
 
@@ -57,7 +63,7 @@ params="-source 7 -target 7 -s src -d bin"
 ## libraries
 jars=''
 if [ -d lib ]; then
-    jars=`echo $(find lib | grep .jar$) | sed -e 's/lib\//:lib\//g' -e 's/ //g'`
+    jars=`echo $(find lib | grep '\.jar$') | sed -e 's/lib\//:lib\//g' -e 's/ //g'`
 fi
 
 
@@ -69,9 +75,9 @@ paramDoc=0
 for opt in "$@"; do
     if [[ $opt = '-ecj' ]]; then
 	paramEcj=1
-	if [ -f ./ecj.jar ]; then
+	if [ -f dev/ecj.jar ]; then
 	    function _ecj()
-	    {   javaSeven -jar ecj.jar "$@"
+	    {   javaSeven -jar dev/ecj.jar "$@"
 	    }
 	else
 	    function _ecj()
@@ -113,8 +119,8 @@ done
 if [[ $paramDoc = 1 ]]; then
     ## generate javadoc
     $docparams="-sourcepath src -source 7 -encoding utf-8 -version -author -charset utf-8 -linksource -sourcetab 8 -keywords -docencoding utf-8"
-    javadoc7 $docparams -d doc/javadoc -private $(find src | grep '.java$') $(find bin | grep '.java$') ||
-    javadoc  $docparams -d doc/javadoc -private $(find src | grep '.java$') $(find bin | grep '.java$')
+    javadoc7 $docparams -d doc/javadoc -private $(find src | grep '\.java$') $(find bin | grep '\.java$') ||
+    javadoc  $docparams -d doc/javadoc -private $(find src | grep '\.java$') $(find bin | grep '\.java$')
 else
     ## colouriser
     function colourise()
@@ -122,14 +128,14 @@ else
 	if [[ $paramEcho = 1 ]]; then
             cat
 	elif [[ $paramEcj = 1 ]]; then
-	    if [[ -f "colourpipe.ecj.jar" ]]; then
-		sed -e 's/invalid warning token: '\''resource'\''. Ignoring warning and compiling//g' | dd "skip=1" "bs=1" 2>/dev/null | javaSeven -jar colourpipe.ecj.jar
+	    if [[ -f "dev/colourpipe.ecj.jar" ]]; then
+		sed -e 's/invalid warning token: '\''resource'\''. Ignoring warning and compiling//g' | dd "skip=1" "bs=1" 2>/dev/null | javaSeven -jar dev/colourpipe.ecj.jar
 		## this sed | dd is for only an old version of colourpipe incompatible with new ecj
 	    else
 		cat
 	    fi
-	elif [[ -f "colourpipe.javac.jar" ]]; then
-            javaSeven -jar colourpipe.javac.jar
+	elif [[ -f "dev/colourpipe.javac.jar" ]]; then
+            javaSeven -jar dev/colourpipe.javac.jar
 	else
 	    cat
 	fi
@@ -146,30 +152,32 @@ else
 	echo -e '\n\n\n'  &&
 	
         ## generate exceptions binaries
-	( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1
+	( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '\.java$')  2>&1
 	) | colourise
     fi &&
     
     ## compile annotations and annotation processorors
-    ( javacSeven $warns -cp .:bin$jars $params src/se/kth/maandree/paradis/{ATProcessor,requires}.java  2>&1
-    ) | colourise &&
+    if [ -f 'src/se/kth/maandree/paradis/requires.java' ]; then
+        ( javacSeven $warns -cp .:bin$jars $params src/se/kth/maandree/paradis/{ATProcessor,requires}.java  2>&1
+        ) | colourise
+    fi &&
     
     if [[ $paramAnnot = 0 ]]; then
         ## compile paradis
-	( javacSeven $warns -cp .:bin$jars $params $(find src | grep '.java$')  2>&1
+	( javacSeven $warns -cp .:bin$jars $params $(find src | grep '\.java$')  2>&1
 	) | colourise &&
 	(
             ## make plugin files
-	    mkdir -p ~/.paradis/plugins 2>/dev/null
+	    mkdir -p ~/.${program}/plugins 2>/dev/null
 	    for plugin in $(find bin | grep '/Plugin.class$' | sed -e 's/\/Plugin.class//g' -e 's/bin\///g'); do
 		cd bin
-                jarSeven -cf ~/.paradis/plugins/`echo $plugin | sed -e 's/\//./g'`.jar $(find $plugin | grep '\.class$')
+                jarSeven -cf ~/.${program}/plugins/`echo $plugin | sed -e 's/\//./g'`.jar $(find $plugin | grep '\.class$')
 		cd ..
 	    done
-	    rm -r bin/se/kth/maandree/paradis/plugins 2>/dev/null
+	    rm -r bin/${dirpackage}/plugins 2>/dev/null
 	)
     else
         ## run annotation processor (and compile paradis)
-	javacSeven -processor se.kth.maandree.paradis.ATProcessor -processorpath bin -implicit:class -cp .:bin$jars $params $(find src | grep '.java$')
+	javacSeven -processor ${package}.ATProcessor -processorpath bin -implicit:class -cp .:bin$jars $params $(find src | grep '\.java$')
     fi
 fi

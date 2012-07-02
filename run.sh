@@ -1,9 +1,12 @@
 #!/bin/sh
 
 ## program execution information
-package="se.kth.maandree.paradis"
+program=paradis
+package=se.kth.maandree.${program}
 hasMain=1
 hasHome=1
+mainClass=Program
+demos=demo
 
 
 ## java executer if default is for Java 7
@@ -22,7 +25,7 @@ hasHome=1
 ## libraries
 jars=''
 if [ -d lib ]; then
-    jars=`echo $(find lib | grep .jar$) | sed -e 's/lib\//:/g' -e 's/ //g'`
+    jars=`echo $(find lib | grep \.jar$) | sed -e 's/lib\//:/g' -e 's/ //g'`
 fi
 
 
@@ -41,40 +44,40 @@ runs+='chat multichat hubchat interfacechat plugins'
 
 ## default run
 if [[ $# = 0 ]]; then
-    javaSeven -ea -cp bin$jars "$package".Program
+    javaSeven -ea -cp bin$jars "$package".${mainClass}
 
 
 ## custom runs
 
 elif [[ $hasMain  &&  $1 = "main" ]]; then
-    javaSeven -ea -cp bin$jars "$package".Program
+    javaSeven -ea -cp bin$jars "$package".${mainClass}
 
 elif [[ $hasMain  &&  $1 = "main-da" ]]; then
-    javaSeven -da -cp bin$jars "$package".Program
+    javaSeven -da -cp bin$jars "$package".${mainClass}
     
 elif [[ $hasMain  &&  $hasHome  &&  $1 = "falsehome" ]]; then
     __myhome=$HOME
     HOME='/dev/shm'
-    javaSeven -ea -cp bin$jars "$package".Program
+    javaSeven -ea -cp bin$jars "$package".${mainClass}
     HOME=$__myhome
 
 
 ## demo runs
 
 elif [[ $1 = "chat" ]]; then
-    javaSeven -ea -cp bin$jars "$package".demo.Chat
+    javaSeven -ea -cp bin$jars "$package"."$demos".Chat
 
 elif [[ $1 = "multichat" ]]; then
-    javaSeven -ea -cp bin$jars "$package".demo.MultiChat
+    javaSeven -ea -cp bin$jars "$package"."$demos".MultiChat
 
 elif [[ $1 = "hubchat" ]]; then
-    javaSeven -ea -cp bin$jars "$package".demo.HubChat
+    javaSeven -ea -cp bin$jars "$package"."$demos".HubChat
 
 elif [[ $1 = "interfacechat" ]]; then
-    javaSeven -ea -cp bin$jars "$package".demo.InterfaceChat
+    javaSeven -ea -cp bin$jars "$package"."$demos".InterfaceChat
 
 elif [[ $1 = "plugins" ]]; then
-    javaSeven -ea -cp bin$jars "$package".demo.PluginDemo
+    javaSeven -ea -cp bin$jars "$package"."$demos".PluginDemo
 
 
 ## completion
