@@ -17,11 +17,9 @@
  */
 package se.kth.maandree.paradis.plugin;
 import se.kth.maandree.paradis.local.Properties; //Explicit
-import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
-import java.io.*;
 
 
 /**
@@ -358,29 +356,26 @@ public class Pacman
     
     
     /**
-     * Gets the package information
+     * Gets a map of all upgradable packages, mapped to their replacer or never version
      * 
-     * @param   pack  The package's file name
-     * @return        The pacakge information
+     * @param   installed  All installed software to check for upgradablility, version must be included
+     * @return             Map of all upgradable packages, mapped to their replacer or never version
      */
-    public static PackageInfo getPackageInfo(final String pack)
+    public static HashMap<String, String> getUpgradable(final String... installed)
     {
-	TransferInputStream tis = null;
-	try
-	{   tis = new TransferInputStream(new FileInputStream(new File(PACKAGE_DIR + pack)));
-	    return tis.readObject(PackageInfo.class);
-	}
-	catch (final Throwable err)
-	{   return null;
-	}
-	finally
-	{   if (tis != null)
-		try
-		{   tis.close();
-		}
-		catch (final Throwable ignore)
-		{   //Ignore
-	}       }
+	return null;
+    }
+    
+    
+    /**
+     * Gets a set of all required packages
+     * 
+     * @param   installed  All installed software to check for upgradablility
+     * @return             Set of all required packages
+     */
+    public static HashSet<String> getRequired(final String... installed)
+    {
+	return null;
     }
     
 }

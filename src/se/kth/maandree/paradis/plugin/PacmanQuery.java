@@ -16,9 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.plugin;
+import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
+import java.util.regex.*;
+import java.io.*;
 
 
 /**
@@ -70,11 +73,104 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
 	    return;
 	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
 	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+	final HashSet<String> packageSet = new HashSet<String>();
+	for (final String pack : packages)
+	    packageSet.add(pack);
 	
-	//QUERY_EXPLICIT
-	//QUERY_SEARCH
-	//QUERY_UNREQUIRED
-	//QUERY_UPGRADE
+	final boolean explicit   = options.contains(QUERY_EXPLICIT);
+	final boolean search     = options.contains(QUERY_SEARCH);
+	final boolean unrequired = options.contains(QUERY_UNREQUIRED);
+	final boolean upgrade    = options.contains(QUERY_UPGRADE);
+	
+	final Pattern pattern;
+	if (search)
+	    pattern = null;
+	else
+	{
+	    final StringBuilder buf = new StringBuilder();
+	    boolean first = true;
+	    for (final String pack : packages)
+	    {
+		if (first == false)
+		    buf.append("|");
+		first = false;
+		buf.append(pack);
+	    }
+	    pattern = Pattern.compile(buf.toString());
+	}
+	
+	final ArrayList<String> explicits = new ArrayList<String>();
+	final HashMap<String, Boolean> installmap = new HashMap<String, Boolean>();
+	try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(new File(PACKAGES_FILE))))
+	{
+	    for (;;)
+	    {
+		final String pack = tis.readObject(String.class);
+		if (pack.isEmpty())
+		    break;
+		final String _pack = pack.substring(0, pack.lastIndexOf("="));
+		if (pattern == null)
+		{   if ((packageSet.contains(_pack) == false) && (packageSet.contains(pack) == false))
+			continue;
+		}
+		else
+		{   if ((pattern.matcher(_pack).matches() == false) && (pattern.matcher(pack).matches() == false))
+			continue;
+		}
+		final Boolean expl = Boolean.valueOf(tis.readBoolean());
+		if (expl == Boolean.TRUE)
+		    explicits.add(pack);
+		if (explicit == unrequired)
+		    installmap.put(pack, expl);
+		else
+		    if (explicit)
+		    {   if (expl == Boolean.TRUE)
+			    installmap.put(pack, expl);
+		    }
+		    else
+		    {   if (expl == Boolean.FALSE)
+			    installmap.put(pack, expl);
+		    }
+	    }
+	}
+	catch (final FileNotFoundException ignore)
+	{   //Ignore
+	}
+	catch (final Throwable err)
+        {   System.err.println(err.toString());
+	}
+	
+	final String[] inst = new String[installmap.size()];
+	int ptr = 0;
+	for (final String pack : installmap.keySet())
+	    inst[ptr++] = pack;
+	
+	final Map<String, String> upgradable = Pacman.getUpgradable(inst);
+	final Set<String> required = Pacman.getRequired(inst);
+	
+	final ArrayList<String> packs = new ArrayList<String>();
+	final String[] rc = new String[packs.size()];
+	ptr = 0;
+	for (final String pack : inst)
+	    if ((unrequired == false) || installmap.get(pack) == Boolean.TRUE)
+		if (upgrade == false)
+		    rc[ptr++] = pack;
+		else
+		{
+		    final String _pack = pack.substring(0, pack.lastIndexOf("="));
+		    if (upgradable.containsKey(_pack))
+			rc[ptr++] = pack;
+		}
+	    else
+	    {
+		final String _pack = pack.substring(0, pack.lastIndexOf("="));
+		if ((required.contains(_pack) == false) || (upgrade == false) || upgradable.containsKey(_pack))
+		    rc[ptr++] = pack;
+	    }
+	
+	Arrays.sort(rc, 0, ptr);
+	for (int i = 0; i < ptr; i++)
+	    System.out.println(rc[i]);
     }
     
 }

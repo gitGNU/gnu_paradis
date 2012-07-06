@@ -88,6 +88,9 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 	    return;
 	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
 	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+	final HashSet<String> packageSet = new HashSet<String>();
+	for (final String pack : packages)
+	    packageSet.add(pack);
 	
 	final String fs = Properties.getFileSeparator();
 	if (options.contains(DATABASE_ADD))
@@ -98,7 +101,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 		    Files.move((new File(pack + ".pkg.xz")).toPath(), (new File(base + ".pkg.xz")).toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (final Throwable err)
-		{   System.err.println(err.getMessage());
+		{   System.err.println(err.toString());
 		}
 	else if (options.contains(DATABASE_REMOVE))
 	    for (final String pack : packages)
@@ -108,7 +111,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 		    Files.delete((new File(base + ".pkg.xz")).toPath());
 		}
 		catch (final Throwable err)
-		{   System.err.println(err.getMessage());
+		{   System.err.println(err.toString());
 		}
 	else
 	{
@@ -166,8 +169,11 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 					this.installmap.put(pack, expl);
 				    }
 				}
-				catch (final Throwable ignore)
+				catch (final FileNotFoundException ignore)
 				{   //Ignore
+				}
+				catch (final Throwable err)
+				{   System.err.println(err.toString());
 				}
 			}
 			
@@ -187,14 +193,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 			    if (packages.isEmpty() == false)
 				if (this.pattern == null)
 				{
-				    boolean found = false;
-				    for (final String pack : packages)
-					if (name.equals(pack))
-					{
-					    found = true;
-					    break;
-					}
-				    if (found == false)
+				    if (packageSet.contains(_name) == false)
 					return false;
 				}
 				else
@@ -213,6 +212,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 		    });
 	    
 	    final boolean files = options.contains(DATABASE_FILES);
+	    Arrays.sort(packs);
 	    for (final String pkg : packs)
 	    {
 		final String pack = pkg.substring(0, pkg.length() - ".tar.xz".length());
@@ -223,11 +223,12 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 		if (files)
 		    try
 		    {   final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
+			Arrays.sort(info.files);
 			for (final String file : info.files)
 			    System.out.println("\t" + file);
 		    }
 		    catch (final Throwable err)
-		    {   System.err.println(err.getMessage());
+		    {   System.err.println(err.toString());
 			continue;
 		    }
 	    }
