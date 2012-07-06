@@ -20,8 +20,6 @@ import se.kth.maandree.paradis.local.Properties;
 import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
-import org.tukaani.xz.*;
-
 import java.util.*;
 import java.util.regex.*;
 import java.io.*;
@@ -43,7 +41,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
     /**
      * The file where the data are saved
      */
-    private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
+    static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
     
     
     /** Add, remove or list packages
@@ -83,7 +81,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
      * {@inheritDoc}
      */
     @Override
-    @requires({"java-runtime>=7", "xz-java"})
+    @requires("java-runtime>=7")
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
 	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(DATABASE) == false))
@@ -153,7 +151,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 				    first = false;
 				    buf.append(pack);
 				}
-				pattern = Pattern.compile(buf.toString());
+				this.pattern = Pattern.compile(buf.toString());
 			    }
 			    
 			    if (this.installed ^ this.noninstalled)
@@ -191,7 +189,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 				{
 				    boolean found = false;
 				    for (final String pack : packages)
-					if (true)
+					if (name.equals(pack))
 					{
 					    found = true;
 					    break;
@@ -210,8 +208,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 				    return this.noninstalled;
 				return (this.deps == this.explicit) || ((inst == Boolean.TRUE) == this.explicit);
 			    }
-			    else
-				return true;
+			    return true;
 			}
 		    });
 	    
@@ -224,18 +221,15 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 		
 		System.out.println(pack);
 		if (files)
-		{
-		    final PackageInfo info;
-		    try (final TransferInputStream tis = new TransferInputStream(new XZInputStream(new BufferedInputStream(new FileInputStream(new File(PACKAGE_DIR + pack + ".pkg.xz"))))))
-		    {   info = tis.readObject(PackageInfo.class);
+		    try
+		    {   final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
+			for (final String file : info.files)
+			    System.out.println("\t" + file);
 		    }
 		    catch (final Throwable err)
 		    {   System.err.println(err.getMessage());
 			continue;
 		    }
-		    for (final String file : info.files)
-			System.out.println("\t" + file);
-		}
 	    }
 	}
     }

@@ -18,6 +18,9 @@
 package se.kth.maandree.paradis.plugin;
 import se.kth.maandree.paradis.net.*;
 import se.kth.maandree.paradis.io.*;
+import se.kth.maandree.paradis.*;
+
+import org.tukaani.xz.*;
 
 import java.io.*;
 
@@ -421,6 +424,25 @@ public final class PackageInfo
      * Package UUID: used to ensure uniqueness of package independent on version, epoch and release
      */
     public final UUID uuid;
+    
+    
+    
+    /**
+     * Loads an {@link PackageInfo} from a file, that may be compressed with xz
+     * 
+     * @param   file  The file to load
+     * @return        The loaded {@link PackageInfo}
+     * 
+     * @throws  IOException  On I/O exception
+     */
+    @requires({"java-environment>=7", "xz-java"})
+    public static PackageInfo fromFile(final String file) throws IOException
+    {
+	try (final InputStream fis = new FileInputStream(file))
+	{   try (final TransferInputStream tis = new TransferInputStream(file.endsWith(".xz") ? new XZInputStream(fis) : fis);)
+	    {   return tis.readObject(PackageInfo.class);
+	}   }
+    }
     
 }
 
