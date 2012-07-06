@@ -226,7 +226,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
 		if (files)
 		{
 		    final PackageInfo info;
-		    try (final TransferInputStream tis = new TransferInputStream(new XZInputStream(new FileInputStream(new File(PACKAGE_DIR + pack + ".pkg.xz")))))
+		    try (final TransferInputStream tis = new TransferInputStream(new XZInputStream(new BufferedInputStream(new FileInputStream(new File(PACKAGE_DIR + pack + ".pkg.xz"))))))
 		    {   info = tis.readObject(PackageInfo.class);
 		    }
 		    catch (final Throwable err)
