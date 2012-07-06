@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.plugin;
+import se.kth.maandree.paradis.local.Properties; //Explicit
 import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
@@ -50,29 +51,66 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
     
     
     
+    /**
+     * Package name with verion or version bounds
+     */
     public static class VersionedPackage
     {
+	/**
+	 * System file separator
+	 */
+	private final String FILE_SEPARATOR = Properties.getFileSeparator();
+	
+	
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param  pkg  Package with version or version bounds, may be a file name
+	 */
 	public VersionedPackage(final String pkg)
 	{
+	    String _pkg = pkg;
+	    if (_pkg.contains(FILE_SEPARATOR))
+		_pkg = _pkg.substring(_pkg.lastIndexOf(FILE_SEPARATOR) + FILE_SEPARATOR.length());
+	    if (_pkg.endsWith(".pkg.xz"))
+		_pkg = _pkg.substring(0, _pkg.length() - ".pkg.xz".length());
+	    else if (_pkg.endsWith(".pkg"))
+		_pkg = _pkg.substring(0, _pkg.length() - ".pkg".length());
+	    
 	    // name>low  name>=low  name=both  name<=high  name<high  name
 	    // low<=name<=high  low<=name<high  low<name<=high  low<name<high
 	    // high>=name>=low  high>=name>low  high>name>=low  high>name>low
 	    
-	    final String[] parts = pkg.replace("<", "=").replace(">", "=").replace("==", "=").split("=");
+	    final String[] parts = _pkg.replace("<", "=").replace(">", "=").replace("==", "=").split("=");
 	    if (parts.length == 3)
 	    {
 		this.name = parts[1];
 		final String versionA = parts[0].replace(";", ":");
 		final String versionB = parts[2].replace(";", ":");
-		final String opA = pkg.substring(versionA.length(), pkg.indexOf(this.name, versionA.length()) - versionA.length());
-		String opB = pkg.substring(versionA.length() + opA.length() + this.name.length());
+		final String opA = _pkg.substring(versionA.length(), _pkg.indexOf(this.name, versionA.length()) - versionA.length());
+		String opB = _pkg.substring(versionA.length() + opA.length() + this.name.length());
 		opB = opB.substring(0, opB.length() - versionB.length());
+		if (opA.contains(">") && opB.contains(">"))
+		{
+		    this.highClosed = opA.contains("=");
+		    this.lowClosed = opB.contains("=");
+		    this.high = versionA;
+		    this.low = versionB;
+		}
+		else
+		{
+		    this.lowClosed = opA.contains("=");
+		    this.highClosed = opB.contains("=");
+		    this.low = versionA;
+		    this.high = versionB;
+		}
 	    }
 	    else if (parts.length == 2)
 	    {
 		this.name = parts[0];
 		final String version = parts[1].replace(";", ":");
-		final String op = pkg.substring(this.name.length(), pkg.length() - this.name.length() - parts[1].length());
+		final String op = _pkg.substring(this.name.length(), _pkg.length() - this.name.length() - parts[1].length());
 		if (op.equals("<"))
 		{
 		    this.lowClosed = this.highClosed = false;
@@ -112,11 +150,116 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	
 	
 	
+	/**
+	 * Package name
+	 */
 	private final String name;
+	
+	/**
+	 * Package version lower bound, {@code null} if unbounded
+	 */
 	private final String low;
+	
+	/**
+	 * Package version upper bound, {@code null} if unbounded
+	 */
 	private final String high;
+	
+	/**
+	 * Whether the lower version bound is closed
+	 */
 	private final boolean lowClosed;
+	
+	/**
+	 * Whether the ypper version bound is closed
+	 */
 	private final boolean highClosed;
+	
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(final Object other)
+	{
+	    if ((other == null) || (other instanceof VersionedPackage == false))
+		return false;
+	    if (other == this)
+		return true;
+	    return this.name.equals(((VersionedPackage)other).name);
+	}
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode()
+	{
+	    return this.name.hashCode()
+	}
+	
+	
+	/**
+	 * Test whether one instance satisficies another
+	 * 
+	 * @param   other  The other isntance
+	 * @return         The result of the test
+	 */
+	public boolean intersects(final VersionedPackage other)
+	{
+	    assert other != null;
+	    if (other == this)
+		return true;
+	    if (this.name.equals(other.name) == false)
+		return false;
+	    
+	    if (((this.low == null) && (this.high == null)) || ((other.low == null) && (other.high == null)))
+		return true;
+	    
+	    if (((this.low == null) ^ (this.high == null)) && ((other.low == null) ^ (other.high == null)) && ((this.low == null) == (other.low == null)))
+		return true;
+	    
+	    if ((this.low != null) && (this.high == null) && (other.high != null))
+	    {   int comp = this.low.compareTo(other.high);
+		return comp == 0 ? (this.lowClosed && other.highClosed) : (comp < 0);
+	    }
+	    
+	    if ((this.low == null) && (this.high != null) && (other.low != null))
+	    {   int comp = other.low.compareTo(this.high);
+		return comp == 0 ? (other.lowClosed && this.highClosed) : (comp < 0);
+	    }
+	    
+	    if ((this.low != null) && (this.high != null) && (other.low == null) && (other.high != null))
+	    {   int comp = this.low.compareTo(other.high);
+		return comp == 0 ? (this.lowClosed && other.highClosed) : (comp < 0);
+	    }
+	    
+	    if ((this.low == null) && (this.high != null) && (other.low != null) && (other.high != null))
+	    {   int comp = other.low.compareTo(this.high);
+		return comp == 0 ? (other.lowClosed && this.highClosed) : (comp < 0);
+	    }
+	    
+	    final boolean olc = other. lowClosed;
+	    final boolean tlc = this . lowClosed;
+	    final boolean thc = this .highClosed;
+	    final boolean ohc = other.highClosed;
+	    
+	    int oltl = other.low .compareTo(this .low );  if (oltl == 0)  oltl = (olc && tlc) ? -1 : 0;
+	    int olth = other.low .compareTo(this .high);  if (olth == 0)  olth = (olc && thc) ? -1 : 0;
+	    int tloh = this .low .compareTo(other.high);  if (tloh == 0)  tloh = (tlc && ohc) ? -1 : 0;
+	    int thoh = this .high.compareTo(other.high);  if (thoh == 0)  thoh = (thc && ohc) ? -1 : 0;
+	    int tlol = this .low .compareTo(other.low );  if (tlol == 0)  tlol = (tlc && olc) ? -1 : 0;
+	    int ohth = other.high.compareTo(this .high);  if (ohth == 0)  ohth = (ohc && thc) ? -1 : 0;
+	    
+	    if ((oltl < 0) && (tloh < 0))  return true;
+	    if ((olth < 0) && (thoh < 0))  return true;
+	    if ((tlol < 0) && (olth < 0))  return true;
+	    if ((tloh < 0) && (ohth < 0))  return true;
+	    return false;
+	}
+	
     }
     
     
@@ -156,8 +299,8 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 		}
 	    }
 	    
-	    final HashMap<String, String> provided = new HashMap<String, String>();
-	    final HashMap<String, String> conflict = new HashMap<String, String>();
+	    final HashMap<VersionedPackage, VersionedPackage> provided = new HashMap<VersionedPackage, VersionedPackage>();
+	    final HashMap<VersionedPackage, VersionedPackage> conflict = new HashMap<VersionedPackage, VersionedPackage>();
 	    for (final String pac : packages)
 	    {
 		final String pack = pac.contains("=") ? pac : enversionmap.get(pac);
