@@ -16,9 +16,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.plugin;
+import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
+import java.io.*;
 
 
 /**
@@ -158,7 +160,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	    final HashMap<String, String> conflict = new HashMap<String, String>();
 	    for (final String pac : packages)
 	    {
-		final String pack = pac.contains("=") ? pac : enversionmap(pac);
+		final String pack = pac.contains("=") ? pac : enversionmap.get(pac);
 		final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
 	    }
 	}
