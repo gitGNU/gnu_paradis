@@ -86,7 +86,7 @@ for opt in "$@"; do
 	fi
 	if [ -d /opt/java7/jre/lib ]; then
 	    function javacSeven()
-	    {   _ecj -bootclasspath `echo $(find /opt/java7/jre/lib | grep .jar$) | sed -e 's/\/opt\/java7\/jre\/lib\//:\/opt\/java7\/jre\/lib\//g' -e 's/ //g' | dd skip=1 bs=1 2>/dev/null` "$@"
+	    {   _ecj -bootclasspath `echo $(find /opt/java7/jre/lib | grep '\.jar$') | sed -e 's/\/opt\/java7\/jre\/lib\//:\/opt\/java7\/jre\/lib\//g' -e 's/ //g' | dd skip=1 bs=1 2>/dev/null` "$@"
 	    }
 	else
 	    function javacSeven()
@@ -148,7 +148,7 @@ else
 	) | colourise &&
 	
         ## generate exceptions code
-	javaSeven -ea -cp bin$jars "se.kth.maandree.javagen.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
+	javaSeven -ea -cp bin$jars "se.kth.maandree.javagen.ExceptionGenerator" -o bin -- $(find src | grep '\.exceptions$')  2>&1  &&
 	echo -e '\n\n\n'  &&
 	
         ## generate exceptions binaries
