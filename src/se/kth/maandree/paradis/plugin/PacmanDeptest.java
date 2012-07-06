@@ -143,6 +143,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	    }
 	    else
 	    {
+		this.name = _pkg;
 		this.low = this.high = null;
 		this.lowClosed = this.highClosed = false;
 	    }
@@ -197,7 +198,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	@Override
 	public int hashCode()
 	{
-	    return this.name.hashCode()
+	    return this.name.hashCode();
 	}
 	
 	
