@@ -365,7 +365,30 @@ public class Pacman
      */
     public static HashMap<String, String> getUpgradable(final String... installed)
     {
-	return null;
+	final HashMap<String, String> rc = new HashMap<String, String>();
+	try
+	{
+	    final String[] packs = (new File(PACKAGE_DIR)).list();
+	    Arrays.sort(packs);
+	    final HashMap<String, String> map = new HashMap<String, String>();
+	    for (final String pack : packs)
+	    {
+		final String _pack = pack.substring(0, pack.lastIndexOf("="));
+		map.put(_pack, pack);
+	    }
+	    for (final String pack : map.values())
+	    {
+		final String[] replaces = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz").replaces;
+		for (final String replacee : replaces)
+		    map.put(replacee, pack);
+	    }
+	    for (final String pack : installed)
+		rc.put(pack, map.get(pack));
+	}
+	catch (final Throwable err)
+	{   System.err.println(err.toString());
+	}
+	return rc;
     }
     
     
@@ -377,8 +400,8 @@ public class Pacman
     @requires({"java-runtime>=6", "java-environment>=7"})
     public static HashSet<String> getRequired()
     {
-	final HashMap<String, String> installed = new HashMap<String, String>(); // FIXME populate
-	final ArrayList<String> explicits = new ArrayList<String>(); // FIXME populate
+	final HashMap<String, String> installed = new HashMap<String, String>();
+	final ArrayList<String> explicits = new ArrayList<String>();
 	
 	try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(new File(PACKAGES_FILE))))
 	{

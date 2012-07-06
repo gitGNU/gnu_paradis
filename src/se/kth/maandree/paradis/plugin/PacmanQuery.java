@@ -32,11 +32,6 @@ import java.io.*;
 public class PacmanQuery implements Blackboard.BlackboardObserver
 {
     /**
-     * The directory where the packages are located
-     */
-    private static final String PACKAGE_DIR = Pacman.PACKAGE_DIR;
-    
-    /**
      * The file where the data are saved
      */
     private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
