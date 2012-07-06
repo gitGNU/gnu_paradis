@@ -17,10 +17,11 @@
  */
 package se.kth.maandree.paradis.plugin;
 import se.kth.maandree.paradis.local.Properties; //Explicit
-import se.kth.maandree.paradis.io,*;
+import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
+import java.io.*;
 
 
 /**
@@ -33,7 +34,7 @@ public class Pacman
     /**
      * The directory where the packages are located
      */
-    public static final String PACKAGE_DIR = "~/.paradis/packages".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    public static final String PACKAGE_DIR = "~/.paradis/packages/".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
     
     /**
      * The file where the data are saved
@@ -367,19 +368,19 @@ public class Pacman
 	TransferInputStream tis = null;
 	try
 	{   tis = new TransferInputStream(new FileInputStream(new File(PACKAGE_DIR + pack)));
-	    return this.readObject(PackageInfo.class);
+	    return tis.readObject(PackageInfo.class);
 	}
 	catch (final Throwable err)
 	{   return null;
 	}
 	finally
-	    {   if (tis != null)
-		    try
-		    {   tis.close();
-		    }
-		    catch (final Throwable ignore)
-		    {   //Ignore
-	    }       }
+	{   if (tis != null)
+		try
+		{   tis.close();
+		}
+		catch (final Throwable ignore)
+		{   //Ignore
+	}       }
     }
     
 }
