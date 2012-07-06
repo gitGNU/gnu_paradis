@@ -237,7 +237,7 @@ public final class PackageInfo
     public final String[] dependencies;
     
     /**
-     * Package epoch number: non-negative
+     * Package epoch number: non-negative, default is 0
      */
     public final int packageEpoch;
     
@@ -254,7 +254,7 @@ public final class PackageInfo
     public final String packageVersion;
     
     /**
-     * Package release number: non-negative
+     * Package release number: non-negative, default is 0
      */
     public final int packageRelease;
     

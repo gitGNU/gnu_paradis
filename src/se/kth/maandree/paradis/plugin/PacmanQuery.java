@@ -99,7 +99,6 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
 	    pattern = Pattern.compile(buf.toString());
 	}
 	
-	final ArrayList<String> explicits = new ArrayList<String>();
 	final HashMap<String, Boolean> installmap = new HashMap<String, Boolean>();
 	try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(new File(PACKAGES_FILE))))
 	{
@@ -118,8 +117,6 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
 			continue;
 		}
 		final Boolean expl = Boolean.valueOf(tis.readBoolean());
-		if (expl == Boolean.TRUE)
-		    explicits.add(pack);
 		if (explicit == unrequired)
 		    installmap.put(pack, expl);
 		else
@@ -146,7 +143,7 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
 	    inst[ptr++] = pack;
 	
 	final Map<String, String> upgradable = Pacman.getUpgradable(inst);
-	final Set<String> required = Pacman.getRequired(inst);
+	final Set<String> required = Pacman.getRequired();
 	
 	final ArrayList<String> packs = new ArrayList<String>();
 	final String[] rc = new String[packs.size()];
