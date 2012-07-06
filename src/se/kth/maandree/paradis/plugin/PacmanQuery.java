@@ -187,8 +187,11 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
 	    final HashMap<String, String> map = new HashMap<String, String>();
 	    for (final String pack : packs)
 	    {
-		final String _pack = pack.substring(0, pack.lastIndexOf("="));
-		map.put(_pack, pack);
+		if (pack.endsWith(".pkg.xz") == false)
+		    continue;
+		final String $pack = pack.substring(0, pack.length() - ".pkg.xz".length());
+		final String _pack = $pack.substring(0, $pack.lastIndexOf("="));
+		map.put(_pack, $pack);
 	    }
 	    for (final String pack : map.values())
 	    {
@@ -259,7 +262,7 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
 		
 		provided.add(dependent.substring(0, dependent.lastIndexOf("=")));
 		for (final String provides : info.provides)
-		    provided.add(provides);
+		    provided.add(provides.substring(0, provides.lastIndexOf("=")));
 		
 		for (final String[] _deps : new String[][] { deps, opts })
 		    for (final String _dep : _deps)

@@ -48,6 +48,77 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
     
     
     
+    public static class VersionedPackage
+    {
+	public VersionedPackage(final String pkg)
+	{
+	    // name>low  name>=low  name=both  name<=high  name<high  name
+	    // low<=name<=high  low<=name<high  low<name<=high  low<name<high
+	    // high>=name>=low  high>=name>low  high>name>=low  high>name>low
+	    
+	    final String[] parts = pkg.replace("<", "=").replace(">", "=").replace("==", "=").split("=");
+	    if (parts.length == 3)
+	    {
+		this.name = parts[1];
+		final String versionA = parts[0].replace(";", ":");
+		final String versionB = parts[2].replace(";", ":");
+		final String opA = pkg.substring(versionA.length(), pkg.indexOf(this.name, versionA.length()) - versionA.length());
+		String opB = pkg.substring(versionA.length() + opA.length() + this.name.length());
+		opB = opB.substring(0, opB.length() - versionB.length());
+	    }
+	    else if (parts.length == 2)
+	    {
+		this.name = parts[0];
+		final String version = parts[1].replace(";", ":");
+		final String op = pkg.substring(this.name.length(), pkg.length() - this.name.length() - parts[1].length());
+		if (op.equals("<"))
+		{
+		    this.lowClosed = this.highClosed = false;
+		    this.low = null;
+		    this.high = version;
+		}
+		else if (op.equals("<="))
+		{
+		    this.lowClosed = (this.highClosed = true) == false;
+		    this.low = null;
+		    this.high = version;
+		}
+		else if (op.equals(">="))
+		{
+		    this.lowClosed = (this.highClosed = false) == false;
+		    this.high = null;
+		    this.low = version;
+		}
+		else if (op.equals(">"))
+		{
+		    this.lowClosed = this.highClosed = false;
+		    this.high = null;
+		    this.low = version;
+		}
+		else
+		{
+		    this.lowClosed = this.highClosed = true;
+		    this.low = this.high = version;
+		}
+	    }
+	    else
+	    {
+		this.low = this.high = null;
+		this.lowClosed = this.highClosed = false;
+	    }
+	}
+	
+	
+	
+	private final String name;
+	private final String low;
+	private final String high;
+	private final boolean lowClosed;
+	private final boolean highClosed;
+    }
+    
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -57,7 +128,46 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(DEPTEST) == false))
 	    return;
 	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+	
+	try
+	{
+	    final HashMap<String, String> installed = new HashMap<String, String>();
+	    try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(new File(PACKAGES_FILE))))
+	    {   for (;;)
+		{
+		    final String pack = tis.readObject(String.class);
+		    if (pack.isEmpty())
+			break;
+		    final String _pack = pack.substring(0, pack.lastIndexOf("="));
+		    installed.put(_pack, pack);
+	    }   }
+	    
+	    final HashMap<String, String> enversionmap = new HashMap<String, String>();
+	    {   final String[] packs = (new File(PACKAGE_DIR)).list();
+		Arrays.sort(packs);
+		for (final String pack : packs)
+	        {
+		    if (pack.endsWith(".pkg.xz") == false)
+			continue;
+		    final String $pack = pack.substring(0, pack.length() - ".pkg.xz".length());
+		    enversionmap.put($pack.substring(0, $pack.lastIndexOf("=")), $pack);
+		}
+	    }
+	    
+	    final HashMap<String, String> provided = new HashMap<String, String>();
+	    final HashMap<String, String> conflict = new HashMap<String, String>();
+	    for (final String pac : packages)
+	    {
+		final String pack = pac.contains("=") ? pac : enversionmap(pac);
+		final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
+	    }
+	}
+	catch (final Throwable err)
+        {   System.err.println(err.toString());
+	    System.out.println("Could not load information needed to test dependencies.");
+	}
     }
+    
     
 }
 
