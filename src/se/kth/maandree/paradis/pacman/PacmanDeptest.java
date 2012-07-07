@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.pacman;
-import se.kth.maandree.paradis.local.Properties; //Explicit
 import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 

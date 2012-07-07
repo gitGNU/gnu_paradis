@@ -17,11 +17,6 @@
  */
 package se.kth.maandree.paradis.pacman;
 import se.kth.maandree.paradis.local.Properties; //Explicit
-import se.kth.maandree.paradis.io.*;
-import se.kth.maandree.paradis.*;
-
-import java.util.*;
-import java.io.*;
 
 
 /**
@@ -34,7 +29,7 @@ public class VersionedPackage implements Comparable<VersionedPackage>
     /**
      * System file separator
      */
-    private final String FILE_SEPARATOR = Properties.getFileSeparator();
+    private static final String FILE_SEPARATOR = Properties.getFileSeparator();
     
     
     
