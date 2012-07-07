@@ -29,7 +29,7 @@ import java.io.*;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class PacmanDeptest implements Blackboard.BlackboardObserver
+public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix sorting (comparison)
 {
     /**
      * The directory where the packages are located
@@ -210,7 +210,8 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	 */
 	public boolean intersects(final VersionedPackage other)
 	{
-	    assert other != null;
+	    if (other == null)
+		return false;
 	    if (other == this)
 		return true;
 	    if (this.name.equals(other.name) == false)
@@ -261,6 +262,20 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	    return false;
 	}
 	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString()
+	{
+	    if ((this.low == null) && (this.high == null))
+		return this.name;
+	    if (this.low == null)   return this.name + (this.highClosed ? "<=" : "<") + this.high;
+	    if (this.high == null)   return this.name + (this.lowClosed ? ">=" : ">") + this.low;
+	    return this.low + (this.lowClosed ? "<=" : "<") + this.name + (this.highClosed ? "<=" : "<") + this.high;
+	}
+	
     }
     
     
@@ -269,6 +284,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
      * {@inheritDoc}
      */
     @Override
+    @requires({"java-runtime>=6", "java-environment>=7"})
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
 	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(DEPTEST) == false))
@@ -297,16 +313,69 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 			continue;
 		    final String $pack = pack.substring(0, pack.length() - ".pkg.xz".length());
 		    enversionmap.put($pack.substring(0, $pack.lastIndexOf("=")), $pack);
+	    }   }
+	    
+	    final HashMap<String, ArrayList<String>> groupmap = new HashMap<String, ArrayList<String>>();
+	    for (final String pack : enversionmap.values())
+		for (final String group : PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz").groups)
+		{   ArrayList<String> list = groupmap.get(group);
+		    if (list == null)
+			groupmap.put(group, list = new ArrayList<String>());
+		    list.add(pack);
 		}
-	    }
 	    
 	    final HashMap<VersionedPackage, VersionedPackage> provided = new HashMap<VersionedPackage, VersionedPackage>();
 	    final HashMap<VersionedPackage, VersionedPackage> conflict = new HashMap<VersionedPackage, VersionedPackage>();
-	    for (final String pac : packages)
-	    {
-		final String pack = pac.contains("=") ? pac : enversionmap.get(pac);
-		final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
+	    VersionedPackage tmp;
+	    
+	    for (final String pack : installed.keySet)
+	    {   final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
+		provided.put(tmp = new VersionedPackage(pack), tmp);
+		for (final String p : info.provides)   provided.put(tmp = new VersionedPackage(p), tmp);
+		for (final String c : info.conflicts)  conflict.put(tmp = new VersionedPackage(c), tmp);
 	    }
+	    
+	    final ArrayDeque<String> $packages = new ArrayDeque<String>();
+	    for (final String pack : packages)
+		if (groupmap.contains(pack) == false)
+		    $packages.offerLast(pack);
+		else
+		    for (final String pac : groupmap.get(pack))
+			$packages.offerLast(pac);
+	    
+	    while ($packages.isEmpty() == false) //FIMXE resolve updates
+	    {   final String pac = $packages.pollFirst();
+		final String pack = pac.contains("=") ? pac : enversionmap.get(pac);
+		if (provided.get(tmp = new VersionedPackage(pack)) != null)
+		{
+		    if (tmp.intersects(provided.get(tmp)))
+			continue;
+		    System.out.println(pack + " is in version conflict with " + conflict.get(tmp).toString());
+		    return;
+		}
+		final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
+		
+		if ((tmp = new VersionedPackage(pack)).intersects(conflict.get(tmp)))
+		{   System.out.println(pack + " conflicts with " + conflict.get(tmp).toString());
+		    return;
+		}
+		provided.put(tmp = new VersionedPackage(pack), tmp);
+		for (final String p : info.provides)
+		{   if ((tmp = new VersionedPackage(pack)).intersects(conflict.get(tmp)))
+		    {   System.out.println(pack + " conflicts with " + conflict.get(tmp).toString());
+			return;
+		    }
+		    provided.put(tmp = new VersionedPackage(p), tmp);
+		}
+		for (final String c : info.conflicts)
+		    conflict.put(tmp = new VersionedPackage(c), tmp);
+		
+		for (final String d : info.dependencies) //FIXME multiple choose dependencies
+		    $packages.offerLast(dep);
+	    }
+	    
+	    System.out.println("Passes depedency test");
+	    return;
 	}
 	catch (final Throwable err)
         {   System.err.println(err.toString());
