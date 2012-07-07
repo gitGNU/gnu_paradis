@@ -47,16 +47,43 @@ public class Common
     
     
     
+    /**
+     * Vector of all available packages
+     */
     public final Vector<VersionedPackage> databaseVector = new Vector<>();
-    public final HashSet<String> databaseSet = new HashSet<>();
-    public final HashMap<VersionedPackage, VersionedPackage> databaseMap = new HashMap<>();
-    public final HashMap<String, String> packageMap = new HashMap<>();
     
+    /**
+     * Set of all available packages
+     */
+    public final HashSet<String> databaseSet = new HashSet<>();
+    
+    /**
+     * Map from packages to latest versions of the packages
+     */
+    public final HashMap<VersionedPackage, VersionedPackage> databaseMap = new HashMap<>();
+    
+    /**
+     * Map from packages to files
+     */
+    public final HashMap<String, File> packageMap = new HashMap<>();
+    
+    
+    /**
+     * Map from packages to installed versions of the packages
+     */
     public final HashMap<VersionedPackage, VersionedPackage> installedMap = new HashMap<>();
+    
+    /**
+     * Set of explicitly installed packages
+     */
     public final HashSet<VersionedPackage> installedExplicitly = new HashSet<>();
     
     
     
+    
+    /**
+     * Populates members for the package database
+     */
     public void loadDatabase()
     {
 	final String[] packs = (new File(PACKAGE_DIR)).list();
@@ -67,7 +94,7 @@ public class Common
 	    if ((p = packs[i]).endsWith(".pkg.xz") == false)
 		continue;
 	    vpacks[i] = new VersionedPackage(p);
-	    this.packageMap.put(vpacks[i].toString(), p.substring(0, p.length() - ".pkg.xz".length()));
+	    this.packageMap.put(vpacks[i].toString(), new File(PACKAGE_DIR + p));
 	}
 	Arrays.sort(vpacks);
 	for (final VersionedPackage pack : vpacks)
@@ -79,6 +106,11 @@ public class Common
     }
     
     
+    /**
+     * Populates members for the installed packaged
+     * 
+     * @throws  IOException  On I/O exception
+     */
     public void loadInstalled() throws IOException
     {
 	try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(PACKAGES_FILE)))
@@ -88,6 +120,7 @@ public class Common
 		if (pack.isEmpty())
 		    break;
 		final VersionedPackage vpack = new VersionedPackage(pack);
+		this.packageMap.put(vpack.toString(), new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
 		this.installedMap.put(vpack, vpack);
 		if (tis.readBoolean())
 		    this.installedExplicitly.add(vpack);
