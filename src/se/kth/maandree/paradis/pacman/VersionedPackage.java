@@ -120,27 +120,27 @@ public class VersionedPackage implements Comparable<VersionedPackage>
     /**
      * Package name
      */
-    private final String name;
+    public final String name;
     
     /**
      * Package version lower bound, {@code null} if unbounded
      */
-    private final Version low;
+    public final Version low;
     
     /**
      * Package version upper bound, {@code null} if unbounded
      */
-    private final Version high;
+    public final Version high;
     
     /**
      * Whether the lower version bound is closed
      */
-    private final boolean lowClosed;
+    public final boolean lowClosed;
     
     /**
      * Whether the ypper version bound is closed
      */
-    private final boolean highClosed;
+    public final boolean highClosed;
     
     
     
