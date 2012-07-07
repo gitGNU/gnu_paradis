@@ -328,7 +328,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix 
 	    final HashMap<VersionedPackage, VersionedPackage> conflict = new HashMap<VersionedPackage, VersionedPackage>();
 	    VersionedPackage tmp;
 	    
-	    for (final String pack : installed.keySet)
+	    for (final String pack : installed.keySet())
 	    {   final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
 		provided.put(tmp = new VersionedPackage(pack), tmp);
 		for (final String p : info.provides)   provided.put(tmp = new VersionedPackage(p), tmp);
@@ -337,7 +337,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix 
 	    
 	    final ArrayDeque<String> $packages = new ArrayDeque<String>();
 	    for (final String pack : packages)
-		if (groupmap.contains(pack) == false)
+		if (groupmap.containsKey(pack) == false)
 		    $packages.offerLast(pack);
 		else
 		    for (final String pac : groupmap.get(pack))
@@ -371,7 +371,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix 
 		    conflict.put(tmp = new VersionedPackage(c), tmp);
 		
 		for (final String d : info.dependencies) //FIXME multiple choose dependencies
-		    $packages.offerLast(dep);
+		    $packages.offerLast(d);
 	    }
 	    
 	    System.out.println("Passes depedency test");
