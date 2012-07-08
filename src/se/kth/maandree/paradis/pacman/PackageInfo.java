@@ -63,37 +63,37 @@ public final class PackageInfo
      * @param  uuid                        Package UUID
      */
     public PackageInfo(final String[] optionalSystemDependencies, final String[] optionalDependencies, final String[] systemDependencies, final String[] dependencies,
-		       final int packageEpoch, final String packageVersion, final int packageRelease, final String packageName, final String packageDesc,
-		       final String packageDescription, final String[] provides, final String[] replaces, final String[] conflicts, final boolean containsSource,
-		       final boolean containsBinary, final String[] licenses, final boolean isFreeSoftware, final String url, final String[] arch, final String[] os,
-		       final String[] groups, final String[] files, final boolean[] backup, final String[] checksums, final String category, final UUID uuid)
+                       final int packageEpoch, final String packageVersion, final int packageRelease, final String packageName, final String packageDesc,
+                       final String packageDescription, final String[] provides, final String[] replaces, final String[] conflicts, final boolean containsSource,
+                       final boolean containsBinary, final String[] licenses, final boolean isFreeSoftware, final String url, final String[] arch, final String[] os,
+                       final String[] groups, final String[] files, final boolean[] backup, final String[] checksums, final String category, final UUID uuid)
     {
-	assert optionalSystemDependencies != null;  this.optionalSystemDependencies = optionalSystemDependencies;
-	assert optionalDependencies != null;        this.optionalDependencies = optionalDependencies;
-	assert systemDependencies != null;          this.systemDependencies = systemDependencies;
-	assert dependencies != null;                this.dependencies = dependencies;
-	                                            this.packageEpoch = packageEpoch;
-	assert packageVersion != null;              this.packageVersion = packageVersion;
-	                                            this.packageRelease = packageRelease;
-	assert packageName != null;                 this.packageName = packageName;
-	assert packageDesc != null;                 this.packageDesc = packageDesc;
-	assert packageDescription != null;          this.packageDescription = packageDescription;
-	assert provides != null;                    this.provides = provides;
-	assert replaces != null;                    this.replaces = replaces;
-	assert conflicts != null;                   this.conflicts = conflicts;
-	                                            this.containsSource = containsSource;
-						    this.containsBinary = containsBinary;
-	assert licenses != null;                    this.licenses = licenses;
-	                                            this.isFreeSoftware = isFreeSoftware;
-	assert url != null;                         this.url = url;
-	assert arch != null;                        this.arch = arch;
-	assert os != null;                          this.os = os;
-	assert groups != null;                      this.groups = groups;
-	assert files != null;                       this.files = files;
-	assert backup != null;                      this.backup = backup;
-	assert checksums != null;                   this.checksums = checksums;
-	assert category != null;                    this.category = category;
-	assert uuid != null;                        this.uuid = uuid;
+        assert optionalSystemDependencies != null;  this.optionalSystemDependencies = optionalSystemDependencies;
+        assert optionalDependencies != null;        this.optionalDependencies = optionalDependencies;
+        assert systemDependencies != null;          this.systemDependencies = systemDependencies;
+        assert dependencies != null;                this.dependencies = dependencies;
+                                                    this.packageEpoch = packageEpoch;
+        assert packageVersion != null;              this.packageVersion = packageVersion;
+                                                    this.packageRelease = packageRelease;
+        assert packageName != null;                 this.packageName = packageName;
+        assert packageDesc != null;                 this.packageDesc = packageDesc;
+        assert packageDescription != null;          this.packageDescription = packageDescription;
+        assert provides != null;                    this.provides = provides;
+        assert replaces != null;                    this.replaces = replaces;
+        assert conflicts != null;                   this.conflicts = conflicts;
+                                                    this.containsSource = containsSource;
+                                                    this.containsBinary = containsBinary;
+        assert licenses != null;                    this.licenses = licenses;
+                                                    this.isFreeSoftware = isFreeSoftware;
+        assert url != null;                         this.url = url;
+        assert arch != null;                        this.arch = arch;
+        assert os != null;                          this.os = os;
+        assert groups != null;                      this.groups = groups;
+        assert files != null;                       this.files = files;
+        assert backup != null;                      this.backup = backup;
+        assert checksums != null;                   this.checksums = checksums;
+        assert category != null;                    this.category = category;
+        assert uuid != null;                        this.uuid = uuid;
     }
     
     
@@ -107,7 +107,7 @@ public final class PackageInfo
     {
         //Has default constructor
         
-	
+        
         
         /**
          * {@inheritDoc}
@@ -115,34 +115,34 @@ public final class PackageInfo
         @Override
         public PackageInfo read(final TransferInputStream stream) throws IOException
         {   return new PackageInfo(stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readLen(),
-				   stream.readObject(String.class),
-				   stream.readLen(),
-				   stream.readObject(String.class),
-				   stream.readObject(String.class),
-				   stream.readObject(String.class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readBoolean(),
-				   stream.readBoolean(),
-				   stream.readObject(String[].class),
-				   stream.readBoolean(),
-				   stream.readObject(String.class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String[].class),
-				   stream.readObject(boolean[].class),
-				   stream.readObject(String[].class),
-				   stream.readObject(String.class),
-				   stream.readObject(UUID.class));
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readLen(),
+                                   stream.readObject(String.class),
+                                   stream.readLen(),
+                                   stream.readObject(String.class),
+                                   stream.readObject(String.class),
+                                   stream.readObject(String.class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readBoolean(),
+                                   stream.readBoolean(),
+                                   stream.readObject(String[].class),
+                                   stream.readBoolean(),
+                                   stream.readObject(String.class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(boolean[].class),
+                                   stream.readObject(String[].class),
+                                   stream.readObject(String.class),
+                                   stream.readObject(UUID.class));
         }
-	
-	
+        
+        
         /**
          * {@inheritDoc}
          */
@@ -436,12 +436,24 @@ public final class PackageInfo
      * @throws  IOException  On I/O exception
      */
     @requires({"java-environment>=7", "xz-java"})
+    public static PackageInfo fromFile(final File file) throws IOException
+    {
+        try (final InputStream fis = new FileInputStream(file) ; final TransferInputStream tis = new TransferInputStream(file.getAbsolutePath().endsWith(".xz") ? new XZInputStream(fis) : fis))
+        {   return tis.readObject(PackageInfo.class);
+        }
+    }
+    
+    /**
+     * Loads an {@link PackageInfo} from a file, that may be compressed with xz
+     * 
+     * @param   file  The file to load
+     * @return        The loaded {@link PackageInfo}
+     * 
+     * @throws  IOException  On I/O exception
+     */
     public static PackageInfo fromFile(final String file) throws IOException
     {
-	try (final InputStream fis = new FileInputStream(file))
-	{   try (final TransferInputStream tis = new TransferInputStream(file.endsWith(".xz") ? new XZInputStream(fis) : fis);)
-	    {   return tis.readObject(PackageInfo.class);
-	}   }
+        return fromFile(new File(file));
     }
     
 }

@@ -17,7 +17,7 @@
  */
 package se.kth.maandree.paradis.io;
 import se.kth.maandree.paradis.net.*;
-import se.kth.maandree.paradis.plugin.*;
+import se.kth.maandree.paradis.pacman.*;
 
 import java.util.HashMap;
 import java.io.*;

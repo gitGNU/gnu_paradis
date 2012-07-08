@@ -86,23 +86,33 @@ public class Common
      */
     public void loadDatabase()
     {
-	final String[] packs = (new File(PACKAGE_DIR)).list();
-	final VersionedPackage[] vpacks = new VersionedPackage[packs.length];
-	for (int i = 0, n = vpacks.length; i < n; i++)
-	{
-	    final String p;
-	    if ((p = packs[i]).endsWith(".pkg.xz") == false)
-		continue;
-	    vpacks[i] = new VersionedPackage(p);
-	    this.packageMap.put(vpacks[i].toString(), new File(PACKAGE_DIR + p));
-	}
-	Arrays.sort(vpacks);
-	for (final VersionedPackage pack : vpacks)
-	{
-	    this.databaseVector.add(pack);
-	    this.databaseSet.add(pack.toString());
-	    this.databaseMap.put(pack, pack);
-	}
+        loadDatabase(null);
+    }
+    
+    /**
+     * Populates members for the package database
+     * 
+     * @param  filter  File filter
+     */
+    public void loadDatabase(final FilenameFilter filter)
+    {
+        final String[] packs = filter == null ? (new File(PACKAGE_DIR)).list() : (new File(PACKAGE_DIR)).list(filter);
+        final VersionedPackage[] vpacks = new VersionedPackage[packs.length];
+        for (int i = 0, n = vpacks.length; i < n; i++)
+        {
+            final String p;
+            if ((p = packs[i]).endsWith(".pkg.xz") == false)
+                continue;
+            vpacks[i] = new VersionedPackage(p);
+            this.packageMap.put(vpacks[i].toString(), new File(PACKAGE_DIR + p));
+        }
+        Arrays.sort(vpacks);
+        for (final VersionedPackage pack : vpacks)
+        {
+            this.databaseVector.add(pack);
+            this.databaseSet.add(pack.toString());
+            this.databaseMap.put(pack, pack);
+        }
     }
     
     
@@ -113,21 +123,21 @@ public class Common
      */
     public void loadInstalled() throws IOException
     {
-	try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(PACKAGES_FILE)))
-	{   for (;;)
-	    {
-		final String pack = tis.readObject(String.class);
-		if (pack.isEmpty())
-		    break;
-		final VersionedPackage vpack = new VersionedPackage(pack);
-		this.packageMap.put(vpack.toString(), new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
-		this.installedMap.put(vpack, vpack);
-		if (tis.readBoolean())
-		    this.installedExplicitly.add(vpack);
-	}   }
-	catch (final FileNotFoundException ignore)
-	{   //Ignore
-	}
+        try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(PACKAGES_FILE)))
+        {   for (;;)
+            {
+                final String pack = tis.readObject(String.class);
+                if (pack.isEmpty())
+                    break;
+                final VersionedPackage vpack = new VersionedPackage(pack);
+                this.packageMap.put(vpack.toString(), new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
+                this.installedMap.put(vpack, vpack);
+                if (tis.readBoolean())
+                    this.installedExplicitly.add(vpack);
+        }   }
+        catch (final FileNotFoundException ignore)
+        {   //Ignore
+        }
     }
     
 }

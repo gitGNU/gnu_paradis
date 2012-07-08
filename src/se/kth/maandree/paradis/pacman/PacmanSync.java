@@ -81,21 +81,21 @@ public class PacmanSync implements Blackboard.BlackboardObserver
     @Override
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
-	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(SYNC) == false))
-	    return;
-	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
-	final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
-	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
-	
-	//SYNC_NODEPS
-	//SYNC_ASEXPLICIT
-	//SYNC_FORCE
-	//SYNC_ASDEPS
-	//SYNC_NEEDED
-	//SYNC_DBONLY
-	//SYNC_RECURSIVE
-	//SYNC_SEARCH
-	//SYNC_UPGRADE
+        if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(SYNC) == false))
+            return;
+        final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
+        final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
+        final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+        
+        //SYNC_NODEPS
+        //SYNC_ASEXPLICIT
+        //SYNC_FORCE
+        //SYNC_ASDEPS
+        //SYNC_NEEDED
+        //SYNC_DBONLY
+        //SYNC_RECURSIVE
+        //SYNC_SEARCH
+        //SYNC_UPGRADE
     }
     
 }

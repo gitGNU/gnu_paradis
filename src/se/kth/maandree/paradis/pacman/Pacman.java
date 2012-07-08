@@ -210,30 +210,30 @@ public class Pacman
      */
     static
     {
-	final HashMap<String, String> D = new HashMap<String, String>();  shortoptses.put(DATABASE, D);
-	final HashMap<String, String> S = new HashMap<String, String>();  shortoptses.put(SYNC, S);
-	final HashMap<String, String> U = new HashMap<String, String>();  shortoptses.put(UPGRADE, U);
-	final HashMap<String, String> R = new HashMap<String, String>();  shortoptses.put(REMOVE, R);
-	final HashMap<String, String> Q = new HashMap<String, String>();  shortoptses.put(QUERY, Q);
-	final HashMap<String, String> T = new HashMap<String, String>();  shortoptses.put(DEPTEST, T);
-	
-	master.put("D", DATABASE);          master.put("S", SYNC);        master.put("U", UPGRADE);        master.put("R", REMOVE);       master.put("Q", QUERY);        master.put("T", DEPTEST);
-	D.put("a", DATABASE_ADD);           S.put("d", SYNC_NODEPS);      U.put("d", UPGRADE_NODEPS);      R.put("c", REMOVE_CASCADE);    Q.put("e", QUERY_EXPLICIT);
-	D.put("d", DATABASE_DEPS);          S.put("e", SYNC_ASEXPLICIT);  U.put("e", UPGRADE_ASEXPLICIT);  R.put("d", REMOVE_NODEPS);     Q.put("s", QUERY_SEARCH);
-	D.put("e", DATABASE_EXPLICIT);      S.put("f", SYNC_FORCE);       U.put("f", UPGRADE_FORCE);       R.put("o", REMOVE_DBONLY);     Q.put("t", QUERY_UNREQUIRED);
-	D.put("f", DATABASE_FILES);         S.put("i", SYNC_ASDEPS);      U.put("i", UPGRADE_ASDEPS);      R.put("r", REMOVE_RECURSIVE);  Q.put("u", QUERY_UPGRADE);
-	D.put("i", DATABASE_INSTALLED);     S.put("n", SYNC_NEEDED);      U.put("n", UPGRADE_NEEDED);      R.put("s", REMOVE_SEARCH);
-	D.put("n", DATABASE_NONINSTALLED);  S.put("o", SYNC_DBONLY);      U.put("o", UPGRADE_DBONLY);      R.put("t", REMOVE_UNREQUIRED);
-	D.put("r", DATABASE_REMOVE);        S.put("r", SYNC_RECURSIVE);   U.put("r", UPGRADE_RECURSIVE);   R.put("u", REMOVE_UNNEEDED);
-	D.put("s", DATABASE_SEARCH);        S.put("s", SYNC_SEARCH);      U.put("s", UPGRADE_SEARCH);
-	                                    S.put("u", SYNC_UPGRADE);     U.put("u", UPGRADE_UPGRADE);
-	
-	Blackboard.getInstance("pacman").registerObserver(new PacmanDatabase());
-	Blackboard.getInstance("pacman").registerObserver(new PacmanSync());
-	Blackboard.getInstance("pacman").registerObserver(new PacmanUpgrade());
-	Blackboard.getInstance("pacman").registerObserver(new PacmanRemove());
-	Blackboard.getInstance("pacman").registerObserver(new PacmanQuery());
-	Blackboard.getInstance("pacman").registerObserver(new PacmanDeptest());
+        final HashMap<String, String> D = new HashMap<String, String>();  shortoptses.put(DATABASE, D);
+        final HashMap<String, String> S = new HashMap<String, String>();  shortoptses.put(SYNC, S);
+        final HashMap<String, String> U = new HashMap<String, String>();  shortoptses.put(UPGRADE, U);
+        final HashMap<String, String> R = new HashMap<String, String>();  shortoptses.put(REMOVE, R);
+        final HashMap<String, String> Q = new HashMap<String, String>();  shortoptses.put(QUERY, Q);
+        final HashMap<String, String> T = new HashMap<String, String>();  shortoptses.put(DEPTEST, T);
+        
+        master.put("D", DATABASE);          master.put("S", SYNC);        master.put("U", UPGRADE);        master.put("R", REMOVE);       master.put("Q", QUERY);        master.put("T", DEPTEST);
+        D.put("a", DATABASE_ADD);           S.put("d", SYNC_NODEPS);      U.put("d", UPGRADE_NODEPS);      R.put("c", REMOVE_CASCADE);    Q.put("e", QUERY_EXPLICIT);
+        D.put("d", DATABASE_DEPS);          S.put("e", SYNC_ASEXPLICIT);  U.put("e", UPGRADE_ASEXPLICIT);  R.put("d", REMOVE_NODEPS);     Q.put("s", QUERY_SEARCH);
+        D.put("e", DATABASE_EXPLICIT);      S.put("f", SYNC_FORCE);       U.put("f", UPGRADE_FORCE);       R.put("o", REMOVE_DBONLY);     Q.put("t", QUERY_UNREQUIRED);
+        D.put("f", DATABASE_FILES);         S.put("i", SYNC_ASDEPS);      U.put("i", UPGRADE_ASDEPS);      R.put("r", REMOVE_RECURSIVE);  Q.put("u", QUERY_UPGRADE);
+        D.put("i", DATABASE_INSTALLED);     S.put("n", SYNC_NEEDED);      U.put("n", UPGRADE_NEEDED);      R.put("s", REMOVE_SEARCH);
+        D.put("n", DATABASE_NONINSTALLED);  S.put("o", SYNC_DBONLY);      U.put("o", UPGRADE_DBONLY);      R.put("t", REMOVE_UNREQUIRED);
+        D.put("r", DATABASE_REMOVE);        S.put("r", SYNC_RECURSIVE);   U.put("r", UPGRADE_RECURSIVE);   R.put("u", REMOVE_UNNEEDED);
+        D.put("s", DATABASE_SEARCH);        S.put("s", SYNC_SEARCH);      U.put("s", UPGRADE_SEARCH);
+                                            S.put("u", SYNC_UPGRADE);     U.put("u", UPGRADE_UPGRADE);
+        
+        Blackboard.getInstance("pacman").registerObserver(new PacmanDatabase());
+        Blackboard.getInstance("pacman").registerObserver(new PacmanSync());
+        Blackboard.getInstance("pacman").registerObserver(new PacmanUpgrade());
+        Blackboard.getInstance("pacman").registerObserver(new PacmanRemove());
+        Blackboard.getInstance("pacman").registerObserver(new PacmanQuery());
+        Blackboard.getInstance("pacman").registerObserver(new PacmanDeptest());
     }
     
     
@@ -243,43 +243,43 @@ public class Pacman
      */
     public static class PacmanInvoke implements Blackboard.BlackboardMessage
     {
-	/**
-	 * Constructor
-	 * 
-	 * @param  masteropt  The first long option
-	 * @param  options    Invocation options
-	 * @param  ignores    Packages to ignore
-	 * @param  packages   Targeted packages
-	 */
-	public PacmanInvoke(final String masteropt, final HashSet<String> options, final HashSet<String> ignores, final ArrayList<String> packages)
-	{
-	    this.masteropt = masteropt;
-	    this.options = options;
-	    this.ignores = ignores;
-	    this.packages = packages;
-	}
-	
-	
-	
-	/**
-	 * The first long option (excluding --ignore)
-	 */
-	public final String masteropt;
-	
-	/**
-	 * Invocation (long) options
-	 */
-	public final HashSet<String> options;
-	
-	/**
-	 * Packages to ignore
-	 */
-	public final HashSet<String> ignores;
-	
-	/**
-	 * Targeted packages
-	 */
-	public final ArrayList<String> packages;
+        /**
+         * Constructor
+         * 
+         * @param  masteropt  The first long option
+         * @param  options    Invocation options
+         * @param  ignores    Packages to ignore
+         * @param  packages   Targeted packages
+         */
+        public PacmanInvoke(final String masteropt, final HashSet<String> options, final HashSet<String> ignores, final ArrayList<String> packages)
+        {
+            this.masteropt = masteropt;
+            this.options = options;
+            this.ignores = ignores;
+            this.packages = packages;
+        }
+        
+        
+        
+        /**
+         * The first long option (excluding --ignore)
+         */
+        public final String masteropt;
+        
+        /**
+         * Invocation (long) options
+         */
+        public final HashSet<String> options;
+        
+        /**
+         * Packages to ignore
+         */
+        public final HashSet<String> ignores;
+        
+        /**
+         * Targeted packages
+         */
+        public final ArrayList<String> packages;
     }
     
     
@@ -291,45 +291,45 @@ public class Pacman
      */
     public static void main(final String... args)
     {
-	String masteropt = null;
-	final HashSet<String> options = new HashSet<String>();
-	final HashSet<String> ignores = new HashSet<String>();
-	final ArrayList<String> packages = new ArrayList<String>();
-	
-	HashMap<String, String> shortopts = master;
-	boolean lastIsIgnore = false;
-	for (final String arg : args)
-	    if (lastIsIgnore)
-	    {   lastIsIgnore = false;
-		ignores.add(arg);
-	    }
-	    else if (arg.equals("--ignore"))
-	    {   lastIsIgnore = true;
-		ignores.add(arg);
-	    }
-	    else if (arg.startsWith("--"))
-		if (masteropt == null)
-		    shortopts = shortoptses.get(masteropt = arg);
-		else
-		    if (options.contains(arg))
-			options.add(arg + arg);
-		    else
-			options.add(arg);
-	    else if (arg.startsWith("-") == false)
-		packages.add(arg);
-	    else
-		for (int i = 1, n = arg.length(); i < n; i++)
-		{   final String larg = shortopts.get(arg.substring(i, 1));
-		    if (masteropt == null)
-			shortopts = shortoptses.get(masteropt = larg);
-		    else
-			if (options.contains(arg))
-			    options.add(arg + arg);
-			else
-			    options.add(larg);
-		}
-	
-	Blackboard.getInstance("pacman").broadcastMessage(new PacmanInvoke(masteropt, options, ignores, packages));
+        String masteropt = null;
+        final HashSet<String> options = new HashSet<String>();
+        final HashSet<String> ignores = new HashSet<String>();
+        final ArrayList<String> packages = new ArrayList<String>();
+        
+        HashMap<String, String> shortopts = master;
+        boolean lastIsIgnore = false;
+        for (final String arg : args)
+            if (lastIsIgnore)
+            {   lastIsIgnore = false;
+                ignores.add(arg);
+            }
+            else if (arg.equals("--ignore"))
+            {   lastIsIgnore = true;
+                ignores.add(arg);
+            }
+            else if (arg.startsWith("--"))
+                if (masteropt == null)
+                    shortopts = shortoptses.get(masteropt = arg);
+                else
+                    if (options.contains(arg))
+                        options.add(arg + arg);
+                    else
+                        options.add(arg);
+            else if (arg.startsWith("-") == false)
+                packages.add(arg);
+            else
+                for (int i = 1, n = arg.length(); i < n; i++)
+                {   final String larg = shortopts.get(arg.substring(i, 1));
+                    if (masteropt == null)
+                        shortopts = shortoptses.get(masteropt = larg);
+                    else
+                        if (options.contains(arg))
+                            options.add(arg + arg);
+                        else
+                            options.add(larg);
+                }
+        
+        Blackboard.getInstance("pacman").broadcastMessage(new PacmanInvoke(masteropt, options, ignores, packages));
     }
     
     
@@ -342,16 +342,16 @@ public class Pacman
      */
     public static String[] expand(final Object... items)
     {
-	final ArrayList<String> list = new ArrayList<String>();
-	for (final Object item : items)
-	    if (item instanceof String[])
-		for (final String elem : (String[])item)
-		    list.add(elem);
-	    else
-		list.add((String)item);
-	final String[] rc = new String[list.size()];
-	list.toArray(rc);
-	return rc;
+        final ArrayList<String> list = new ArrayList<String>();
+        for (final Object item : items)
+            if (item instanceof String[])
+                for (final String elem : (String[])item)
+                    list.add(elem);
+            else
+                list.add((String)item);
+        final String[] rc = new String[list.size()];
+        list.toArray(rc);
+        return rc;
     }
     
 }

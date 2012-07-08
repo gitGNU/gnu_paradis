@@ -75,19 +75,19 @@ public class PacmanRemove implements Blackboard.BlackboardObserver
     @Override
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
-	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(REMOVE) == false))
-	    return;
-	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
-	final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
-	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
-	
-	//REMOVE_CASCADE
-	//REMOVE_NODEPS
-	//REMOVE_DBONLY
-	//REMOVE_RECURSIVE
-	//REMOVE_SEARCH
-	//REMOVE_UNREQUIRED
-	//REMOVE_UNNEEDED
+        if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(REMOVE) == false))
+            return;
+        final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
+        final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
+        final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+        
+        //REMOVE_CASCADE
+        //REMOVE_NODEPS
+        //REMOVE_DBONLY
+        //REMOVE_RECURSIVE
+        //REMOVE_SEARCH
+        //REMOVE_UNREQUIRED
+        //REMOVE_UNNEEDED
     }
     
 }

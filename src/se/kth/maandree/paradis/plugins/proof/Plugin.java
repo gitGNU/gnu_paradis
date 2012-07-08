@@ -37,7 +37,7 @@ public class Plugin implements PluginV1
      */
     static
     {
-	System.out.println("Touching se.kth.maandree.paradis.plugins.proof for the first time");
+        System.out.println("Touching se.kth.maandree.paradis.plugins.proof for the first time");
     }
     
     

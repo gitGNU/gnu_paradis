@@ -153,47 +153,47 @@ public class PluginHandler
      */
     public static synchronized void setActive(final int plugin, final boolean active)
     {
-	try
+        try
         {
-	    final boolean test = activePlugins.contains(pluginInstances.get(plugin)) ^ active;
-	    if (test)
-		if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  pluginInstances.get(plugin).initialise();  }
-		else         {  activePlugins.remove(pluginInstances.get(plugin));  pluginInstances.get(plugin).terminate();   }
-	    
-	    if (test || (isActive(plugin) ^ active))
-	    {
-		StringBuilder buf = new StringBuilder();
-		for (final PluginV1 p : activePlugins)
+            final boolean test = activePlugins.contains(pluginInstances.get(plugin)) ^ active;
+            if (test)
+                if (active)  {  activePlugins.add   (pluginInstances.get(plugin));  pluginInstances.get(plugin).initialise();  }
+                else         {  activePlugins.remove(pluginInstances.get(plugin));  pluginInstances.get(plugin).terminate();   }
+            
+            if (test || (isActive(plugin) ^ active))
+            {
+                StringBuilder buf = new StringBuilder();
+                for (final PluginV1 p : activePlugins)
                 {
-		    int indexOf = pluginInstances.indexOf(p);
-		    String pluginFile = pluginFiles.get(indexOf);
-		    buf.append(pluginFile);
-		    buf.append("\n");
-		}
+                    int indexOf = pluginInstances.indexOf(p);
+                    String pluginFile = pluginFiles.get(indexOf);
+                    buf.append(pluginFile);
+                    buf.append("\n");
+                }
                 
-		String data = buf.toString();
-		if (data.isEmpty() == false)
-		    data = data.substring(0, data.length() - "\n".length());
-		
-		OutputStream os = null;
-		try
+                String data = buf.toString();
+                if (data.isEmpty() == false)
+                    data = data.substring(0, data.length() - "\n".length());
+                
+                OutputStream os = null;
+                try
                 {   os = new BufferedOutputStream(new FileOutputStream(new File(PLUGINS_FILE)));
-		    os.write(data.getBytes("UTF-8"));
-		    os.flush();
-		}
-		finally
+                    os.write(data.getBytes("UTF-8"));
+                    os.flush();
+                }
+                finally
                 {   if (os != null)
-			try
+                        try
                         {    os.close();
-			}
-			catch (final Throwable ignore)
+                        }
+                        catch (final Throwable ignore)
                         {    //Ignore
-		}       }
-	    }
-	}
-	catch (final Throwable err)
+                }       }
+            }
+        }
+        catch (final Throwable err)
         {   System.err.println("Problem with plug-in " + (active ? "activation" : "deactivation") + ": " + err.toString());
-	}
+        }
     }
     
     
@@ -204,18 +204,18 @@ public class PluginHandler
      */
     public static synchronized void updatePlugin(final int plugin)
     {
-	try
-	{   {   final PluginV1 _plugin = pluginInstances.get(plugin);
-		if (activePlugins.contains(_plugin))
-		    return;
-	    }
-	    pluginInstances.set(plugin, null);
-	    System.gc();
-	    pluginInstances.set(plugin, getPluginInstance(pluginFiles.get(plugin)));
-	}
-	catch (final Throwable err)
-	{   System.err.println("Problem with plug-in updating: " + err.toString());
-	}
+        try
+        {   {   final PluginV1 _plugin = pluginInstances.get(plugin);
+                if (activePlugins.contains(_plugin))
+                    return;
+            }
+            pluginInstances.set(plugin, null);
+            System.gc();
+            pluginInstances.set(plugin, getPluginInstance(pluginFiles.get(plugin)));
+        }
+        catch (final Throwable err)
+        {   System.err.println("Problem with plug-in updating: " + err.toString());
+        }
     }
     
     
@@ -226,8 +226,8 @@ public class PluginHandler
      */
     public static synchronized Vector<Integer> findPlugins()
     {
-	final Vector<Integer> rc = new Vector<Integer>();
-	
+        final Vector<Integer> rc = new Vector<Integer>();
+        
         final String fs;
         final String dir = PLUGIN_DIR + (fs = Properties.getFileSeparator());
         
@@ -240,19 +240,19 @@ public class PluginHandler
                     name = name.substring(name.lastIndexOf(fs) + fs.length());
                     name = name.substring(0, name.length() - ".jar".length());
                     
-		    int index = pluginFiles.size();
-		    if (pluginHash.contains(name) == false)
-		    {   pluginInstances.add(getPluginInstance(name));
-			pluginFiles.add(name);
-			pluginHash.add(name);
-			rc.add(Integer.valueOf(index));
-		    }
+                    int index = pluginFiles.size();
+                    if (pluginHash.contains(name) == false)
+                    {   pluginInstances.add(getPluginInstance(name));
+                        pluginFiles.add(name);
+                        pluginHash.add(name);
+                        rc.add(Integer.valueOf(index));
+                    }
                 }
                 catch (final Exception err)
                 {   //Do nothing
                 }
-	
-	return rc;
+        
+        return rc;
     }
     
     
@@ -285,7 +285,7 @@ public class PluginHandler
      */
     public static synchronized void startPlugins()
     {
-	findPlugins();
+        findPlugins();
         try
         {   for (int i = 0, n = getPluginCount(); i < n; i++)
                 setActive(i, isActive(i));

@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.pacman;
-import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
@@ -35,11 +34,6 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
      * The directory where the packages are located
      */
     public static final String PACKAGE_DIR = Pacman.PACKAGE_DIR;
-    
-    /**
-     * The file where the data are saved
-     */
-    private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
     
     
     /** Search for installed packages
@@ -69,143 +63,108 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
     @Override
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
-	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(QUERY) == false))
-	    return;
-	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
-	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
-	final HashSet<String> packageSet = new HashSet<String>();
-	for (final String pack : packages)
-	    packageSet.add(pack);
-	
-	final boolean explicit   = options.contains(QUERY_EXPLICIT);
-	final boolean search     = options.contains(QUERY_SEARCH);
-	final boolean unrequired = options.contains(QUERY_UNREQUIRED);
-	final boolean upgrade    = options.contains(QUERY_UPGRADE);
-	
-	final Pattern pattern;
-	if (search)
-	    pattern = null;
-	else
+        if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(QUERY) == false))
+            return;
+        final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
+        final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+        final HashSet<String> packageSet = new HashSet<String>();
+        for (final String pack : packages)
+            packageSet.add(pack);
+        
+        final boolean explicit   = options.contains(QUERY_EXPLICIT);
+        final boolean search     = options.contains(QUERY_SEARCH);
+        final boolean unrequired = options.contains(QUERY_UNREQUIRED);
+        final boolean upgrade    = options.contains(QUERY_UPGRADE);
+        
+	try
 	{
-	    final StringBuilder buf = new StringBuilder();
-	    boolean first = true;
-	    for (final String pack : packages)
-	    {
-		if (first == false)
-		    buf.append("|");
-		first = false;
-		buf.append(pack);
-	    }
-	    pattern = Pattern.compile(buf.toString());
-	}
-	
-	final HashMap<String, Boolean> installmap = new HashMap<String, Boolean>();
-	try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(new File(PACKAGES_FILE))))
-	{
-	    for (;;)
-	    {
-		final String pack = tis.readObject(String.class);
-		if (pack.isEmpty())
-		    break;
-		final String _pack = pack.substring(0, pack.lastIndexOf("="));
-		if (pattern == null)
-		{   if ((packageSet.contains(_pack) == false) && (packageSet.contains(pack) == false))
-			continue;
-		}
-		else
-		{   if ((pattern.matcher(_pack).matches() == false) && (pattern.matcher(pack).matches() == false))
-			continue;
-		}
-		final Boolean expl = Boolean.valueOf(tis.readBoolean());
-		if (explicit == unrequired)
-		    installmap.put(pack, expl);
-		else
-		    if (explicit)
-		    {   if (expl == Boolean.TRUE)
-			    installmap.put(pack, expl);
-		    }
-		    else
-		    {   if (expl == Boolean.FALSE)
-			    installmap.put(pack, expl);
-		    }
-	    }
-	}
-	catch (final FileNotFoundException ignore)
-	{   //Ignore
-	}
-	catch (final Throwable err)
-        {   System.err.println(err.toString());
-	}
-	
-	final String[] inst = new String[installmap.size()];
-	int ptr = 0;
-	for (final String pack : installmap.keySet())
-	    inst[ptr++] = pack;
-	
-	final Map<String, String> upgradable = getUpgradable(inst);
-	final Set<String> required = getRequired();
-	
-	final ArrayList<String> packs = new ArrayList<String>();
-	final String[] rc = new String[packs.size()];
-	ptr = 0;
-	for (final String pack : inst)
-	    if ((unrequired == false) || installmap.get(pack) == Boolean.TRUE)
-		if (upgrade == false)
-		    rc[ptr++] = pack;
-		else
-		{
-		    final String _pack = pack.substring(0, pack.lastIndexOf("="));
-		    if (upgradable.containsKey(_pack))
-			rc[ptr++] = pack;
-		}
+	    final Pattern pattern;
+	    if (search)
+		pattern = null;
 	    else
 	    {
-		final String _pack = pack.substring(0, pack.lastIndexOf("="));
-		if ((required.contains(_pack) == false) || (upgrade == false) || upgradable.containsKey(_pack))
-		    rc[ptr++] = pack;
+		final StringBuilder buf = new StringBuilder();
+		boolean first = true;
+		for (final String pack : packages)
+		{
+		    if (first == false)
+			buf.append("|");
+		    first = false;
+		    buf.append(pack);
+		}
+		pattern = Pattern.compile(buf.toString());
 	    }
-	
-	Arrays.sort(rc, 0, ptr);
-	for (int i = 0; i < ptr; i++)
-	    System.out.println(rc[i]);
+	    
+	    final Common common = new Common();
+	    common.loadInstalled();
+	    
+	    final ArrayList<VersionedPackage> tmp = new ArrayList<VersionedPackage>();
+	    
+	    if (pattern == null)
+	    {   for (final VersionedPackage pack : common.installedMap.values())
+		    if ((packageSet.contains(pack.name) == false) && (packageSet.contains(pack.toString()) == false))
+			tmp.add(pack);
+		    else if ((explicit ^ unrequired) && (common.installedExplicitly.contains(pack) ^ explicit))
+			tmp.add(pack);
+	    }
+	    else
+		for (final VersionedPackage pack : common.installedMap.values())
+		    if ((pattern.matcher(pack.name).matches() == false) && (pattern.matcher(pack.toString()).matches() == false))
+			tmp.add(pack);
+		    else if ((explicit ^ unrequired) && (common.installedExplicitly.contains(pack) ^ explicit))
+			tmp.add(pack);
+	    
+	    for (final VersionedPackage pack : tmp)
+		common.installedMap.remove(pack);
+	    
+	    final Map<String, String> upgradable = getUpgradable();
+	    final Set<String> required = getRequired();
+	    
+	    final String[] rc = new String[common.installedExplicitly.size()];
+	    int ptr = 0;
+	    for (final VersionedPackage pack : common.installedMap.keySet())
+		if ((unrequired == false) || common.installedExplicitly.contains(pack))
+		{
+		    if ((upgrade == false) || upgradable.containsKey(pack.name))
+			rc[ptr++] = pack.toString();
+		}
+		else
+		    if ((required.contains(pack.name) == false) || (upgrade == false) || upgradable.containsKey(pack.name))
+			rc[ptr++] = pack.toString();
+	    
+	    for (int i = 0; i < ptr; i++)
+		System.out.println(rc[i]);
+	}
+        catch (final Throwable err)
+	{   System.err.println(err.toString());
+	}
     }
     
     
     /**
      * Gets a map of all upgradable packages, mapped to their replacer or never version
      * 
-     * @param   installed  All installed software to check for upgradablility, version must be included
-     * @return             Map of all upgradable packages, mapped to their replacer or never version
+     * @return  Map of all upgradable packages, mapped to their replacer or never version
      */
-    public static HashMap<String, String> getUpgradable(final String... installed)
+    public static HashMap<String, String> getUpgradable()
     {
-	final HashMap<String, String> rc = new HashMap<String, String>();
-	try
-	{
-	    final String[] packs = (new File(PACKAGE_DIR)).list();
-	    Arrays.sort(packs);
-	    final HashMap<String, String> map = new HashMap<String, String>();
-	    for (final String pack : packs)
-	    {
-		if (pack.endsWith(".pkg.xz") == false)
-		    continue;
-		final String $pack = pack.substring(0, pack.length() - ".pkg.xz".length());
-		final String _pack = $pack.substring(0, $pack.lastIndexOf("="));
-		map.put(_pack, $pack);
-	    }
-	    for (final String pack : map.values())
-	    {
-		final String[] replaces = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz").replaces;
-		for (final String replacee : replaces)
-		    map.put(replacee, pack);
-	    }
-	    for (final String pack : installed)
-		rc.put(pack, map.get(pack));
-	}
-	catch (final Throwable err)
-	{   System.err.println(err.toString());
-	}
-	return rc;
+        final HashMap<String, String> rc = new HashMap<String, String>();
+        try
+        {
+            final Common common = new Common();
+	    common.loadDatabase();
+	    
+	    for (final VersionedPackage pack : common.databaseMap.values())
+		rc.put(pack.name, pack.toString());
+	    
+            for (final VersionedPackage pack : common.databaseMap.values())
+                for (final String replacee : PackageInfo.fromFile(common.packageMap.get(pack.toString())).replaces)
+                    rc.put(replacee, pack.toString());
+        }
+        catch (final Throwable err)
+        {   System.err.println(err.toString());
+        }
+        return rc;
     }
     
     
@@ -213,72 +172,53 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
      * Gets a set of all required packages
      * 
      * @return  Set of all required packages
+     * 
+     * @throws  IOException  On I/O exception
      */
-    @requires({"java-runtime>=6", "java-environment>=7"})
-    public static HashSet<String> getRequired()
+    @requires("java-runtime>=6")
+    public static HashSet<String> getRequired() throws IOException
     {
-	final HashMap<String, String> installed = new HashMap<String, String>();
-	final ArrayList<String> explicits = new ArrayList<String>();
+        final HashSet<String> rc = new HashSet<String>();
+	final Common common = new Common();
+	common.loadInstalled();
 	
-	try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(new File(PACKAGES_FILE))))
-	{
-	    for (;;)
-	    {
-		final String pack = tis.readObject(String.class);
-		if (pack.isEmpty())
-		    break;
-		if (tis.readBoolean())
-		    explicits.add(pack);
-		final String _pack = pack.substring(0, pack.lastIndexOf("="));
-		installed.put(_pack, pack);
-	    }
-	}
-	catch (final FileNotFoundException ignore)
-	{   //Ignore
-	}
-	catch (final Throwable err)
-        {   System.err.println(err.toString());
-	}
-	
-	final HashSet<String> provided = new HashSet<String>();
-	final HashSet<String> rc = new HashSet<String>();
-	final ArrayDeque<String> dependents = new ArrayDeque<String>();
-	
-	for (final String dependent : explicits)
-	    dependents.add(dependent);
-	
-	while (dependents.isEmpty() == false)
-	{
-	    final String dependent = dependents.pollFirst();
-	    if (provided.contains(dependent.substring(0, dependent.lastIndexOf("="))))
-		continue;
-	    rc.add(dependent);
-	    
-	    try
-	    {
-		final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + dependent + ".pkg.xz");
-		final String[] opts = info.optionalDependencies;
-		final String[] deps = info.dependencies;
-		
-		provided.add(dependent.substring(0, dependent.lastIndexOf("=")));
-		for (final String provides : info.provides)
-		    provided.add(provides.substring(0, provides.lastIndexOf("=")));
-		
-		for (final String[] _deps : new String[][] { deps, opts })
-		    for (final String _dep : _deps)
-		    {
-			String dep = _dep.replace(">", "=").replace("<", "=").replace("==", "=");
-			dep = dep.substring(0, dep.lastIndexOf("="));
-			if (installed.containsKey(dep))
-			    if (provided.contains(dep) == false)
-				dependents.offerLast(installed.get(dep));
+        final HashSet<VersionedPackage> provided = new HashSet<VersionedPackage>();
+        final ArrayDeque<VersionedPackage> dependents = new ArrayDeque<VersionedPackage>();
+        
+        for (final VersionedPackage dependent : common.installedExplicitly)
+            dependents.add(dependent);
+        
+        while (dependents.isEmpty() == false)
+        {
+            final VersionedPackage dependent = dependents.pollFirst();
+            if (provided.contains(dependent))
+                continue;
+            rc.add(dependent.name);
+            
+            try
+            {
+                final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(dependent));
+                final String[] opts = info.optionalDependencies;
+                final String[] deps = info.dependencies;
+                
+                provided.add(dependent);
+                for (final String provides : info.provides)
+                    provided.add(new VersionedPackage(provides));
+                
+                for (final String[] _deps : new String[][] { deps, opts })
+                    for (final String _dep : _deps)
+                    {
+                        final VersionedPackage dep = new VersionedPackage(_dep);
+                        if (common.installedMap.containsKey(dep))
+                            if (provided.contains(dep) == false)
+                                dependents.offerLast(common.installedMap.get(dep));
 		    }
-	    }
-	    catch (final Throwable err)
-	    {   System.err.println(err.toString());
-	    }
-	}
-	return rc;
+            }
+            catch (final Throwable err)
+            {   System.err.println(err.toString());
+            }
+        }
+        return rc;
     }
     
 }

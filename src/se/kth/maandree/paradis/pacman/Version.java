@@ -32,45 +32,45 @@ public class Version implements Comparable<Version>
      */
     public Version(final String version)
     {
-	final String ver = version.replace(";", ":");
-	final int te = ver.contains("=")
-	               ? Integer.parseInt(ver.substring(0, ver.indexOf(":")))
-	               : 0;
-	
-	String t = ver;
-	if (t.contains(":"))
-	    t = t.substring(t.indexOf(":") + 1);
-	
-	int tc = t.contains("-rc")
-	         ? (t.indexOf("-rc") + 3)
-	         : 0;
-	
-	if (tc > 0)
-	    tc = Integer.parseInt(t.substring(tc, t.indexOf("-", tc) < 0
-					      ? t.length() - tc
-					      : t.indexOf("-", tc) - tc
-					      ));
-	
-	String _tv = t.contains("-") ? t.substring(0, t.indexOf("-")) : t;
-	
-	t = t.substring(_tv.length());  if (t.startsWith("-"))  t = t.substring(1);
-	
-	final int tr = t.contains("-") ? Integer.parseInt(t.substring(t.indexOf("-") + 1)) : 0;
-	
-	final String[] _tvs = _tv.split(".");
-	final int[] tvs = this.versions = new int[_tvs.length];
-	
-	final StringBuilder v = new StringBuilder();
-	v.append((this.epoch = te) + ":");
-	for (int i = 0, n = tvs.length; i < n; i++)
-	{
-	    if (i > 0)
-		v.append(".");
-	    v.append(Integer.toString(tvs[i] = Integer.parseInt(_tvs[i])));
-	}
-	v.append("-rc" + (this.candidate = tc));
-	v.append("-" + (this.release = tr));
-	this.version = v.toString();
+        final String ver = version.replace(";", ":");
+        final int te = ver.contains("=")
+                       ? Integer.parseInt(ver.substring(0, ver.indexOf(":")))
+                       : 0;
+        
+        String t = ver;
+        if (t.contains(":"))
+            t = t.substring(t.indexOf(":") + 1);
+        
+        int tc = t.contains("-rc")
+                 ? (t.indexOf("-rc") + 3)
+                 : 0;
+        
+        if (tc > 0)
+            tc = Integer.parseInt(t.substring(tc, t.indexOf("-", tc) < 0
+                                              ? t.length() - tc
+                                              : t.indexOf("-", tc) - tc
+                                              ));
+        
+        String _tv = t.contains("-") ? t.substring(0, t.indexOf("-")) : t;
+        
+        t = t.substring(_tv.length());  if (t.startsWith("-"))  t = t.substring(1);
+        
+        final int tr = t.contains("-") ? Integer.parseInt(t.substring(t.indexOf("-") + 1)) : 0;
+        
+        final String[] _tvs = _tv.split(".");
+        final int[] tvs = this.versions = new int[_tvs.length];
+        
+        final StringBuilder v = new StringBuilder();
+        v.append((this.epoch = te) + ":");
+        for (int i = 0, n = tvs.length; i < n; i++)
+        {
+            if (i > 0)
+                v.append(".");
+            v.append(Integer.toString(tvs[i] = Integer.parseInt(_tvs[i])));
+        }
+        v.append("-rc" + (this.candidate = tc));
+        v.append("-" + (this.release = tr));
+        this.version = v.toString();
     }
     
     
@@ -108,11 +108,11 @@ public class Version implements Comparable<Version>
     @Override
     public boolean equals(final Object other)
     {
-	if ((other == null) || (other instanceof Version == false))
-	    return false;
-	if (other == this)
-	    return true;
-	return this.compareTo((Version)other) == 0;
+        if ((other == null) || (other instanceof Version == false))
+            return false;
+        if (other == this)
+            return true;
+        return this.compareTo((Version)other) == 0;
     }
     
     
@@ -122,7 +122,7 @@ public class Version implements Comparable<Version>
     @Override
     public int hashCode()
     {
-	return this.version.hashCode();
+        return this.version.hashCode();
     }
     
     
@@ -132,21 +132,21 @@ public class Version implements Comparable<Version>
     @Override
     public int compareTo(final Version other)
     {
-	if (this.epoch != other.epoch)
-	    return this.epoch - other.epoch;
-	
-	int tl, ol, t, o;
-	final int n = (tl = this.versions.length) > (ol = other.versions.length)
-	              ? this.versions.length
-	              : other.versions.length;
-	for (int i = 0; i < n; i++)
-	    if ((t = i >= tl ? 0 : this .versions[i]) != (o = i >= ol ? 0 : other.versions[i]))
-		return t - o;
-	
-	if (this.candidate != other.candidate)
-	    return this.candidate - other.candidate;
-	
-	return this.release - other.release;
+        if (this.epoch != other.epoch)
+            return this.epoch - other.epoch;
+        
+        int tl, ol, t, o;
+        final int n = (tl = this.versions.length) > (ol = other.versions.length)
+                      ? this.versions.length
+                      : other.versions.length;
+        for (int i = 0; i < n; i++)
+            if ((t = i >= tl ? 0 : this .versions[i]) != (o = i >= ol ? 0 : other.versions[i]))
+                return t - o;
+        
+        if (this.candidate != other.candidate)
+            return this.candidate - other.candidate;
+        
+        return this.release - other.release;
     }
     
     
@@ -156,7 +156,7 @@ public class Version implements Comparable<Version>
     @Override
     public String toString()
     {
-	return this.version;
+        return this.version;
     }
     
 }

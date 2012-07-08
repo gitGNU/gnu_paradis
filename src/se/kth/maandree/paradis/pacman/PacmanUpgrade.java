@@ -81,20 +81,20 @@ public class PacmanUpgrade implements Blackboard.BlackboardObserver
     @Override
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
-	if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(UPGRADE) == false))
-	    return;
-	final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
-	final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
-	final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
-	
-	//UPGRADE_NODEPS
-	//UPGRADE_ASEXPLICIT | UPGRADE_ASDEPS
-	//UPGRADE_FORCE
-	//UPGRADE_NEEDED
-	//UPGRADE_DBONLY
-	//UPGRADE_RECURSIVE
-	//UPGRADE_SEARCH
-	//UPGRADE_UPGRADE
+        if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(UPGRADE) == false))
+            return;
+        final HashSet<String> options = ((Pacman.PacmanInvoke)message).options;
+        final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
+        final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
+        
+        //UPGRADE_NODEPS
+        //UPGRADE_ASEXPLICIT | UPGRADE_ASDEPS
+        //UPGRADE_FORCE
+        //UPGRADE_NEEDED
+        //UPGRADE_DBONLY
+        //UPGRADE_RECURSIVE
+        //UPGRADE_SEARCH
+        //UPGRADE_UPGRADE
     }
     
 }
