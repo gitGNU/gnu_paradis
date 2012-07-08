@@ -76,68 +76,68 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
         final boolean unrequired = options.contains(QUERY_UNREQUIRED);
         final boolean upgrade    = options.contains(QUERY_UPGRADE);
         
-	try
-	{
-	    final Pattern pattern;
-	    if (search)
-		pattern = null;
-	    else
-	    {
-		final StringBuilder buf = new StringBuilder();
-		boolean first = true;
-		for (final String pack : packages)
-		{
-		    if (first == false)
-			buf.append("|");
-		    first = false;
-		    buf.append(pack);
-		}
-		pattern = Pattern.compile(buf.toString());
-	    }
-	    
-	    final Common common = new Common();
-	    common.loadInstalled();
-	    
-	    final ArrayList<VersionedPackage> tmp = new ArrayList<VersionedPackage>();
-	    
-	    if (pattern == null)
-	    {   for (final VersionedPackage pack : common.installedMap.values())
-		    if ((packageSet.contains(pack.name) == false) && (packageSet.contains(pack.toString()) == false))
-			tmp.add(pack);
-		    else if ((explicit ^ unrequired) && (common.installedExplicitly.contains(pack) ^ explicit))
-			tmp.add(pack);
-	    }
-	    else
-		for (final VersionedPackage pack : common.installedMap.values())
-		    if ((pattern.matcher(pack.name).matches() == false) && (pattern.matcher(pack.toString()).matches() == false))
-			tmp.add(pack);
-		    else if ((explicit ^ unrequired) && (common.installedExplicitly.contains(pack) ^ explicit))
-			tmp.add(pack);
-	    
-	    for (final VersionedPackage pack : tmp)
-		common.installedMap.remove(pack);
-	    
-	    final Map<String, String> upgradable = getUpgradable();
-	    final Set<String> required = getRequired();
-	    
-	    final String[] rc = new String[common.installedExplicitly.size()];
-	    int ptr = 0;
-	    for (final VersionedPackage pack : common.installedMap.keySet())
-		if ((unrequired == false) || common.installedExplicitly.contains(pack))
-		{
-		    if ((upgrade == false) || upgradable.containsKey(pack.name))
-			rc[ptr++] = pack.toString();
-		}
-		else
-		    if ((required.contains(pack.name) == false) || (upgrade == false) || upgradable.containsKey(pack.name))
-			rc[ptr++] = pack.toString();
-	    
-	    for (int i = 0; i < ptr; i++)
-		System.out.println(rc[i]);
-	}
+        try
+        {
+            final Pattern pattern;
+            if (search)
+                pattern = null;
+            else
+            {
+                final StringBuilder buf = new StringBuilder();
+                boolean first = true;
+                for (final String pack : packages)
+                {
+                    if (first == false)
+                        buf.append("|");
+                    first = false;
+                    buf.append(pack);
+                }
+                pattern = Pattern.compile(buf.toString());
+            }
+            
+            final Common common = new Common();
+            common.loadInstalled();
+            
+            final ArrayList<VersionedPackage> tmp = new ArrayList<VersionedPackage>();
+            
+            if (pattern == null)
+            {   for (final VersionedPackage pack : common.installedMap.values())
+                    if ((packageSet.contains(pack.name) == false) && (packageSet.contains(pack.toString()) == false))
+                        tmp.add(pack);
+                    else if ((explicit ^ unrequired) && (common.installedExplicitly.contains(pack) ^ explicit))
+                        tmp.add(pack);
+            }
+            else
+                for (final VersionedPackage pack : common.installedMap.values())
+                    if ((pattern.matcher(pack.name).matches() == false) && (pattern.matcher(pack.toString()).matches() == false))
+                        tmp.add(pack);
+                    else if ((explicit ^ unrequired) && (common.installedExplicitly.contains(pack) ^ explicit))
+                        tmp.add(pack);
+            
+            for (final VersionedPackage pack : tmp)
+                common.installedMap.remove(pack);
+            
+            final Map<String, String> upgradable = getUpgradable();
+            final Set<String> required = getRequired();
+            
+            final String[] rc = new String[common.installedExplicitly.size()];
+            int ptr = 0;
+            for (final VersionedPackage pack : common.installedMap.keySet())
+                if ((unrequired == false) || common.installedExplicitly.contains(pack))
+                {
+                    if ((upgrade == false) || upgradable.containsKey(pack.name))
+                        rc[ptr++] = pack.toString();
+                }
+                else
+                    if ((required.contains(pack.name) == false) || (upgrade == false) || upgradable.containsKey(pack.name))
+                        rc[ptr++] = pack.toString();
+            
+            for (int i = 0; i < ptr; i++)
+                System.out.println(rc[i]);
+        }
         catch (final Throwable err)
-	{   System.err.println(err.toString());
-	}
+        {   System.err.println(err.toString());
+        }
     }
     
     
@@ -152,11 +152,11 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
         try
         {
             final Common common = new Common();
-	    common.loadDatabase();
-	    
-	    for (final VersionedPackage pack : common.databaseMap.values())
-		rc.put(pack.name, pack.toString());
-	    
+            common.loadDatabase();
+            
+            for (final VersionedPackage pack : common.databaseMap.values())
+                rc.put(pack.name, pack.toString());
+            
             for (final VersionedPackage pack : common.databaseMap.values())
                 for (final String replacee : PackageInfo.fromFile(common.packageMap.get(pack.toString())).replaces)
                     rc.put(replacee, pack.toString());
@@ -179,9 +179,9 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
     public static HashSet<String> getRequired() throws IOException
     {
         final HashSet<String> rc = new HashSet<String>();
-	final Common common = new Common();
-	common.loadInstalled();
-	
+        final Common common = new Common();
+        common.loadInstalled();
+        
         final HashSet<VersionedPackage> provided = new HashSet<VersionedPackage>();
         final ArrayDeque<VersionedPackage> dependents = new ArrayDeque<VersionedPackage>();
         
@@ -212,7 +212,7 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
                         if (common.installedMap.containsKey(dep))
                             if (provided.contains(dep) == false)
                                 dependents.offerLast(common.installedMap.get(dep));
-		    }
+                    }
             }
             catch (final Throwable err)
             {   System.err.println(err.toString());
