@@ -78,6 +78,10 @@ public class Common
      */
     public final HashSet<VersionedPackage> installedExplicitly = new HashSet<>();
     
+    /**
+     * Map from group to packages
+     */
+    public final HashMap<String, Vector<VersionedPackage>> groupMap = new HashMap<>();
     
     
     
@@ -138,6 +142,23 @@ public class Common
         catch (final FileNotFoundException ignore)
         {   //Ignore
         }
+    }
+    
+    
+    /**
+     * Populate {@link #groupMap}
+     * 
+     * @throws  IOException  On I/O exception
+     */
+    public void loadGroups() throws IOException
+    {
+	for (final VersionedPackage pack : this.databaseMap.values())
+	    for (final String group : PackageInfo.fromFile(this.packageMap.get(pack.toString())).groups)
+	    {   Vector<VersionedPackage> list = this.groupMap.get(group);
+		if (list == null)
+		    this.groupMap.put(group, list = new Vector<VersionedPackage>());
+		list.add(pack);
+	    }
     }
     
 }

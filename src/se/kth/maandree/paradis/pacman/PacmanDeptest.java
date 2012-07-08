@@ -16,11 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.pacman;
-import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
-import java.io.*;
 
 
 /**
@@ -28,19 +26,8 @@ import java.io.*;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix sorting (comparison)
+public class PacmanDeptest implements Blackboard.BlackboardObserver
 {
-    /**
-     * The directory where the packages are located
-     */
-    private static final String PACKAGE_DIR = Pacman.PACKAGE_DIR;
-    
-    /**
-     * The file where the data are saved
-     */
-    private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
-    
-    
     /** Return missing dependencies and conflicts
      */ private static final String DEPTEST = Pacman.DEPTEST;
     
@@ -54,7 +41,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix 
      * {@inheritDoc}
      */
     @Override
-    @requires({"java-runtime>=6", "java-environment>=7"})
+    @requires("java-runtime>=6")
     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
     {
         if ((message instanceof Pacman.PacmanInvoke == false) || (((Pacman.PacmanInvoke)message).masteropt.equals(DEPTEST) == false))
@@ -63,76 +50,49 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix 
         
         try
         {
-            final HashMap<String, String> installed = new HashMap<String, String>();
-            try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(new File(PACKAGES_FILE))))
-            {   for (;;)
-                {
-                    final String pack = tis.readObject(String.class);
-                    if (pack.isEmpty())
-                        break;
-                    final String _pack = pack.substring(0, pack.lastIndexOf("="));
-                    installed.put(_pack, pack);
-            }   }
-            
-            final HashMap<String, String> enversionmap = new HashMap<String, String>();
-            {   final String[] packs = (new File(PACKAGE_DIR)).list();
-                Arrays.sort(packs);
-                for (final String pack : packs)
-                {
-                    if (pack.endsWith(".pkg.xz") == false)
-                        continue;
-                    final String $pack = pack.substring(0, pack.length() - ".pkg.xz".length());
-                    enversionmap.put($pack.substring(0, $pack.lastIndexOf("=")), $pack);
-            }   }
-            
-            final HashMap<String, ArrayList<String>> groupmap = new HashMap<String, ArrayList<String>>();
-            for (final String pack : enversionmap.values())
-                for (final String group : PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz").groups)
-                {   ArrayList<String> list = groupmap.get(group);
-                    if (list == null)
-                        groupmap.put(group, list = new ArrayList<String>());
-                    list.add(pack);
-                }
+	    final Common common = new Common();
+	    common.loadInstalled();
+	    common.loadDatabase();
+	    common.loadGroups();
             
             final HashMap<VersionedPackage, VersionedPackage> provided = new HashMap<VersionedPackage, VersionedPackage>();
             final HashMap<VersionedPackage, VersionedPackage> conflict = new HashMap<VersionedPackage, VersionedPackage>();
             VersionedPackage tmp;
             
-            for (final String pack : installed.keySet())
-            {   final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
-                provided.put(tmp = new VersionedPackage(pack), tmp);
+            for (final VersionedPackage pack : common.installedMap.values())
+	    {   final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
+                provided.put(pack, pack);
                 for (final String p : info.provides)   provided.put(tmp = new VersionedPackage(p), tmp);
                 for (final String c : info.conflicts)  conflict.put(tmp = new VersionedPackage(c), tmp);
             }
             
             final ArrayDeque<String> $packages = new ArrayDeque<String>();
             for (final String pack : packages)
-                if (groupmap.containsKey(pack) == false)
+                if (common.groupMap.containsKey(pack) == false)
                     $packages.offerLast(pack);
                 else
-                    for (final String pac : groupmap.get(pack))
-                        $packages.offerLast(pac);
+                    for (final VersionedPackage pac : common.groupMap.get(pack))
+                        $packages.offerLast(pac.toString());
             
             while ($packages.isEmpty() == false) //FIMXE resolve updates
-            {   final String pac = $packages.pollFirst();
-                final String pack = pac.contains("=") ? pac : enversionmap.get(pac);
-                if (provided.get(tmp = new VersionedPackage(pack)) != null)
+            {   final VersionedPackage pack = common.databaseMap.get(new VersionedPackage($packages.pollFirst()));
+                if (provided.get(pack) != null)
                 {
-                    if (tmp.intersects(provided.get(tmp)))
+                    if (pack.intersects(provided.get(pack)))
                         continue;
-                    System.out.println(pack + " is in version conflict with " + conflict.get(tmp).toString());
+                    System.out.println(pack.toString() + " is in version conflict with " + conflict.get(pack).toString());
                     return;
                 }
-                final PackageInfo info = PackageInfo.fromFile(PACKAGE_DIR + pack + ".pkg.xz");
+                final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
                 
-                if ((tmp = new VersionedPackage(pack)).intersects(conflict.get(tmp)))
-                {   System.out.println(pack + " conflicts with " + conflict.get(tmp).toString());
+                if ((pack).intersects(conflict.get(pack)))
+                {   System.out.println(pack + " conflicts with " + conflict.get(pack).toString());
                     return;
                 }
-                provided.put(tmp = new VersionedPackage(pack), tmp);
+                provided.put(pack, pack);
                 for (final String p : info.provides)
-                {   if ((tmp = new VersionedPackage(pack)).intersects(conflict.get(tmp)))
-                    {   System.out.println(pack + " conflicts with " + conflict.get(tmp).toString());
+                {   if (pack.intersects(conflict.get(pack)))
+                    {   System.out.println(pack + " conflicts with " + conflict.get(pack).toString());
                         return;
                     }
                     provided.put(tmp = new VersionedPackage(p), tmp);
@@ -152,7 +112,6 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver //FIXME fix 
             System.out.println("Could not load information needed to test dependencies.");
         }
     }
-    
     
 }
 
