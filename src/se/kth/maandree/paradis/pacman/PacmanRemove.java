@@ -28,17 +28,6 @@ import java.util.*;
  */
 public class PacmanRemove implements Blackboard.BlackboardObserver
 {
-    /**
-     * The directory where the packages are located
-     */
-    private static final String PACKAGE_DIR = Pacman.PACKAGE_DIR;
-    
-    /**
-     * The file where the data are saved
-     */
-    private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
-    
-    
     /** Uninstall packages
      */ private static final String REMOVE = Pacman.REMOVE;
     
@@ -96,6 +85,40 @@ public class PacmanRemove implements Blackboard.BlackboardObserver
             }
             else
             {
+		common.loadInstalled();
+		common.loadGroups();
+		
+		VersionedPackage tmp;
+		final HashMap<VersionedPackage, VersionedPackage> skips = new HashMap<VersionedPackage, VersionedPackage>();
+		final HashMap<VersionedPackage, VersionedPackage> required = new HashMap<VersionedPackage, VersionedPackage>();
+		final HashSet<VersionedPackage> uninstall = new HashSet<VersionedPackage>();
+		
+		for (final String pack : ignores)
+		    skips.put(tmp = new VersionedPackage(pack), tmp);
+		
+		for (final String pack : packages)
+		    uninstall.add(new VersionedPackage(pack));
+		if (unrequired || unneeded)
+		    for (final String pack : PacmanQuery.getRequired())
+			required.put(tmp = new VersionedPackage(pack), tmp);
+		if (unrequired)
+		    for (final VersionedPackage pack : common.installedMap.values())
+			if (pack.intersects(required.get(pack)) == false)
+			    uninstall.add(pack);
+		
+		//FIXME implement
+		// nodeps    :: enlist newly unrequired package
+		// cascade   :: enlist dependents
+		// recursive :: enlist dependencies
+		
+		for (final VersionedPackage pack : uninstall)
+	        {
+		    if (pack.intersects(skips.get(pack)))
+			continue;
+		    if (unneeded && pack.intersects(required.get(pack)))
+			continue;
+		    common.uninstall(pack, dbonly);
+		}
         }   }
         catch (final Throwable err)
         {   System.err.println(err.toString());

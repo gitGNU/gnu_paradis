@@ -219,9 +219,10 @@ public class Common
     /**
      * Uninstall package
      * 
-     * @param  pack  The package
+     * @param  pack    The package
+     * @param  dbonly  Do not remove files
      */
-    public void uninstall(final VersionedPackage pack)
+    public void uninstall(final VersionedPackage pack, final boolean dbonly)
     {
     }
     

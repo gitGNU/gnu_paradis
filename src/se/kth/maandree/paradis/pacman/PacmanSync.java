@@ -340,10 +340,8 @@ public class PacmanSync implements Blackboard.BlackboardObserver
 	    final boolean doUninstall = clean || uninstall.contains(pack);
 	    final boolean asExplicit = explicits.contains(pack);
 	    
-	    if (doUninstall)
-		common.uninstall(pack);
-	    if (doInstall)
-		common.install(pack, asExplicit, dbonly, force);
+	    if (doUninstall)  common.uninstall(pack, dbonly);
+	    if (doInstall)    common.install(pack, asExplicit, dbonly, force);
 	}
     }
     
