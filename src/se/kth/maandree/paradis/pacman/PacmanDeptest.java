@@ -50,86 +50,86 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
         
         try
         {
-	    final Common common = new Common();
-	    common.loadInstalled();
-	    common.loadDatabase();
+            final Common common = new Common();
+            common.loadInstalled();
+            common.loadDatabase();
             
             final HashMap<VersionedPackage, VersionedPackage> provided = new HashMap<VersionedPackage, VersionedPackage>();
             final HashMap<VersionedPackage, VersionedPackage> conflict = new HashMap<VersionedPackage, VersionedPackage>();
             VersionedPackage tmp;
             
             for (final VersionedPackage pack : common.installedMap.values())
-	    {   final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
+            {   final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
                 provided.put(pack, pack);
                 for (final String p : info.provides)   provided.put(tmp = new VersionedPackage(p), tmp);
                 for (final String c : info.conflicts)  conflict.put(tmp = new VersionedPackage(c), tmp);
             }
             
-	    final ArrayDeque<String> $packages = new ArrayDeque<String>();
-	    for (final String pack : packages)
-		$packages.offerLast(pack);
-	    
-	    common.loadGroups();
-	    common.loadProviders();
-	    common.loadReplacers();
-	    final ArrayDeque<String> choice = new ArrayDeque<String>();
+            final ArrayDeque<String> $packages = new ArrayDeque<String>();
+            for (final String pack : packages)
+                $packages.offerLast(pack);
+            
+            common.loadGroups();
+            common.loadProviders();
+            common.loadReplacers();
+            final ArrayDeque<String> choice = new ArrayDeque<String>();
             for (;;)
             {
-		String polled = $packages.pollFirst();
-		if (common.groupMap.containsKey(polled))
+                String polled = $packages.pollFirst();
+                if (common.groupMap.containsKey(polled))
                     for (final VersionedPackage pack : common.groupMap.get(polled))
                         $packages.offerFirst(pack.toString());
-		
-		if (polled == null)
-		{
-		    if ((polled = choice.pollFirst()) == null)
-			break;
-		    final VersionedPackage p = new VersionedPackage(polled);
-		    if (provided.get(p) != null)
-		    {   if (p.intersects(provided.get(p)))
-			    continue;
-			System.out.println(p.toString() + " is in version conflict with " + conflict.get(p).toString());
-			return;
-		    }
-		    if (p.intersects(conflict.get(p)))
-		    {   System.out.println(p + " conflicts with " + conflict.get(p).toString());
-			return;
-		    }
-		    
-		    final Set<VersionedPackage> providers = common.provideMap.get(p);
-		    int i = 0, n;
-		    final VersionedPackage[] packs = new VersionedPackage[n = providers.size()];
-		    for (final VersionedPackage pack : providers)
-			packs[i++] = pack;
-		    Arrays.sort(packs);
-		    
-		    System.out.println("Select provider for " + p.name + ":\n");
-		    for (i = 0; i < n; i++)
-			System.out.println("  " + i + ".\t" + packs[i].name);
-		    System.out.println();
-		    System.out.print("Enter index (default = 0): ");
-		    
-		    i = 0;
-		    mid:
-		        for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
-			    if (('0' <= d) && (d <= '9'))
-				i = (i * 10) - (d & 15);
-			    else
-				for (i = 1;;)
-				    if (((d = System.in.read()) == '\n') || (d == -1))
-					break mid;
-		    i = -i;
-		    
-		    if ((0 > i) || (i >= n))
-			i = 0;
-		    provided.put(p, packs[i]);
-		}
-		
-		final VersionedPackage pack = common.databaseMap.get(new VersionedPackage(polled));
-		
-		if (common.replaceMap.containsKey(pack))
-		    System.out.println(common.databaseMap.get(pack).toString() + " is replaced by " + common.replaceMap.get(pack).toString());
-		
+                
+                if (polled == null)
+                {
+                    if ((polled = choice.pollFirst()) == null)
+                        break;
+                    final VersionedPackage p = new VersionedPackage(polled);
+                    if (provided.get(p) != null)
+                    {   if (p.intersects(provided.get(p)))
+                            continue;
+                        System.out.println(p.toString() + " is in version conflict with " + conflict.get(p).toString());
+                        return;
+                    }
+                    if (p.intersects(conflict.get(p)))
+                    {   System.out.println(p + " conflicts with " + conflict.get(p).toString());
+                        return;
+                    }
+                    
+                    final Set<VersionedPackage> providers = common.provideMap.get(p);
+                    int i = 0, n;
+                    final VersionedPackage[] packs = new VersionedPackage[n = providers.size()];
+                    for (final VersionedPackage pack : providers)
+                        packs[i++] = pack;
+                    Arrays.sort(packs);
+                    
+                    System.out.println("Select provider for " + p.name + ":\n");
+                    for (i = 0; i < n; i++)
+                        System.out.println("  " + i + ".\t" + packs[i].name);
+                    System.out.println();
+                    System.out.print("Enter index (default = 0): ");
+                    
+                    i = 0;
+                    mid:
+                        for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
+                            if (('0' <= d) && (d <= '9'))
+                                i = (i * 10) - (d & 15);
+                            else
+                                for (i = 1;;)
+                                    if (((d = System.in.read()) == '\n') || (d == -1))
+                                        break mid;
+                    i = -i;
+                    
+                    if ((0 > i) || (i >= n))
+                        i = 0;
+                    provided.put(p, packs[i]);
+                }
+                
+                final VersionedPackage pack = common.databaseMap.get(new VersionedPackage(polled));
+                
+                if (common.replaceMap.containsKey(pack))
+                    System.out.println(common.databaseMap.get(pack).toString() + " is replaced by " + common.replaceMap.get(pack).toString());
+                
                 if (provided.get(pack) != null)
                 {
                     if (pack.intersects(provided.get(pack)))
@@ -142,7 +142,7 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
                     return;
                 }
                 provided.put(pack, pack);
-		
+                
                 final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
                 for (final String p : info.provides)
                 {   if (pack.intersects(conflict.get(pack)))
@@ -154,12 +154,12 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
                 for (final String c : info.conflicts)
                     conflict.put(tmp = new VersionedPackage(c), tmp);
                 
-		Set<VersionedPackage> tmpset;
+                Set<VersionedPackage> tmpset;
                 for (final String d : info.dependencies)
-		    if (((tmpset = common.provideMap.get(new VersionedPackage(d))) != null) && (tmpset.size() > 1))
-			choice.offerLast(d);
-		    else
-			$packages.offerLast(d);
+                    if (((tmpset = common.provideMap.get(new VersionedPackage(d))) != null) && (tmpset.size() > 1))
+                        choice.offerLast(d);
+                    else
+                        $packages.offerLast(d);
             }
             
             System.out.println("Passes depedency test");

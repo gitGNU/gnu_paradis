@@ -19,6 +19,7 @@ package se.kth.maandree.paradis.pacman;
 import se.kth.maandree.paradis.*;
 
 import java.util.*;
+import java.io.*;
 
 
 /**
@@ -87,27 +88,50 @@ public class PacmanSync implements Blackboard.BlackboardObserver
         final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
         final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
         
-	final boolean nodeps    = options.contains(SYNC_NODEPS);
-	final boolean asexpl    = options.contains(SYNC_ASEXPLICIT);
-	final boolean asdeps    = options.contains(SYNC_ASDEPS);
-	final boolean force     = options.contains(SYNC_FORCE); 
-	final boolean needed    = options.contains(SYNC_NEEDED);
-	final boolean dbonly    = options.contains(SYNC_DBONLY);
-	final boolean recursive = options.contains(SYNC_RECURSIVE);
-	final boolean upgrade   = options.contains(SYNC_UPGRADE);
-	
-	final Common common = new Common();
-	try
-	{   if (options.contains(SYNC_SEARCH))
-	    {   common.loadDatabase();
-		PacmanQuery.search(common.databaseMap, packages, ignores, options.contains(SYNC_SEARCH));
-	    }
-	    else
-	    {
-	}   }
-	catch (final Throwable err)
-	{   System.err.println(err.toString());
-	}
+        final boolean nodeps    = options.contains(SYNC_NODEPS);
+        final boolean asexpl    = options.contains(SYNC_ASEXPLICIT);
+        final boolean asdeps    = options.contains(SYNC_ASDEPS);
+        final boolean force     = options.contains(SYNC_FORCE); 
+        final boolean needed    = options.contains(SYNC_NEEDED);
+        final boolean dbonly    = options.contains(SYNC_DBONLY);
+        final boolean recursive = options.contains(SYNC_RECURSIVE);
+        final boolean upgrade   = options.contains(SYNC_UPGRADE);
+        
+        final Common common = new Common();
+        try
+        {   if (options.contains(SYNC_SEARCH))
+            {   common.loadDatabase();
+                PacmanQuery.search(common.databaseMap, packages, ignores, options.contains(SYNC_SEARCH));
+            }
+            else
+                PacmanSync.sync(packages, ignores, false, nodeps, asexpl, asdeps, force, needed, dbonly, recursive, upgrade);
+        }
+        catch (final Throwable err)
+        {   System.err.println(err.toString());
+        }
+    }
+    
+    
+    /**
+     * Synchronise packages
+     * 
+     * @param  packages   Packages to synchronise
+     * @param  ignores    Packages not to synchronise
+     * @param  clean      Uninstall before synchronising
+     * @param  nodeps     Ignore dependencies
+     * @param  asexpl     Mark dependencies as explicitly installed
+     * @param  asdeps     Mark installed packages as installed as a dependency
+     * @param  force      Override existing files not installed by the package itself
+     * @param  needed     Ignore up to date packages
+     * @param  dbonly     Do not install the files
+     * @param  recursive  Recursively reinstall all dependencies
+     * @param  upgrade    Include all installed non-up to date packages
+     * 
+     * @throws  IOException  On I/O exception
+     */
+    public static void sync(final ArrayList<String> packages, final HashSet<String> ignores, final boolean clean, final boolean nodeps, final boolean asexpl,
+                            final boolean asdeps, final boolean force, final boolean needed, final boolean dbonly, final boolean recursive, final boolean upgrade) throws IOException
+    {
     }
     
 }

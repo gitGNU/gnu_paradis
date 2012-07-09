@@ -157,9 +157,9 @@ public class PacmanQuery implements Blackboard.BlackboardObserver //FIXME Print 
             for (final VersionedPackage pack : common.databaseMap.values())
                 rc.put(pack.name, pack.toString());
             
-	    common.loadReplacers();
-	    for (final Map.Entry<VersionedPackage, VersionedPackage> pair : common.replaceMap.entrySet())
-		rc.put(pair.getKey().toString(), pair.getValue().toString());
+            common.loadReplacers();
+            for (final Map.Entry<VersionedPackage, VersionedPackage> pair : common.replaceMap.entrySet())
+                rc.put(pair.getKey().toString(), pair.getValue().toString());
         }
         catch (final Throwable err)
         {   System.err.println(err.toString());
@@ -232,46 +232,46 @@ public class PacmanQuery implements Blackboard.BlackboardObserver //FIXME Print 
      */
     public static void search(final HashMap<VersionedPackage, VersionedPackage> everything, final ArrayList<String> packages, final HashSet<String> ignores, final boolean regex)
     {
-	final ArrayList<VersionedPackage> packs = new ArrayList<VersionedPackage>();
-	for (final String pack : packages)
-	    packs.add(new VersionedPackage(pack));
-	
-	final HashMap<VersionedPackage, VersionedPackage> skips = new HashMap<VersionedPackage, VersionedPackage>();
-	VersionedPackage tmp;
-	for (final String pack : ignores)
-	    skips.put(tmp = new VersionedPackage(pack), tmp);
-	
-	if (regex == false)
-	    for (final VersionedPackage pack : packs)
-	    {
-		if (((tmp = skips.get(pack)) != null) && tmp.intersects(pack))
-		    continue;
-		if (((tmp = everything.get(pack)) == null) || (tmp.intersects(pack) == false))
-		    continue;
-		System.out.println(tmp.toString());
-	    }
-	else
-	{
-	    final Pattern pattern;
-	    final StringBuilder buf = new StringBuilder();
-	    boolean first = true;
-	    for (final VersionedPackage pack : packs)
+        final ArrayList<VersionedPackage> packs = new ArrayList<VersionedPackage>();
+        for (final String pack : packages)
+            packs.add(new VersionedPackage(pack));
+        
+        final HashMap<VersionedPackage, VersionedPackage> skips = new HashMap<VersionedPackage, VersionedPackage>();
+        VersionedPackage tmp;
+        for (final String pack : ignores)
+            skips.put(tmp = new VersionedPackage(pack), tmp);
+        
+        if (regex == false)
+            for (final VersionedPackage pack : packs)
             {
-		if (first == false)
-		    buf.append("|");
-		first = false;
-		buf.append(pack.toString());
-	    }
-	    pattern = Pattern.compile(buf.toString());
-	    
-	    for (final VersionedPackage pack : everything.values())
-	    {
-		if (((tmp = skips.get(pack)) != null) && tmp.intersects(pack))
-		    continue;
-		if (pattern.matcher(pack.toString()).matches() || pattern.matcher(pack.name).matches())
-		    System.out.println(pack.toString());
-	    }
-	}
+                if (((tmp = skips.get(pack)) != null) && tmp.intersects(pack))
+                    continue;
+                if (((tmp = everything.get(pack)) == null) || (tmp.intersects(pack) == false))
+                    continue;
+                System.out.println(tmp.toString());
+            }
+        else
+        {
+            final Pattern pattern;
+            final StringBuilder buf = new StringBuilder();
+            boolean first = true;
+            for (final VersionedPackage pack : packs)
+            {
+                if (first == false)
+                    buf.append("|");
+                first = false;
+                buf.append(pack.toString());
+            }
+            pattern = Pattern.compile(buf.toString());
+            
+            for (final VersionedPackage pack : everything.values())
+            {
+                if (((tmp = skips.get(pack)) != null) && tmp.intersects(pack))
+                    continue;
+                if (pattern.matcher(pack.toString()).matches() || pattern.matcher(pack.name).matches())
+                    System.out.println(pack.toString());
+            }
+        }
     }
     
 }

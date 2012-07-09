@@ -162,13 +162,13 @@ public class Common
      */
     public void loadGroups() throws IOException
     {
-	for (final VersionedPackage pack : this.databaseMap.values())
-	    for (final String group : PackageInfo.fromFile(this.packageMap.get(pack.toString())).groups)
-	    {   Vector<VersionedPackage> list = this.groupMap.get(group);
-		if (list == null)
-		    this.groupMap.put(group, list = new Vector<VersionedPackage>());
-		list.add(pack);
-	    }
+        for (final VersionedPackage pack : this.databaseMap.values())
+            for (final String group : PackageInfo.fromFile(this.packageMap.get(pack.toString())).groups)
+            {   Vector<VersionedPackage> list = this.groupMap.get(group);
+                if (list == null)
+                    this.groupMap.put(group, list = new Vector<VersionedPackage>());
+                list.add(pack);
+            }
     }
     
     
@@ -179,25 +179,25 @@ public class Common
      */
     public void loadProviders() throws IOException
     {
-	 if (this.replaceMap.size() == 0)
-	    loadReplacers();
-	
-	for (final VersionedPackage provider : this.databaseMap.values())
-	    for (final String providee : PackageInfo.fromFile(this.packageMap.get(provider.toString())).provides)
-	    {   HashSet<VersionedPackage> list = this.provideMap.get(new VersionedPackage(providee));
-		if (list == null)
-		    this.provideMap.put(new VersionedPackage(providee), list = new HashSet<VersionedPackage>());
-		list.add(provider);
-	    }
-	
-	if (this.replaceMap.size() == 0)
-	    return;
-	
-	VersionedPackage replacee;
-	for (final HashSet<VersionedPackage> providers : this.provideMap.values())
-	    for (final Map.Entry<VersionedPackage, VersionedPackage> pair : this.replaceMap.entrySet())
-		if (providers.contains(replacee = pair.getKey()) && providers.contains(pair.getValue()))
-		    providers.remove(replacee);
+         if (this.replaceMap.size() == 0)
+            loadReplacers();
+        
+        for (final VersionedPackage provider : this.databaseMap.values())
+            for (final String providee : PackageInfo.fromFile(this.packageMap.get(provider.toString())).provides)
+            {   HashSet<VersionedPackage> list = this.provideMap.get(new VersionedPackage(providee));
+                if (list == null)
+                    this.provideMap.put(new VersionedPackage(providee), list = new HashSet<VersionedPackage>());
+                list.add(provider);
+            }
+        
+        if (this.replaceMap.size() == 0)
+            return;
+        
+        VersionedPackage replacee;
+        for (final HashSet<VersionedPackage> providers : this.provideMap.values())
+            for (final Map.Entry<VersionedPackage, VersionedPackage> pair : this.replaceMap.entrySet())
+                if (providers.contains(replacee = pair.getKey()) && providers.contains(pair.getValue()))
+                    providers.remove(replacee);
     }
     
     
@@ -208,11 +208,11 @@ public class Common
      */
     public void loadReplacers() throws IOException
     {
-	if (this.replaceMap.size() > 0)
-	    return;
-	for (final VersionedPackage replacer : this.databaseMap.values())
-	    for (final String replacee : PackageInfo.fromFile(this.packageMap.get(replacer.toString())).replaces)
-		this.replaceMap.put(new VersionedPackage(replacee), replacer);
+        if (this.replaceMap.size() > 0)
+            return;
+        for (final VersionedPackage replacer : this.databaseMap.values())
+            for (final String replacee : PackageInfo.fromFile(this.packageMap.get(replacer.toString())).replaces)
+                this.replaceMap.put(new VersionedPackage(replacee), replacer);
     }
     
 }

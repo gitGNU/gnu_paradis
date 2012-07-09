@@ -87,19 +87,19 @@ public class PacmanRemove implements Blackboard.BlackboardObserver
         final boolean recursive  = options.contains(REMOVE_RECURSIVE);
         final boolean unrequired = options.contains(REMOVE_UNREQUIRED);
         final boolean unneeded   = options.contains(REMOVE_UNNEEDED);
-	
-	final Common common = new Common();
+        
+        final Common common = new Common();
         try
         {   if (options.contains(REMOVE_SEARCH))
-	    {   common.loadInstalled();
-		PacmanQuery.search(common.installedMap, packages, ignores, options.contains(REMOVE_SEARCH));
-	    }
-	    else
-	    {
-	}   }
-	catch (final Throwable err)
-	{   System.err.println(err.toString());
-	}
+            {   common.loadInstalled();
+                PacmanQuery.search(common.installedMap, packages, ignores, options.contains(REMOVE_SEARCH));
+            }
+            else
+            {
+        }   }
+        catch (final Throwable err)
+        {   System.err.println(err.toString());
+        }
     }
     
 }

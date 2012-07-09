@@ -28,17 +28,6 @@ import java.util.*;
  */
 public class PacmanUpgrade implements Blackboard.BlackboardObserver
 {
-    /**
-     * The directory where the packages are located
-     */
-    private static final String PACKAGE_DIR = Pacman.PACKAGE_DIR;
-    
-    /**
-     * The file where the data are saved
-     */
-    private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
-    
-    
     /** Remove-and-install process
      */ private static final String UPGRADE = Pacman.UPGRADE;
     
@@ -89,25 +78,25 @@ public class PacmanUpgrade implements Blackboard.BlackboardObserver
         
         final boolean nodeps    = options.contains(UPGRADE_NODEPS);
         final boolean asexpl    = options.contains(UPGRADE_ASEXPLICIT);
-	final boolean asdeps    = options.contains(UPGRADE_ASDEPS);
+        final boolean asdeps    = options.contains(UPGRADE_ASDEPS);
         final boolean force     = options.contains(UPGRADE_FORCE);
         final boolean needed    = options.contains(UPGRADE_NEEDED);
         final boolean dbonly    = options.contains(UPGRADE_DBONLY);
         final boolean recursive = options.contains(UPGRADE_RECURSIVE);
         final boolean upgrade   = options.contains(UPGRADE_UPGRADE);
-	
-	final Common common = new Common();
-	try
+        
+        final Common common = new Common();
+        try
         {   if (options.contains(UPGRADE_SEARCH))
-	    {   common.loadInstalled();
-		PacmanQuery.search(common.installedMap, packages, ignores, options.contains(UPGRADE_SEARCH));
-	    }
-	    else
-	    {
-	}   }
-	catch (final Throwable err)
-	{   System.err.println(err.toString());
-	}
+            {   common.loadInstalled();
+                PacmanQuery.search(common.installedMap, packages, ignores, options.contains(UPGRADE_SEARCH));
+            }
+            else
+                PacmanSync.sync(packages, ignores, true, nodeps, asexpl, asdeps, force, needed, dbonly, recursive, upgrade);
+        }
+        catch (final Throwable err)
+        {   System.err.println(err.toString());
+        }
     }
     
 }
