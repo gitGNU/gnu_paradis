@@ -121,11 +121,16 @@ public class Common
             this.packageMap.put(vpacks[i].toString(), new File(PACKAGE_DIR + p));
         }
         Arrays.sort(vpacks);
+	final HashSet<String> done = new HashSet<String>();
+	for (final String item : this.packageMap.keySet())
+	    done.add(item);
         for (final VersionedPackage pack : vpacks)
         {
             this.databaseVector.add(pack);
             this.databaseSet.add(pack.toString());
             this.databaseMap.put(pack, pack);
+	    if (done.contains(pack.name) == false)
+		this.packageMap.put(pack.name, this.packageMap.get(packs.toString()));
         }
     }
     
@@ -145,6 +150,7 @@ public class Common
                     break;
                 final VersionedPackage vpack = new VersionedPackage(pack);
                 this.packageMap.put(vpack.toString(), new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
+		this.packageMap.put(vpack.name,       new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
                 this.installedMap.put(vpack, vpack);
                 if (tis.readBoolean())
                     this.installedExplicitly.add(vpack);
