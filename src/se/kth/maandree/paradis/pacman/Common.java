@@ -215,5 +215,28 @@ public class Common
                 this.replaceMap.put(new VersionedPackage(replacee), replacer);
     }
     
+    
+    /**
+     * Uninstall package
+     * 
+     * @param  pack  The package
+     */
+    public void uninstall(final VersionedPackage pack)
+    {
+    }
+    
+    
+    /**
+     * Install package
+     * 
+     * @param  pack      The package
+     * @param  explicit  Install as explicitly installed (not dependency)
+     * @param  dbonly    Do not install files
+     * @param  force     Force installation of files
+     */
+    public void install(final VersionedPackage pack, final boolean explicit, final boolean dbonly, final boolean force)
+    {
+    }
+    
 }
 
