@@ -29,17 +29,6 @@ import java.io.*;
  */
 public class PacmanSync implements Blackboard.BlackboardObserver
 {
-    /**
-     * The directory where the packages are located
-     */
-    private static final String PACKAGE_DIR = Pacman.PACKAGE_DIR;
-    
-    /**
-     * The file where the data are saved
-     */
-    private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
-    
-    
     /** Synchronise (install or upgrade) packages
      */ private static final String SYNC = Pacman.SYNC;
     
@@ -129,9 +118,111 @@ public class PacmanSync implements Blackboard.BlackboardObserver
      * 
      * @throws  IOException  On I/O exception
      */
+    @requires("java-runtime>=6")
     public static void sync(final ArrayList<String> packages, final HashSet<String> ignores, final boolean clean, final boolean nodeps, final boolean asexpl,
                             final boolean asdeps, final boolean force, final boolean needed, final boolean dbonly, final boolean recursive, final boolean upgrade) throws IOException
     {
+	/**
+	 * Set that can be uniserse
+	 * 
+	 * @param  <E>  Set element
+	 */
+	class FSet<E>
+	{
+	    //Has default constructor
+	    
+	    
+	    /** Underlaying map
+	     */ public final HashMap<E, E> map = new HashMap<E, E>();
+	    
+	    /** Whether the set is the universe set
+	     */ public boolean containsEverything = false;
+	    
+	    /** Whether the set is the empty set
+	     */ public boolean containsNothing = false;
+	    
+	    
+	    /**
+	     * Adds an item to the set
+	     * 
+	     * @param  item  The item
+	     */
+	    public void add(final E item)
+	    {   this.map.put(item, item);
+	    }
+	    
+	    /**
+	     * Removes an item to the set
+	     * 
+	     * @param  item  The item
+	     */
+	    public void remove(final E item)
+	    {   this.map.remove(item);
+	    }
+	    
+	    /**
+	     * Checks whether the set contains an item
+	     * 
+	     * @param   item  The item
+	     * @return        Whether the set contains the item
+	     */
+	    public boolean contains(final E item)
+	    {   return this.containsEverything?true : this.containsNothing?false : this.map.containsKey(item);
+	    }
+	    
+	    /**
+	     * Return the intern of an item, or {@code null} is it does not exist
+	     * 
+	     * @param   item  The item
+	     * @return        The intern of an item, or {@code null} is it does not exist
+	     */
+	    public E get(final E item)
+	    {   return this.containsEverything?(this.map.containsKey(item) ? this.map.get(item) : item) : this.containsNothing?null : this.map.get(item);
+	    }
+	}
+	
+	final Common common = new Common();
+	common.loadDatabase();
+	common.loadInstalled();
+	
+	final FSet<VersionedPackage> explicits = new FSet<VersionedPackage>();
+	if (asexpl ^ asdeps)  if (asexpl)  explicits.containsEverything = true;
+	                      else         explicits.containsNothing    = true;
+	for (final String pack : packages)
+	    explicits.add(new VersionedPackage(pack));
+	
+	final FSet<VersionedPackage> skips = new FSet<VersionedPackage>();
+	for (final String pack : ignores)
+	    skips.add(new VersionedPackage(pack));
+	if (needed)
+	    for (final VersionedPackage pack : common.installedMap.values())
+		skips.add(pack);
+	
+	final HashSet<VersionedPackage> install = new HashSet<VersionedPackage>();
+	final HashSet<VersionedPackage> uninstall = new HashSet<VersionedPackage>();
+	final ArrayDeque<VersionedPackage> queue = new ArrayDeque<VersionedPackage>();
+	for (final String pack : packages)
+	    queue.offerFirst(new VersionedPackage(pack));
+	if (upgrade)
+	    for (final Map.Entry<String, String> entry : PacmanQuery.getUpgradable().entrySet())
+	    {
+		final VersionedPackage key = new VersionedPackage(entry.getKey());
+		final VersionedPackage value = new VersionedPackage(entry.getValue());
+		queue.offerFirst(value);
+		if (value.name.equals(key.name) == false)
+		    uninstall.add(key);
+	    }
+	
+	for (;;)
+	{
+	    final VersionedPackage polled = queue.pollFirst();
+	    if (polled == null)
+		break;
+	}
+	
+	//  nodeps  recursive
+	
+	//  clean  force  dbonly
     }
     
 }
