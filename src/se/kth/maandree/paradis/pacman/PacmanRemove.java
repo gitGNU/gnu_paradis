@@ -93,7 +93,7 @@ public class PacmanRemove implements Blackboard.BlackboardObserver
 		final HashMap<VersionedPackage, VersionedPackage> skips = new HashMap<VersionedPackage, VersionedPackage>();
 		final HashMap<VersionedPackage, VersionedPackage> required = new HashMap<VersionedPackage, VersionedPackage>();
 		final HashMap<VersionedPackage, HashSet<VersionedPackage>> casc = new HashMap<VersionedPackage, HashSet<VersionedPackage>>();
-		final HashSet<VersionedPackage> uninstall = new HashSet<VersionedPackage>();
+		HashSet<VersionedPackage> uninstall = new HashSet<VersionedPackage>();
 		final ArrayDeque<VersionedPackage> queue = new ArrayDeque<VersionedPackage>();
 		
 		for (final String pack : ignores)
@@ -123,33 +123,49 @@ public class PacmanRemove implements Blackboard.BlackboardObserver
 			    }
 		    }
 		
-		while (queue.isEmpty() == false)
+		for (;;)
 		{
-		    final VersionedPackage pack = queue.pollFirst();
-		    for (final VersionedPackage pac : common.groupMap.get(pack))
-			queue.offerFirst(pac);
-		    if (common.groupMap.get(pack).isEmpty() == false)    continue;
-		    if (pack.intersects(skips.get(pack)))                continue;
-		    if (common.installedMap.containsKey(pack) == false)  continue;
-		    final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
-		    if (recursive)
-		    {   for (final String d : info.dependencies)          queue.offerLast(new VersionedPackage(d));
-			for (final String d : info.optionalDependencies)  queue.offerLast(new VersionedPackage(d));
+		    while (queue.isEmpty() == false)
+		    {
+			final VersionedPackage pack = queue.pollFirst();
+			for (final VersionedPackage pac : common.groupMap.get(pack))
+			    queue.offerFirst(pac);
+			if (common.groupMap.get(pack).isEmpty() == false)    continue;
+			if (pack.intersects(skips.get(pack)))                continue;
+			if (common.installedMap.containsKey(pack) == false)  continue;
+			final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
+			if (recursive)
+			{   for (final String d : info.dependencies)          queue.offerLast(new VersionedPackage(d));
+			    for (final String d : info.optionalDependencies)  queue.offerLast(new VersionedPackage(d));
+			}
+			if (cascade)
+			    for (final VersionedPackage c : casc.get(pack))
+				queue.offerLast(c);
 		    }
-		    if (cascade)
-			for (final VersionedPackage c : casc.get(pack))
-			    queue.offerLast(c);
-		}
-		//FIXME implement
-		// nodeps    :: enlist newly unrequired package
-		
-		for (final VersionedPackage pack : uninstall)
-	        {
-		    if (pack.intersects(skips.get(pack)))
-			continue;
-		    if (unneeded && pack.intersects(required.get(pack)))
-			continue;
-		    common.uninstall(pack, dbonly);
+		    
+		    if (uninstall.isEmpty())
+			break;
+		    
+		    for (final VersionedPackage pack : uninstall)
+		    {
+			    if (pack.intersects(skips.get(pack)))
+				continue;
+			    if (unneeded && pack.intersects(required.get(pack)))
+				continue;
+			    common.uninstall(pack, dbonly);
+		    }
+		    uninstall = new HashSet<VersionedPackage>();
+		    
+		    if (nodeps == false)
+			for (final String spack : PacmanQuery.getRequired())
+			{
+			    final VersionedPackage pack = new VersionedPackage(spack);
+			    if (required.containsKey(pack) == false)
+			    {
+				required.put(pack, pack);
+				queue.offerLast(pack);
+			    }
+			}
 		}
         }   }
         catch (final Throwable err)
