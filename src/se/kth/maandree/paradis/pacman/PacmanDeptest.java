@@ -53,7 +53,6 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
 	    final Common common = new Common();
 	    common.loadInstalled();
 	    common.loadDatabase();
-	    common.loadGroups();
             
             final HashMap<VersionedPackage, VersionedPackage> provided = new HashMap<VersionedPackage, VersionedPackage>();
             final HashMap<VersionedPackage, VersionedPackage> conflict = new HashMap<VersionedPackage, VersionedPackage>();
@@ -66,16 +65,71 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
                 for (final String c : info.conflicts)  conflict.put(tmp = new VersionedPackage(c), tmp);
             }
             
-            final ArrayDeque<String> $packages = new ArrayDeque<String>();
-            for (final String pack : packages)
-                if (common.groupMap.containsKey(pack) == false)
-                    $packages.offerLast(pack);
-                else
-                    for (final VersionedPackage pac : common.groupMap.get(pack))
-                        $packages.offerLast(pac.toString());
-            
-            while ($packages.isEmpty() == false) //FIMXE resolve updates
-            {   final VersionedPackage pack = common.databaseMap.get(new VersionedPackage($packages.pollFirst()));
+	    final ArrayDeque<String> $packages = new ArrayDeque<String>();
+	    for (final String pack : packages)
+		$packages.offerLast(pack);
+	    
+	    common.loadGroups();
+	    common.loadProviders();
+	    common.loadReplacers();
+	    final ArrayDeque<String> choice = new ArrayDeque<String>();
+            for (;;)
+            {
+		String polled = $packages.pollFirst();
+		if (common.groupMap.containsKey(polled))
+                    for (final VersionedPackage pack : common.groupMap.get(polled))
+                        $packages.offerFirst(pack.toString());
+		
+		if (polled == null)
+		{
+		    if ((polled = choice.pollFirst()) == null)
+			break;
+		    final VersionedPackage p = new VersionedPackage(polled);
+		    if (provided.get(p) != null)
+		    {   if (p.intersects(provided.get(p)))
+			    continue;
+			System.out.println(p.toString() + " is in version conflict with " + conflict.get(p).toString());
+			return;
+		    }
+		    if (p.intersects(conflict.get(p)))
+		    {   System.out.println(p + " conflicts with " + conflict.get(p).toString());
+			return;
+		    }
+		    
+		    final Set<VersionedPackage> providers = common.provideMap.get(p);
+		    int i = 0, n;
+		    final VersionedPackage[] packs = new VersionedPackage[n = providers.size()];
+		    for (final VersionedPackage pack : providers)
+			packs[i++] = pack;
+		    Arrays.sort(packs);
+		    
+		    System.out.println("Select provider for " + p.name + ":\n");
+		    for (i = 0; i < n; i++)
+			System.out.println("  " + i + ".\t" + packs[i].name);
+		    System.out.println();
+		    System.out.print("Enter index (default = 0): ");
+		    
+		    i = 0;
+		    mid:
+		        for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
+			    if (('0' <= d) && (d <= '9'))
+				i = (i * 10) - (d & 15);
+			    else
+				for (i = 1;;)
+				    if (((d = System.in.read()) == '\n') || (d == -1))
+					break mid;
+		    i = -i;
+		    
+		    if ((0 > i) || (i >= n))
+			i = 0;
+		    provided.put(p, packs[i]);
+		}
+		
+		final VersionedPackage pack = common.databaseMap.get(new VersionedPackage(polled));
+		
+		if (common.replaceMap.containsKey(pack))
+		    System.out.println(common.databaseMap.get(pack).toString() + " is replaced by " + common.replaceMap.get(pack).toString());
+		
                 if (provided.get(pack) != null)
                 {
                     if (pack.intersects(provided.get(pack)))
@@ -83,13 +137,13 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
                     System.out.println(pack.toString() + " is in version conflict with " + conflict.get(pack).toString());
                     return;
                 }
-                final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
-                
-                if ((pack).intersects(conflict.get(pack)))
+                if (pack.intersects(conflict.get(pack)))
                 {   System.out.println(pack + " conflicts with " + conflict.get(pack).toString());
                     return;
                 }
                 provided.put(pack, pack);
+		
+                final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
                 for (final String p : info.provides)
                 {   if (pack.intersects(conflict.get(pack)))
                     {   System.out.println(pack + " conflicts with " + conflict.get(pack).toString());
@@ -100,8 +154,12 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
                 for (final String c : info.conflicts)
                     conflict.put(tmp = new VersionedPackage(c), tmp);
                 
-                for (final String d : info.dependencies) //FIXME multiple choose dependencies
-                    $packages.offerLast(d);
+		Set<VersionedPackage> tmpset;
+                for (final String d : info.dependencies)
+		    if (((tmpset = common.provideMap.get(new VersionedPackage(d))) != null) && (tmpset.size() > 1))
+			choice.offerLast(d);
+		    else
+			$packages.offerLast(d);
             }
             
             System.out.println("Passes depedency test");

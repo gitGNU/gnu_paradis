@@ -83,6 +83,16 @@ public class Common
      */
     public final HashMap<String, Vector<VersionedPackage>> groupMap = new HashMap<>();
     
+    /**
+     * Map from logical (or physical) package to physical packages
+     */
+    public final HashMap<VersionedPackage, HashSet<VersionedPackage>> provideMap = new HashMap<>();
+    
+    /**
+     * Map from replacees to replacers
+     */
+    public final HashMap<VersionedPackage, VersionedPackage> replaceMap = new HashMap<>();
+    
     
     
     /**
@@ -159,6 +169,50 @@ public class Common
 		    this.groupMap.put(group, list = new Vector<VersionedPackage>());
 		list.add(pack);
 	    }
+    }
+    
+    
+    /**
+     * Populate {@link #provideMap}
+     * 
+     * @throws  IOException  On I/O exception
+     */
+    public void loadProviders() throws IOException
+    {
+	 if (this.replaceMap.size() == 0)
+	    loadReplacers();
+	
+	for (final VersionedPackage provider : this.databaseMap.values())
+	    for (final String providee : PackageInfo.fromFile(this.packageMap.get(provider.toString())).provides)
+	    {   HashSet<VersionedPackage> list = this.provideMap.get(new VersionedPackage(providee));
+		if (list == null)
+		    this.provideMap.put(new VersionedPackage(providee), list = new HashSet<VersionedPackage>());
+		list.add(provider);
+	    }
+	
+	if (this.replaceMap.size() == 0)
+	    return;
+	
+	VersionedPackage replacee;
+	for (final HashSet<VersionedPackage> providers : this.provideMap.values())
+	    for (final Map.Entry<VersionedPackage, VersionedPackage> pair : this.replaceMap.entrySet())
+		if (providers.contains(replacee = pair.getKey()) && providers.contains(pair.getValue()))
+		    providers.remove(replacee);
+    }
+    
+    
+    /**
+     * Populate {@link #replaceMap}
+     * 
+     * @throws  IOException  On I/O exception
+     */
+    public void loadReplacers() throws IOException
+    {
+	if (this.replaceMap.size() > 0)
+	    return;
+	for (final VersionedPackage replacer : this.databaseMap.values())
+	    for (final String replacee : PackageInfo.fromFile(this.packageMap.get(replacer.toString())).replaces)
+		this.replaceMap.put(new VersionedPackage(replacee), replacer);
     }
     
 }

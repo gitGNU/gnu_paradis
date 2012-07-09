@@ -157,9 +157,9 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
             for (final VersionedPackage pack : common.databaseMap.values())
                 rc.put(pack.name, pack.toString());
             
-            for (final VersionedPackage pack : common.databaseMap.values())
-                for (final String replacee : PackageInfo.fromFile(common.packageMap.get(pack.toString())).replaces)
-                    rc.put(replacee, pack.toString());
+	    common.loadReplacers();
+	    for (final Map.Entry<VersionedPackage, VersionedPackage> pair : common.replaceMap.entrySet())
+		rc.put(pair.getKey().toString(), pair.getValue().toString());
         }
         catch (final Throwable err)
         {   System.err.println(err.toString());
