@@ -87,14 +87,27 @@ public class PacmanUpgrade implements Blackboard.BlackboardObserver
         final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
         final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
         
-        //UPGRADE_NODEPS
-        //UPGRADE_ASEXPLICIT | UPGRADE_ASDEPS
-        //UPGRADE_FORCE
-        //UPGRADE_NEEDED
-        //UPGRADE_DBONLY
-        //UPGRADE_RECURSIVE
-        //UPGRADE_SEARCH
-        //UPGRADE_UPGRADE
+        final boolean nodeps    = options.contains(UPGRADE_NODEPS);
+        final boolean asexpl    = options.contains(UPGRADE_ASEXPLICIT);
+	final boolean asdeps    = options.contains(UPGRADE_ASDEPS);
+        final boolean force     = options.contains(UPGRADE_FORCE);
+        final boolean needed    = options.contains(UPGRADE_NEEDED);
+        final boolean dbonly    = options.contains(UPGRADE_DBONLY);
+        final boolean recursive = options.contains(UPGRADE_RECURSIVE);
+        final boolean upgrade   = options.contains(UPGRADE_UPGRADE);
+	
+	final Common common = new Common();
+	try
+        {   if (options.contains(UPGRADE_SEARCH))
+	    {   common.loadInstalled();
+		PacmanQuery.search(common.installedMap, packages, ignores, options.contains(UPGRADE_SEARCH));
+	    }
+	    else
+	    {
+	}   }
+	catch (final Throwable err)
+	{   System.err.println(err.toString());
+	}
     }
     
 }

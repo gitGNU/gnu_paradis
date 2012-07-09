@@ -28,7 +28,7 @@ import java.io.*;
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class PacmanQuery implements Blackboard.BlackboardObserver
+public class PacmanQuery implements Blackboard.BlackboardObserver //FIXME Print package information on (-i, --info)
 {
     /**
      * The directory where the packages are located
@@ -79,7 +79,7 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
         try
         {
             final Pattern pattern;
-            if (search)
+            if (search == false)
                 pattern = null;
             else
             {
@@ -219,6 +219,59 @@ public class PacmanQuery implements Blackboard.BlackboardObserver
             }
         }
         return rc;
+    }
+    
+    
+    /**
+     * Search for packages
+     * 
+     * @param  everything  All packages
+     * @param  packages    Wanted packages
+     * @param  ignores     Unwanted packages
+     * @param  regex       Whether to use regular expressions
+     */
+    public static void search(final HashMap<VersionedPackage, VersionedPackage> everything, final ArrayList<String> packages, final HashSet<String> ignores, final boolean regex)
+    {
+	final ArrayList<VersionedPackage> packs = new ArrayList<VersionedPackage>();
+	for (final String pack : packages)
+	    packs.add(new VersionedPackage(pack));
+	
+	final HashMap<VersionedPackage, VersionedPackage> skips = new HashMap<VersionedPackage, VersionedPackage>();
+	VersionedPackage tmp;
+	for (final String pack : ignores)
+	    skips.put(tmp = new VersionedPackage(pack), tmp);
+	
+	if (regex == false)
+	    for (final VersionedPackage pack : packs)
+	    {
+		if (((tmp = skips.get(pack)) != null) && tmp.intersects(pack))
+		    continue;
+		if (((tmp = everything.get(pack)) == null) || (tmp.intersects(pack) == false))
+		    continue;
+		System.out.println(tmp.toString());
+	    }
+	else
+	{
+	    final Pattern pattern;
+	    final StringBuilder buf = new StringBuilder();
+	    boolean first = true;
+	    for (final VersionedPackage pack : packs)
+            {
+		if (first == false)
+		    buf.append("|");
+		first = false;
+		buf.append(pack.toString());
+	    }
+	    pattern = Pattern.compile(buf.toString());
+	    
+	    for (final VersionedPackage pack : everything.values())
+	    {
+		if (((tmp = skips.get(pack)) != null) && tmp.intersects(pack))
+		    continue;
+		if (pattern.matcher(pack.toString()).matches() || pattern.matcher(pack.name).matches())
+		    System.out.println(pack.toString());
+	    }
+	}
     }
     
 }

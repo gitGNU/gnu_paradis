@@ -81,13 +81,25 @@ public class PacmanRemove implements Blackboard.BlackboardObserver
         final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
         final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
         
-        //REMOVE_CASCADE
-        //REMOVE_NODEPS
-        //REMOVE_DBONLY
-        //REMOVE_RECURSIVE
-        //REMOVE_SEARCH
-        //REMOVE_UNREQUIRED
-        //REMOVE_UNNEEDED
+        final boolean cascade    = options.contains(REMOVE_CASCADE);
+        final boolean nodeps     = options.contains(REMOVE_NODEPS);
+        final boolean dbonly     = options.contains(REMOVE_DBONLY);
+        final boolean recursive  = options.contains(REMOVE_RECURSIVE);
+        final boolean unrequired = options.contains(REMOVE_UNREQUIRED);
+        final boolean unneeded   = options.contains(REMOVE_UNNEEDED);
+	
+	final Common common = new Common();
+        try
+        {   if (options.contains(REMOVE_SEARCH))
+	    {   common.loadInstalled();
+		PacmanQuery.search(common.installedMap, packages, ignores, options.contains(REMOVE_SEARCH));
+	    }
+	    else
+	    {
+	}   }
+	catch (final Throwable err)
+	{   System.err.println(err.toString());
+	}
     }
     
 }

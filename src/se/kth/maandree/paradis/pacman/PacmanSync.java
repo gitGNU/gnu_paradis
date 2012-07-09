@@ -87,15 +87,27 @@ public class PacmanSync implements Blackboard.BlackboardObserver
         final HashSet<String> ignores = ((Pacman.PacmanInvoke)message).ignores;
         final ArrayList<String> packages = ((Pacman.PacmanInvoke)message).packages;
         
-        //SYNC_NODEPS
-        //SYNC_ASEXPLICIT
-        //SYNC_FORCE
-        //SYNC_ASDEPS
-        //SYNC_NEEDED
-        //SYNC_DBONLY
-        //SYNC_RECURSIVE
-        //SYNC_SEARCH
-        //SYNC_UPGRADE
+	final boolean nodeps    = options.contains(SYNC_NODEPS);
+	final boolean asexpl    = options.contains(SYNC_ASEXPLICIT);
+	final boolean asdeps    = options.contains(SYNC_ASDEPS);
+	final boolean force     = options.contains(SYNC_FORCE); 
+	final boolean needed    = options.contains(SYNC_NEEDED);
+	final boolean dbonly    = options.contains(SYNC_DBONLY);
+	final boolean recursive = options.contains(SYNC_RECURSIVE);
+	final boolean upgrade   = options.contains(SYNC_UPGRADE);
+	
+	final Common common = new Common();
+	try
+	{   if (options.contains(SYNC_SEARCH))
+	    {   common.loadDatabase();
+		PacmanQuery.search(common.databaseMap, packages, ignores, options.contains(SYNC_SEARCH));
+	    }
+	    else
+	    {
+	}   }
+	catch (final Throwable err)
+	{   System.err.println(err.toString());
+	}
     }
     
 }
