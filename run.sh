@@ -1,5 +1,9 @@
 #!/bin/sh
+
 # This script is put in Public Domain
+# Year: 2012
+# Author: Mattias Andrée (maandree@kth.se)
+
 
 ## program execution information
 program=paradis
