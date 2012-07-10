@@ -18,6 +18,7 @@
 package se.kth.maandree.paradis;
 import se.kth.maandree.paradis.util.*;
 import se.kth.maandree.paradis.local.Properties; //Explicit
+import se.kth.maandree.paradis.pacman.*;
 
 import java.util.*;
 import java.io.File;
@@ -133,6 +134,10 @@ public class Program
                     System.out.println("Paradis — Ever growing network for parallell and distributed computing.");
                     System.out.println("Copyright © 2012  Mattias Andrée");
                 }
+		else if (line.equals("pacman") || line.startsWith("pacman "))
+	        {
+		    Pacman.main(line.equals("pacman") ? new String[0] : line.substring("pacman ".length()).split(" "));
+		}
                 else
                     System.out.println("Unrecognised command.");
             }
