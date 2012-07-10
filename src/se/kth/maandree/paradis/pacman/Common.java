@@ -20,6 +20,9 @@ import se.kth.maandree.paradis.local.Properties; //Explicit
 import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
+import com.ice.tar.*;
+import org.tukaani.xz.*;
+
 import java.util.*;
 import java.io.*;
 
@@ -250,7 +253,9 @@ public class Common
 	    final PackageInfo info = PackageInfo.fromFile(this.packageMap.get(pack));
 	    for (final String file : info.files)
 		try
-		{   (new File((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs))).delete();
+		{   final File f = new File((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs));
+		    if ((f.exists() && f.isDirectory()) == false)
+			f.delete();
 		}
 		catch (final Throwable err)
 		{   System.out.println(err.toString());
@@ -299,7 +304,30 @@ public class Common
 	    String tarfile = this.packageMap.get(pack).getAbsolutePath();
 	    tarfile = tarfile.substring(0, tarfile.length() - ".pkg.xz".length()) + ".tar.xz";
 	    
-	    //FIXME extract tarfile (.tar.xz)
+	    try (final TarInputStream tar = new TarInputStream(new XZInputStream(new FileInputStream(tarfile))))
+	    {   for (TarEntry entry; (entry = tar.getNextEntry()) != null;)
+		{
+		    final String top = entry.getName().replace("\\", "/").replace("/", fs);
+		    String dest = FILE_ROOT + (top.startsWith(fs) ? top.substring(fs.length()) : top);
+		    if (dest.endsWith(fs))
+			dest = dest.substring(0, dest.length() - fs.length());
+		    final File destFile = new File(dest);
+		    
+		    if (entry.isDirectory())
+		    {
+			destFile.mkdirs();
+			continue;
+		    }
+		    if (installed.contains(dest) == false)
+			continue;
+		    if (destFile.getParentFile().exists() == false)
+			destFile.getParentFile().mkdirs();
+		    
+		    try (final FileOutputStream out = new FileOutputStream(destFile))
+		    {   tar.copyEntryContents(out);
+			/* skipping mode, owner, links &c */
+		    }
+	    }   }
 	}
     }
     
@@ -312,7 +340,7 @@ public class Common
     public void syncInstalledMap() throws IOException
     {
         try (final TransferOutputStream tos = new TransferOutputStream(new FileOutputStream(PACKAGES_FILE)))
-		{   for (final VersionedPackage pack : this.installedMap.values())
+	{   for (final VersionedPackage pack : this.installedMap.values())
             {
 		String file = this.packageMap.get(pack.toString()).getAbsolutePath().replace(";", ":");
 		file = file.substring(PACKAGE_DIR.length());
