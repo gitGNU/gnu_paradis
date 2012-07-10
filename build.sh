@@ -1,4 +1,5 @@
 #!/bin/sh
+# This script is put in public Domain
 
 ## completion
 . run.sh --completion--

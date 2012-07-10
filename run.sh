@@ -1,4 +1,5 @@
 #!/bin/sh
+# This script is put in Public Domain
 
 ## program execution information
 program=paradis

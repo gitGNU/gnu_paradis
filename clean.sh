@@ -1,4 +1,5 @@
 #!/bin/sh
+# This script is put in public Domain
 
 rm -r bin  2>  /dev/null
 
