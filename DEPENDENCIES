@@ -1,8 +1,13 @@
-REQUIRED:
+REQUIRED::
+
 java-runtime>=7
 coreutils
 iputils
 xz-java
+javagnutar
 
-OPTIONAL:
+
+OPTIONAL::
+
 x-server
+
