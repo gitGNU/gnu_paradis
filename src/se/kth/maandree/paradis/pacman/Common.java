@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.pacman;
+import se.kth.maandree.paradis.local.Properties; //Explicit
 import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
@@ -40,6 +41,11 @@ public class Common
      * The file where the data are saved
      */
     private static final String PACKAGES_FILE = Pacman.PACKAGES_FILE;
+    
+    /**
+     * File root for installed files
+     */
+    public static final String FILE_ROOT = Pacman.FILE_ROOT;
     
     
     
@@ -227,9 +233,29 @@ public class Common
      * 
      * @param  pack    The package
      * @param  dbonly  Do not remove files
+     * 
+     * @throws  IOException  On I/O exception
      */
-    public void uninstall(final VersionedPackage pack, final boolean dbonly)
+    public void uninstall(final VersionedPackage pack, final boolean dbonly) throws IOException
     {
+	if (this.installedMap.containsKey(pack) == false)
+	{   System.out.println(pack.name + " was not installed");
+	    return;
+	}
+	this.installedMap.remove(pack);
+	this.installedExplicitly.remove(pack);
+	if (dbonly == false)
+	{
+	    final String fs = Properties.getFileSeparator();
+	    final PackageInfo info = PackageInfo.fromFile(this.packageMap.get(pack));
+	    for (final String file : info.files)
+		try
+		{   (new File((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs))).delete();
+		}
+		catch (final Throwable err)
+		{   System.out.println(err.toString());
+		}
+	}
     }
     
     
@@ -240,9 +266,62 @@ public class Common
      * @param  explicit  Install as explicitly installed (not dependency)
      * @param  dbonly    Do not install files
      * @param  force     Force installation of files
+     * 
+     * @throws  IOException  On I/O exception
      */
-    public void install(final VersionedPackage pack, final boolean explicit, final boolean dbonly, final boolean force)
+    public void install(final VersionedPackage pack, final boolean explicit, final boolean dbonly, final boolean force) throws IOException
     {
+	final VersionedPackage prev = this.installedMap.get(pack);
+	this.installedMap.put(pack, pack);
+	if (explicit)  this.installedExplicitly.add(pack);
+	else           this.installedExplicitly.remove(pack);
+	if (dbonly == false)
+	{
+	    final PackageInfo iprev = prev == null ? null : PackageInfo.fromFile(this.packageMap.get(prev));
+	    final String fs = Properties.getFileSeparator();
+	    final HashSet<String> installed = new HashSet<String>();
+	    if (iprev != null)
+	        for (final String file : iprev.files)
+		    installed.add((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs));
+	    
+	    final PackageInfo info = PackageInfo.fromFile(this.packageMap.get(pack));
+	    for (final String file : info.files)
+	    {
+		final String f = (FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs);
+		if (installed.contains(f))
+		    continue;
+		if (force || ((new File(f)).exists() == false))
+		    installed.add(f);
+		else
+		    System.out.println("Skipping " + file + ", installed by another package");
+	    }
+	    
+	    String tarfile = this.packageMap.get(pack).getAbsolutePath();
+	    tarfile = tarfile.substring(0, tarfile.length() - ".pkg.xz".length()) + ".tar.xz";
+	    
+	    //FIXME extract tarfile (.tar.xz)
+	}
+    }
+    
+    
+    /**
+     * Stores {@link installedMap}
+     * 
+     * @throws  IOException  On I/O exception
+     */
+    public void syncInstalledMap() throws IOException
+    {
+        try (final TransferOutputStream tos = new TransferOutputStream(new FileOutputStream(PACKAGES_FILE)))
+		{   for (final VersionedPackage pack : this.installedMap.values())
+            {
+		String file = this.packageMap.get(pack.toString()).getAbsolutePath().replace(";", ":");
+		file = file.substring(PACKAGE_DIR.length());
+		file = file.substring(0, file.length() - ".pkg.xz".length());
+		tos.writeObject(file);
+		tos.writeBoolean(this.installedExplicitly.contains(pack));
+	    }
+	    tos.flush();
+	}
     }
     
 }

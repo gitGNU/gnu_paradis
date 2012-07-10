@@ -167,6 +167,8 @@ public class PacmanRemove implements Blackboard.BlackboardObserver
 			    }
 			}
 		}
+		
+		common.syncInstalledMap();
         }   }
         catch (final Throwable err)
         {   System.err.println(err.toString());

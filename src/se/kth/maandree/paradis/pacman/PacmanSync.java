@@ -343,6 +343,8 @@ public class PacmanSync implements Blackboard.BlackboardObserver
 	    if (doUninstall)  common.uninstall(pack, dbonly);
 	    if (doInstall)    common.install(pack, asExplicit, dbonly, force);
 	}
+	
+	common.syncInstalledMap();
     }
     
 }

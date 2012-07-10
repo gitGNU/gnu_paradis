@@ -32,6 +32,7 @@ import java.io.*;
  */
 public final class PackageInfo
 {
+    //TODO unimplementied fields: isFreeSoftware arch os backup checksums category uuid
     /**
      * Constructor
      * 

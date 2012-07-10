@@ -39,6 +39,11 @@ public class Pacman
      */
     public static final String PACKAGES_FILE = "~/.paradis/packages.data".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
     
+    /**
+     * File root for installed files
+     */
+    public static final String FILE_ROOT = "~/.paradis/".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    
     
     
     /** Add, remove or list packages
