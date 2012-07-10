@@ -138,6 +138,10 @@ public class Program
 	        {
 		    Pacman.main(line.equals("pacman") ? new String[0] : line.substring("pacman ".length()).split(" "));
 		}
+		else if (line.equals("makepkg") || line.startsWith("makepkg "))
+	        {
+		    Makepkg.main(line.equals("makepkg") ? new String[0] : line.substring("makepkg ".length()).split(" "));
+		}
                 else
                     System.out.println("Unrecognised command.");
             }
