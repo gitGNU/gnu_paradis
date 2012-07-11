@@ -5,6 +5,7 @@
 /doc/javadoc/
 *.class
 /ecj.jar
+/dev/ecj.jar
 
 
 ##  backup files  ##
