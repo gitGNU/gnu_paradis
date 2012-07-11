@@ -1,13 +1,49 @@
-REQUIRED::
+DEPENDENCIES FOR ALL PLATFORMS:
 
-java-runtime>=7
-coreutils        [gnu gpl 3]
-iputils: ping    [public domain]
-xz-java          [public domain]
-javagnutar       [apache 2.0]
+java-runtime>=7, provided by jdk7-openjdk:
+ GNU General Public License, version 2, with GNU Classpath Exception
+http://openjdk.java.net/
+
+xz-java, provided by xz-java-git:
+Public Domain,
+http://tukaani.org/xz/java.html
+
+javagnutar:
+Apache License 2.0,
+http://code.google.com/p/javagnutar/
+
+(planned) gnucrypto (GNU Crypto | GNU Classpath):
+GNU GPLv2 with library exception,
+http://www.gnu.org/software/gnu-crypto/
 
 
-OPTIONAL::
 
-x-server         [X11]
+DEPENDENCIES FOR GNU/Linux PLATFORMS:
+
+coreutils (GNU Coreutils):
+GNU General Public License, version 3,
+http://www.gnu.org/software/coreutils/
+
+iputils:ping:
+Public Domain (applies to ping, iputils is multilicensed),
+http://www.linuxfoundation.org/collaborate/workgroups/networking/iputils
+
+
+
+OPTIONAL DEPENDENCIES FOR GNU/Linux PLATFORMS:
+
+(planned) x-server, provided by xorg-server (X.org):
+X11 License,
+http://xorg.freedesktop.org/
+purpose: graphical user interface
+
+(temporary) less:
+GNU General Public License, version 3,
+http://www.greenwoodsoftware.com/less/
+purpose: document pager
+
+sh, provided by bash (GNU Bash):
+GNU General Public License version 3,
+http://www.gnu.org/software/bash/
+purpose: external command execution with shell script support
 

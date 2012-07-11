@@ -1,0 +1,202 @@
+#!sh  this shebang is only added to enable colouring in text editors
+
+
+` This is a template PKGBUILD file for the makepkg command `
+
+
+# Package name: lower case a-z alphanumberical with non-initial, non-terminal hyphens
+packageName=
+
+# Short package description: one line, at most 80 characters
+packageDesc="quoted \"hello word\" unquote"
+
+# Long package description: full multiline description
+packageDescription=<<EOF
+First Line
+Second Line
+EOF
+
+
+# Package epoch number: non-negative, default is 0
+packageEpoch=
+
+# Package version
+# Element syntax:
+#  * STABIL
+#  * STABIL-rcNUMBER
+# STABIL: non-negative integers separated '.' (one dot)
+# NUMBER: positive integer
+packageVersion=
+
+# Package release number: non-negative, default is 0
+packageRelease=
+
+
+# Upstream URL
+url=''
+
+# Package category
+category=
+
+
+# Whether the package contains source files
+# Syntax:
+#  * yes
+#  * no
+containsSource=yes
+
+# Whether the package contains executable files
+# Syntax:
+#  * yes
+#  * no
+containsBinary=yes
+
+
+# Licenses this packages uses
+# Examples:
+#  * AGPL3
+#  * GPL3
+#  * GPL2
+#  * EPL
+#  * MIT
+#  * WTFPL
+#  * Public Domain
+licenses=(GPL3)
+
+# Whether the package is Free Software
+# Syntax:
+#  * yes
+#  * no
+isFreeSoftware=yes
+
+
+# Package groups in which this package is included
+groups=()
+
+# Logical packages proviced by this package
+# Element syntax:
+#  * package
+#  * package<version
+#  * package<=version
+#  * package=version
+#  * package>=version
+#  * package>version
+provides=()
+
+# Physical packages replaced by this package
+# Element syntax:
+#  * package
+#  * package<version
+#  * package<=version
+#  * package=version
+#  * package>=version
+#  * package>version
+replaces=()
+
+# Package conflicting with this package
+# Element syntax:
+#  * package
+#  * package<version
+#  * package<=version
+#  * package=version
+#  * package>=version
+#  * package>version
+conflicts=()
+
+
+# Files included in the package: / is paradis root, and / is also the file seperator (directories)
+autofill files
+
+# Which files of which to make backup
+# Syntax:
+#  * yes
+#  * no
+# Alternatively you can specify the file name as in $files
+backup=()
+
+# File checksums
+# Element syntax: list of '|' (one pipe) separated algorithm:checksum,
+# whether algorithm is in lowercase and checksum is in upper case
+# dashless hexadecimal.
+autofill checksums
+
+
+# Manditory system dependencies
+# Element syntax:
+#  * package
+#  * package<version
+#  * package<=version
+#  * package=version
+#  * package>=version
+#  * package>version
+systemDependencies=(java-runtime>=1.4)
+
+# Manditory paradis dependencies
+# Element syntax:
+#  * package
+#  * package<version
+#  * package<=version
+#  * package=version
+#  * package>=version
+#  * package>version
+dependencies=()
+
+# Optional system dependencies
+# Element syntax:
+#  * package: purpose
+#  * package<version: purpose
+#  * package<=version: purpose
+#  * package=version: purpose
+#  * package>=version: purpose
+#  * package>version: purpose
+optionalSystemDependencies=()
+
+# Optional paradis dependencies
+# Element syntax:
+#  * package: purpose
+#  * package<version: purpose
+#  * package<=version: purpose
+#  * package=version: purpose
+#  * package>=version: purpose
+#  * package>version: purpose
+optionalDependencies=()
+    
+
+# Supported architectures
+# Examples:
+#  * any
+#  * ia-32
+#  * x86-64
+#  * ia-64
+#  * ppc
+#  * ppc64
+#  * sparc32
+#  * sparc64
+#  * arm
+#  * hppa
+#  * mips
+#  * sh
+#  * s390
+#  * s390x
+#  * alpha
+# An element may have the prefix ! (a bang) if it is known not to be supported
+arch=(any)
+
+# Supported operating systems
+# Examples:
+#  * any
+#  * gnulinux
+#  * gnuhurd
+#  * macos
+#  * macos 9
+#  * macosx
+#  * windows
+#  * windows nt
+#  * windows 7
+# An element may have the prefix ! (a bang) if it is known not to be supported
+os=(gnulinux gnuhurd)
+
+
+# Package UUID: used to ensure uniqueness of package independent on version, epoch and release
+autofill uuid
+

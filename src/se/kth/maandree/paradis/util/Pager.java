@@ -167,7 +167,7 @@ public class Pager
      * @param  pager  The pager to use
      * @param  text   The text to print
      */
-    @requires("coreutils")
+    @requires("sh")
     private static void page(final String pager, final String text)
     {
         try
