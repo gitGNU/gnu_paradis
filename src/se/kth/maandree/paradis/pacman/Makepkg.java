@@ -51,12 +51,10 @@ public class Makepkg
     {
 	try
         {   if (args[0].equals("--init"))
-	    {
-		FileHandler.writeFile(args[1] + "/PKGBUILD", FileHandler.readInternalFileBytes("res/PKGBUILD.prototype"));
+	    {   FileHandler.writeFile(args[1] + "/PKGBUILD", FileHandler.readInternalFileBytes("res/PKGBUILD.prototype"));
 	    }
 	    else if (args[0].equals("--edit"))
-	    {
-		String edit = Properties.getEditor();
+	    {   String edit = Properties.getEditor();
 		if (edit == null)
 		    edit = "emacs";
 		exec(edit + " '" + args[1].replace("\\'", "'\\''") + "/PKGBUILD'");
@@ -102,28 +100,156 @@ public class Makepkg
     }
     
     
+    /**
+     * Convert a coded {@link String} to a plain {@link String}
+     * 
+     * @param   value  {@link String} to parse
+     * @return         Parsed value
+     */
     public static String parseString(final String value)
-    {   return null;
+    {
+	if (value.startsWith("<<"))
+        {   String rc = value.substring(value.indexOf("\n") + 1);
+	    return rc.substring(0, rc.lastIndexOf("\n"));
+	}
+	final String[] words = parseStrings("(" + value + ")");
+	final StringBuilder rc = new StringBuilder();
+	for (int i = 0, n = words.length; i < n; i++)
+	{   if (i > 0)
+		rc.append(" ");
+	    rc.append(words[i]);
+	}
+	return rc.toString();
     }
     
+    
+    /**
+     * Convert a {@link String} to {@code String[]}
+     * 
+     * @param   value  {@link String} to convert
+     * @return         Parsed value
+     */
     public static String[] parseStrings(final String value)
-    {   return null;
+    {
+	final String val = value.substring(1, value.length() - 1) + " ";
+	final ArrayList<String> rc = new ArrayList<String>();
+	int ptr = 0, n;
+	final char[] buf = new char[n = val.length()];
+	
+	boolean dq = false;
+	boolean sq = false;
+	for (int i = 0; i < n;)
+	{
+	    char c = val.charAt(i++);
+	    if ((c == ' ') && !dq && !sq)
+	    {   if (ptr == 0)
+		    continue;
+		rc.add(new String(buf, 0, ptr));
+		ptr = 0;
+	    }
+	    else if (sq)
+		if (c == '\'')
+		    sq = false;
+		else
+		    buf[ptr++] = c;
+	    else
+	    {
+		if (c == '\"')
+		{   dq = !dq;
+		    continue;
+		}
+		if ((c == '\'') && !dq)
+	        {   sq = true;
+		    continue;
+		}
+		if (c == '\\')
+		    c = val.charAt(i++);
+		buf[ptr++] = c;
+	    }
+	}
+	
+	final String[] _rc = new String[rc.size()];
+	rc.toArray(_rc);
+	return _rc;
     }
     
+    
+    /**
+     * Convert a {@link String} to {@code int}
+     * 
+     * @param   value  {@link String} to convert
+     * @return         Parsed value
+     */
     public static int parseInteger(final String value)
-    {   return 0;
+    {   int rc = 0;
+	for (int i = 0, n = value.length(); i < n; i++)
+	    rc = (rc * 10) - (value.charAt(i) & 15);
+	return -rc;
     }
     
+    
+    /**
+     * Convert a {@link String} to {@code boolean}
+     * 
+     * @param   value  {@link String} to convert
+     * @return         Parsed value
+     */
     public static boolean parseBoolean(final String value)
-    {   return false;
+    {   return value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("y") || value.equals("1");
     }
     
+    
+    /**
+     * Convert a {@link String} to {@code boolean[]}
+     * 
+     * @param   value  {@link String} to convert
+     * @return         Parsed value
+     */
     public static boolean[] parseBooleans(final String value)
-    {   return null;
+    {
+	if ((value.startsWith("(") && value.endsWith(")")) == false)
+	    return null;
+	String tmp = value.substring(1, value.length() - 2);
+	while (tmp.contains("  "))  tmp = tmp.replace("  ", " ");
+	if (tmp.startsWith(" "))    tmp = tmp.substring(1);
+	if (tmp.endsWith(" "))      tmp = tmp.substring(0, tmp.length() - 1);
+	final String[] vals = tmp.split(" ");
+	final boolean[] rc = new boolean[vals.length];
+	for (int i = 0, n = vals.length; i < n; i++)
+	{
+	    final boolean yes = value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("y") || value.equals("1");
+	    final boolean no  = value.equalsIgnoreCase("no")  || value.equalsIgnoreCase("n") || value.equals("0");
+	    if (yes | no)
+		rc[i] = yes;
+	    else
+		return null;
+	}
+	return rc;
     }
     
+    
+    /**
+     * Convert a {@link String} to {@link UUID}
+     * 
+     * @param   value  {@link String} to convert
+     * @return         Parsed value
+     */
     public static UUID parseUUID(final String value)
-    {   return null;
+    {
+        final long[] hi_lo = new long[2];
+	for (int j = 0, e = 0; j < 2; j++)
+	    for (int i = 0; i < 16; i++)
+	    {
+		int d = value.charAt((i | (j << 4)) + e);
+		if (d == '-')
+		{   e++;
+		    i--;
+		    continue;
+		}
+		hi_lo[j] = (hi_lo[j] << 4) | ((d & 15) + ((d >> 6) * 10));
+	    }
+	
+	return new UUID(hi_lo[0], hi_lo[1]);
     }
     
     

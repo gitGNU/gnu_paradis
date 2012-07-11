@@ -49,7 +49,7 @@ public class UUID implements Comparable<UUID>
      * @param  high  The high 64 bits
      * @param  low   The low 64 bits
      */
-    protected UUID(final long high, final long low)
+    public UUID(final long high, final long low)
     {
         this.high = high;
         this.low = low;
