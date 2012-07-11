@@ -1,4 +1,4 @@
-paradis [from: PARallell And DIStributed computing network]
+paradis [from: PARallel And DIStributed computing network]
 
 
 paradis is a service which uses plug-ins for its primary
