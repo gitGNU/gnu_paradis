@@ -49,18 +49,19 @@ public class Makepkg
      */
     public static void main(final String... args)
     {
+	final String fs = Properties.getFileSeparator();
 	try
         {   if (args[0].equals("--init"))
-	    {   FileHandler.writeFile(args[1] + "/PKGBUILD", FileHandler.readInternalFileBytes("res/PKGBUILD.prototype"));
+	    {   FileHandler.writeFile(args[1] + fs + "PKGBUILD", FileHandler.readInternalFileBytes("res" + fs + "PKGBUILD.prototype"));
 	    }
 	    else if (args[0].equals("--edit"))
 	    {   String edit = Properties.getEditor();
 		if (edit == null)
 		    edit = "emacs";
-		exec(edit + " '" + args[1].replace("\\'", "'\\''") + "/PKGBUILD'");
+		exec(edit + " '" + args[1].replace("\\'", "'\\''") + fs + "PKGBUILD'");
 	    }
 	    else if (args[0].equals("--make"))
-	    {
+	    {   make(args[1]);
 	    }
 	    else if (args[0].equals("--reverse"))
 	    {
@@ -89,14 +90,108 @@ public class Makepkg
 		buf.append("groups=" + encodeArray(info.groups));
 		buf.append("files=" + encodeArray(info.files));
 		buf.append("backup=" + encodeArray(info.backup));
-		buf.append("checksums=" + encodeArray(info.checksums));
+		buf.append("`checksums=" + encodeArray(info.checksums) + "`");
 		buf.append("category='" + info.category.replace("'", "'\\''") + "'");
 		buf.append("uuid=" + info.uuid.toString());
-		FileHandler.writeFile(args[2] + "/PKGBUILD", buf.toString());
+		FileHandler.writeFile(args[2] + fs + "PKGBUILD", buf.toString());
 	}   }
 	catch (final Throwable err)
 	{   System.err.println(err.toString());
 	}
+    }
+    
+    
+    /**
+     * Build a package
+     * 
+     * @param  directory  The package directory
+     */
+    @requires("java-runtime>=6")
+    public static void make(final String directory)
+    {
+	final String fs = Properties.getFileSeparator();
+	final String pkgfile = directory + fs + "PKGBUILD";
+	final HashMap<String, String> map = new HashMap<String, String>();
+	
+	// TODO populate map
+	
+	String[] files = parseStrings(map.get("files"));
+	if (files == null)
+	{
+	    final ArrayList<String> list = new ArrayList<String>();
+	    final ArrayDeque<String> stack = new ArrayDeque<String>();
+	    stack.offerLast(directory);
+	    for (String item; (item = stack.pollLast()) != null;)
+	    {
+		final File file = new File(item);
+		if (file.isDirectory())
+		{
+		    final String[] subs = file.list();
+		    Arrays.sort(subs);
+		    for (int i = subs.length - 1; i >= 0; i--)
+			stack.offerLast(item + fs + subs[i]);
+		}
+		else
+		    if (item.equals(pkgfile) == false)
+			list.add(item.substring(directory.length()).replace(fs, "/"));
+	    }
+	    files = new String[list.size()];
+	    list.toArray(files);
+	}
+	
+	boolean[] backup = parseBooleans(map.get("backup"));
+	if (backup == null)
+	{
+	    final HashSet<String> fileSet = new HashSet<String>();
+	    for (final String file : parseStrings(map.get("backup")))
+		fileSet.add(file);
+	    backup = new boolean[files.length];
+	    for (int i = 0, n = files.length; i < n; i++)
+		backup[i] = fileSet.contains(files[i]);
+	}
+	
+	String checksums = map.get("checksums");
+	final PackageInfo info = new PackageInfo(parseStrings(map.get("optionalSystemDependencies")),
+						 parseStrings(map.get("optionalDependencies")),
+						 parseStrings(map.get("systemDependencies")),
+						 parseStrings(map.get("dependencies")),
+						 parseInteger(map.get("packageEpoch")),
+						 parseString(map.get("packageVersion")),
+						 parseInteger(map.get("packageRelease")),
+						 parseString(map.get("packageName")),
+						 parseString(map.get("packageDesc")),
+						 parseString(map.get("packageDescription")),
+						 parseStrings(map.get("provides")),
+						 parseStrings(map.get("replaces")),
+						 parseStrings(map.get("conflicts")),
+						 parseBoolean(map.get("containsSource")),
+						 parseBoolean(map.get("containsBinary")),
+						 parseStrings(map.get("licenses")),
+						 parseBoolean(map.get("isFreeSoftware")),
+						 parseString(map.get("url")),
+						 parseStrings(map.get("arch")),
+						 parseStrings(map.get("os")),
+						 parseStrings(map.get("groups")),
+						 files,
+						 backup,
+						 checksums != null ? parseStrings(checksums) : checksums(files),
+						 parseString(map.get("category")),
+						 map.containsKey("uuid") ? parseUUID(map.get("uuid")) : new UUID()
+						 );
+	
+	// TODO create .pkg.xz and .tar.xz and print uuid install info
+    }
+    
+    
+    /**
+     * Gets the checksum for files
+     * 
+     * @param   files  The files
+     * @return         The files' checksums
+     */
+    public static String[] checksums(final String[] files)
+    {
+	return new String[0]; //TODO calculate checksums
     }
     
     
