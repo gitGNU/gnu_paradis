@@ -70,7 +70,7 @@ public class UDPSocket
     /**
      * Time to wait for acknowledgement before deeming receiver dead
      */
-    public static final int TIME_OUT = 4_000;
+    public static final int TIME_OUT = 4000; // FIXME use user configurations
     
     
     
