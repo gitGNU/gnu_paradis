@@ -64,39 +64,71 @@ public class Makepkg
 	    }
 	    else if (args[0].equals("--reverse"))
 	    {
+		final PackageInfo info = PackageInfo.fromFile(args[1]);
+		final StringBuilder buf = new StringBuilder();
+		buf.append("optionalSystemDependencies=" + encodeArray(info.optionalSystemDependencies));
+		buf.append("optionalDependencies=" + encodeArray(info.optionalDependencies));
+		buf.append("systemDependencies=" + encodeArray(info.systemDependencies));
+		buf.append("dependencies=" + encodeArray(info.dependencies));
+		buf.append("packageEpoch=" + Integer.toString(info.packageEpoch));
+		buf.append("packageVersion=" + info.packageVersion);
+		buf.append("packageRelease=" + Integer.toString(info.packageRelease));
+		buf.append("packageName=" + info.packageName);
+		buf.append("packageDesc='" + info.packageDesc.replace("'", "'\\''") + "'");
+		buf.append("packageDescription='" + info.packageDescription.replace("'", "'\\''") + "'");
+		buf.append("provides=" + encodeArray(info.provides));
+		buf.append("replaces=" + encodeArray(info.replaces));
+		buf.append("conflicts=" + encodeArray(info.conflicts));
+		buf.append("containsSource=" + (info.containsSource ? "yes" : "no"));
+		buf.append("containsBinary=" + (info.containsBinary ? "yes" : "no"));
+		buf.append("licenses=" + encodeArray(info.licenses));
+		buf.append("isFreeSoftware=" + (info.isFreeSoftware ? "yes" : "no"));
+		buf.append("url='" + info.url.replace("'", "'\\''") + "'");
+		buf.append("arch=" + encodeArray(info.arch));
+		buf.append("os=" + encodeArray(info.os));
+		buf.append("groups=" + encodeArray(info.groups));
+		buf.append("files=" + encodeArray(info.files));
+		buf.append("backup=" + encodeArray(info.backup));
+		buf.append("checksums=" + encodeArray(info.checksums));
+		buf.append("category='" + info.category.replace("'", "'\\''") + "'");
+		buf.append("uuid=" + info.uuid.toString());
+		FileHandler.writeFile(args[2] + "/PKGBUILD", buf.toString());
 	}   }
 	catch (final Throwable err)
 	{   System.err.println(err.toString());
 	}
-	
-	/*
-	  optionalSystemDependencies = parseStrings()
-	  optionalDependencies = parseStrings()
-	  systemDependencies = parseStrings()
-	  dependencies = parseStrings()
-	  packageEpoch = parseInteger()
-	  packageVersion = parseString()
-	  packageRelease = parseInteger()
-	  packageName = parseString()
-	  packageDesc = parseString()
-	  packageDescription = parseString()
-	  provides = parseStrings()
-	  replaces = parseStrings()
-	  conflicts = parseStrings()
-	  containsSource = parseBoolean()
-	  containsBinary = parseBoolean()
-	  licenses = parseStrings()
-	  isFreeSoftware = parseBoolean()
-	  url = parseString()
-	  arch = parseStrings()
-	  os = parseStrings()
-	  groups = parseStrings()
-	  files = parseStrings() autofill
-	  backup = parseBooleans(files) autofill
-	  checksums = parseStrings() autofill
-	  category = parseString()
-	  uuid = parseUUID() autofill
-	 */
+    }
+    
+    
+    /**
+     * Converts a {@code boolean[]} to an encoded {@link String}
+     * 
+     * @param   array  Array to encode
+     * @return         Encoded {@link String}
+     */
+    public static String encodeArray(final boolean[] array)
+    {
+	final StringBuilder rc = new StringBuilder();
+	for (int i = 0, n = array.length; i < n; i++)
+	    rc.append((i == 0 ? "(" : " ") + (array[i] ? "yes" : "no"));
+	rc.append(")");
+	return rc.toString();
+    }
+    
+    
+    /**
+     * Converts a {@code String[]} to an encoded {@link String}
+     * 
+     * @param   array  Array to encode
+     * @return         Encoded {@link String}
+     */
+    public static String encodeArray(final String[] array)
+    {
+	final StringBuilder rc = new StringBuilder();
+	for (int i = 0, n = array.length; i < n; i++)
+	    rc.append((i == 0 ? "('" : "' '") + array[i].replace("'", "'\\''"));
+	rc.append("')");
+	return rc.toString();
     }
     
     
