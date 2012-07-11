@@ -1,5 +1,5 @@
 /**
- *  Paradis — Ever growing network for parallell and distributed computing.
+ *  Paradis — Ever growing network for parallel and distributed computing.
  *  Copyright © 2012  Mattias Andrée
  *
  *  This program is free software: you can redistribute it and/or modify
