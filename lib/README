@@ -1,1 +1,10 @@
 Directory for all .jar files
+
+
+activation.jar and javagnutar.jar are binaries of javagnutar:
+Apache License 2.0,
+http://code.google.com/p/javagnutar/
+
+xz-java.jar is a binary of xz-java:
+Public Domain,
+http://tukaani.org/xz/java.html

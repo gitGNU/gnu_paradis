@@ -16,9 +16,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
+Image in this programs are licensed under GNU General Public License 3:
+
+    Copyright © 2010  Mattias Andrée
+
+    This media is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This media is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this media.  If not, see <http://www.gnu.org/licenses/>.
+
+
 
 This program uses parts of GNU Classpath:
-
 
     The software in this package is distributed under the GNU General Public
     License (with a special exception described below).

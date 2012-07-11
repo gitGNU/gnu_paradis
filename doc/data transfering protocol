@@ -1,3 +1,8 @@
+# This document has been put in Public Domain
+# Year: 2012
+# Author: Mattias Andrée (maandree@kth.se)
+
+
 In order to the program easy to port and make sure serialisation
 protocol change does not break version compatbility we use our
 own protocol for converting data to octet streams.

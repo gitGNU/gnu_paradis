@@ -1,3 +1,8 @@
+# This document has been put in Public Domain
+# Year: 2012
+# Author: Mattias Andrée (maandree@kth.se)
+
+
 The package is identified by three parameters:
 
     name          This must always be ‘paradis’, otherwise other clients will reject it
