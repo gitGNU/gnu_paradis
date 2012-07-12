@@ -11,10 +11,9 @@ packageName=
 packageDesc="quoted \"hello word\" unquote"
 
 # Long package description: full multiline description
-packageDescription=<<EOF
-First Line
-Second Line
-EOF
+packageDescription='First line
+Second line
+Third line'
 
 
 # Package epoch number: non-negative, default is 0

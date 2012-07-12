@@ -116,9 +116,7 @@ public class Makepkg
     {
 	final String fs = Properties.getFileSeparator();
 	final String pkgfile = directory + fs + "PKGBUILD";
-	final HashMap<String, String> map = new HashMap<String, String>();
-	
-	// TODO populate map
+	final HashMap<String, String> map = map(FileHandler.readExternalFile(pkgfile));
 	
 	String[] files = parseStrings(map.get("files"));
 	if (files == null)
@@ -213,6 +211,111 @@ public class Makepkg
     
     
     /**
+     *                                                                     
+     * 
+     * @param   content                                                    
+     * @return                                                             
+     */
+    public static HashMap<String, String> map(final String content)
+    {
+	StringBuilder buf = new StringBuilder();
+	String cont = content.replace("\r\n", "\n").replace("\r", "\n");
+	
+	boolean beginning = true;
+	boolean comment = false;
+	boolean aq = false;
+	boolean dq = false;
+	boolean sq = false;
+	boolean esc = false;
+	for (int i = 0, n = cont.length(); i < n;)
+	{
+	    char c = cont.charAt(i++);
+	    
+	    if (comment)
+	    {   if (c == '\n')
+		{   buf.append(c);
+		    comment = false;
+		}
+		continue;
+	    }
+	    if (((c == '\t') || (c == ' ')) && beginning && !aq && !dq && !sq)
+		continue;
+	    buf.append(c);
+	    
+	    if ((c == '\n') && !esc && !aq && !dq && !sq)
+	        beginning = true;
+	    
+	    if (esc)
+		esc = false;
+	    else if (aq)
+	    {   if (c == '`')
+		    dq = false;
+		else if (c == '\\')
+		    esc = true;
+	    }
+	    else if (dq)
+	    {   if (c == '\"')
+		    dq = false;
+		else if (c == '\\')
+		    esc = true;
+	    }
+	    else if (sq)
+	    {	if (c == '\'')
+		    sq = false;
+	    }
+	    else if (c == '`')   aq = true;
+	    else if (c == '\"')  dq = true;
+	    else if (c == '\'')  sq = true;
+	    else if (c == '\\')  esc = true;
+	}
+	
+	cont = buf.toString();
+	buf = new StringBuilder();
+	for (final String line : cont.split("\n"))
+	{   buf.append(("." + line).trim().substring(1));
+	    buf.append("\n");
+	}
+	cont = buf.toString();
+	
+	final HashMap<String, String> map = new HashMap<String, String>();
+	buf = new StringBuilder();
+	
+	dq = sq = esc = false;
+	for (int i = 0, n = cont.length(); i < n;)
+	{
+	    char c = cont.charAt(i++);
+	    if ((c == '\n') && !esc && !aq && !dq && !sq)
+	    {
+		String seg = buf.toString();
+		int eq = seg.indexOf("=");
+		buf = new StringBuilder();
+		map.put(seg.substring(0, eq).trim(), seg.substring(eq + 1).trim());
+		continue;
+	    }
+	    buf.append(c);
+	    
+	    if (esc)
+		esc = false;
+	    else if (dq)
+	    {   if (c == '\"')
+		    dq = false;
+		else if (c == '\\')
+		    esc = true;
+	    }
+	    else if (sq)
+	    {	if (c == '\'')
+		    sq = false;
+	    }
+	    else if (c == '\"')  dq = true;
+	    else if (c == '\'')  sq = true;
+	    else if (c == '\\')  esc = true;
+	}
+	
+	return map;
+    }
+    
+    
+    /**
      * Gets the checksum for files
      * 
      * @param   files  The files
@@ -265,10 +368,6 @@ public class Makepkg
      */
     public static String parseString(final String value)
     {
-	if (value.startsWith("<<"))
-        {   String rc = value.substring(value.indexOf("\n") + 1);
-	    return rc.substring(0, rc.lastIndexOf("\n"));
-	}
 	final String[] words = parseStrings("(" + value + ")");
 	final StringBuilder rc = new StringBuilder();
 	for (int i = 0, n = words.length; i < n; i++)
