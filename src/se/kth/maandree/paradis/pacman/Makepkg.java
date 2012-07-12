@@ -21,6 +21,9 @@ import se.kth.maandree.paradis.net.UUID;
 import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
+import org.tukaani.xz.*;
+import com.ice.tar.*;
+
 import java.util.*;
 import java.io.*;
 
@@ -105,9 +108,11 @@ public class Makepkg
      * Build a package
      * 
      * @param  directory  The package directory
+     * 
+     * @throws  IOException  On I/O exception
      */
-    @requires("java-runtime>=6")
-    public static void make(final String directory)
+    @requires({"java-runtime>=6", "java-environment>=7"})
+    public static void make(final String directory) throws IOException
     {
 	final String fs = Properties.getFileSeparator();
 	final String pkgfile = directory + fs + "PKGBUILD";
@@ -150,14 +155,18 @@ public class Makepkg
 		backup[i] = fileSet.contains(files[i]);
 	}
 	
+	final int epoch   = map.containsKey("packageEpoch")   ? parseInteger(map.get("packageEpoch"))   : 0;
+	final int release = map.containsKey("packageRelease") ? parseInteger(map.get("packageRelease")) : 0;
+	final UUID uuid   = map.containsKey("uuid") ? parseUUID(map.get("uuid")) : new UUID();
+	
 	String checksums = map.get("checksums");
 	final PackageInfo info = new PackageInfo(parseStrings(map.get("optionalSystemDependencies")),
 						 parseStrings(map.get("optionalDependencies")),
 						 parseStrings(map.get("systemDependencies")),
 						 parseStrings(map.get("dependencies")),
-						 parseInteger(map.get("packageEpoch")),
+						 epoch,
 						 parseString(map.get("packageVersion")),
-						 parseInteger(map.get("packageRelease")),
+						 release,
 						 parseString(map.get("packageName")),
 						 parseString(map.get("packageDesc")),
 						 parseString(map.get("packageDescription")),
@@ -176,10 +185,30 @@ public class Makepkg
 						 backup,
 						 checksums != null ? parseStrings(checksums) : checksums(files),
 						 parseString(map.get("category")),
-						 map.containsKey("uuid") ? parseUUID(map.get("uuid")) : new UUID()
+						 uuid
 						 );
 	
-	// TODO create .pkg.xz and .tar.xz and print uuid install info
+	final String root = directory + fs + map.get("packageName") + "=" + epoch + ";" + map.get("packageVersion") + "-" + release;
+	final String pkgxz = root + ".pkg.xz"; //Create first
+	final String tarxz = root + ".tar.xz"; //Create last
+	final LZMA2Options lzma2 = new LZMA2Options(LZMA2Options.PRESET_MAX);
+	try (final TransferOutputStream tos = new TransferOutputStream(new XZOutputStream(new FileOutputStream(pkgxz), lzma2)))
+	{
+	    tos.writeObject(info);
+	    tos.flush();
+	    System.out.println("Package info file created: " + pkgxz);
+	}
+	try (final TarOutputStream tar = new TarOutputStream(new XZOutputStream(new FileOutputStream(tarxz), lzma2)))
+        {   for (final String file : files)
+	    {
+		final TarEntry entry = new TarEntry(new File(directory + file));
+		entry.setName(file.substring(1));
+	}   }
+        System.out.println("Package file tarball created: " + tarxz);
+	
+	System.out.println("Package UUID: " + uuid.toString());
+	System.out.println("\nPackage ready for adding to database [pacman -Da]:");
+	System.out.println(root);
     }
     
     
@@ -189,6 +218,7 @@ public class Makepkg
      * @param   files  The files
      * @return         The files' checksums
      */
+    @SuppressWarnings("unused")
     public static String[] checksums(final String[] files)
     {
 	return new String[0]; //TODO calculate checksums
