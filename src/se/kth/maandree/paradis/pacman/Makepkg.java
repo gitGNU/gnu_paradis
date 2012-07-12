@@ -211,10 +211,10 @@ public class Makepkg
     
     
     /**
-     *                                                                     
+     * Creates a map of all keys and values (encoded) in a PKGBUILD file
      * 
-     * @param   content                                                    
-     * @return                                                             
+     * @param   content  The content of the file to parse
+     * @return           The keys and values in the file
      */
     public static HashMap<String, String> map(final String content)
     {
@@ -288,8 +288,10 @@ public class Makepkg
 	    {
 		String seg = buf.toString();
 		int eq = seg.indexOf("=");
-		buf = new StringBuilder();
-		map.put(seg.substring(0, eq).trim(), seg.substring(eq + 1).trim());
+		if (eq > 0)
+		{   buf = new StringBuilder();
+		    map.put(seg.substring(0, eq).trim(), seg.substring(eq + 1).trim());
+		}
 		continue;
 	    }
 	    buf.append(c);
