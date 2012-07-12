@@ -16,12 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis;
-import se.kth.maandree.paradis.util.*;
-import se.kth.maandree.paradis.local.Properties; //Explicit
 import se.kth.maandree.paradis.pacman.*;
+import se.kth.maandree.paradis.local.Properties; //Explicit
+import se.kth.maandree.paradis.util.*;
+import se.kth.maandree.paradis.io.*;
 
 import java.util.*;
-import java.io.File;
 
 
 /**
@@ -113,13 +113,21 @@ public class Program
                 {
                     final String pager = Properties.getPager();
                     
-                    if      ((new File("res/LICENSE.AGPL3+colour")).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3+colour");
-                    else if ((new File("res/LICENSE.AGPL3"       )).exists())  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3");
-                    else                                                       Pager.pageFile(pager, "GNU Affero General Public License v3", "LICENSE.AGPL3");
+                    if      (FileHandler.fileExists("res/COPYING+colour"))  Pager.pageFile(pager, "Copyright information", "res/COPYING+colour");
+                    else if (FileHandler.fileExists("res/COPYING"       ))  Pager.pageFile(pager, "Copyright information", "res/COPYING");
+                    else                                                    Pager.pageFile(pager, "Copyright information", "COPYING");
+		    
+                    if      (FileHandler.fileExists("res/LICENSE.AGPL3+colour"))  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3+colour");
+                    else if (FileHandler.fileExists("res/LICENSE.AGPL3"       ))  Pager.pageFile(pager, "GNU Affero General Public License v3", "res/LICENSE.AGPL3");
+                    else                                                          Pager.pageFile(pager, "GNU Affero General Public License v3", "LICENSE.AGPL3");
                     
-                    if      ((new File("res/LICENSE.GPL2+colour")).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2+colour");
-                    else if ((new File("res/LICENSE.GPL2"       )).exists())  Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2");
-                    else                                                      Pager.pageFile(pager, "GNU General Public License v2", "LICENSE.GPL2");
+                    if      (FileHandler.fileExists("res/LICENSE.GPL3+colour"))   Pager.pageFile(pager, "GNU General Public License v3", "res/LICENSE.GPL3+colour");
+                    else if (FileHandler.fileExists("res/LICENSE.GPL3"       ))   Pager.pageFile(pager, "GNU General Public License v3", "res/LICENSE.GPL3");
+                    else                                                          Pager.pageFile(pager, "GNU General Public License v3", "LICENSE.GPL3");
+                    
+                    if      (FileHandler.fileExists("res/LICENSE.GPL2+colour"))   Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2+colour");
+                    else if (FileHandler.fileExists("res/LICENSE.GPL2"       ))   Pager.pageFile(pager, "GNU General Public License v2", "res/LICENSE.GPL2");
+                    else                                                          Pager.pageFile(pager, "GNU General Public License v2", "LICENSE.GPL2");
                 }
                 else if (line.equals("version"))
                 {

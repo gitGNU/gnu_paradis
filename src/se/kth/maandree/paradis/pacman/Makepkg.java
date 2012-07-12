@@ -201,6 +201,7 @@ public class Makepkg
 	    {
 		final TarEntry entry = new TarEntry(new File(directory + file));
 		entry.setName(file.substring(1));
+		tar.putNextEntry(entry);
 	}   }
         System.out.println("Package file tarball created: " + tarxz);
 	

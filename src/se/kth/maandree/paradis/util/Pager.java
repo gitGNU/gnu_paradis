@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.kth.maandree.paradis.util;
+import se.kth.maandree.paradis.io.*;
 import se.kth.maandree.paradis.*;
 
 import java.io.*;
@@ -48,7 +49,7 @@ public class Pager
      */
     public static void pageFile(final String pager, final String title, final String file)
     {
-        if ((new File(file)).exists() == false)
+        if (FileHandler.fileExists(file) == false)
         {
             final String errText = "The file " + file + " is missing.\nIts title is: " + title + "\n\n";
             page(pager, "--:: FILE MISSING ::--", errText);
@@ -60,7 +61,7 @@ public class Pager
         InputStream is = null;
         try
         {
-            is = new BufferedInputStream(new FileInputStream(new File(file)));
+            is = FileHandler.externalFileExists(file) ? FileHandler.readExternalFileStream(file) : FileHandler.readInternalFileStream(file);
             
             final Vector<byte[]> bufs = new Vector<byte[]>();
             int size = 0;
@@ -167,39 +168,19 @@ public class Pager
      * @param  pager  The pager to use
      * @param  text   The text to print
      */
-    @requires("sh")
+    @requires({"sh", "java-runtime>=7"})
     private static void page(final String pager, final String text)
     {
         try
         {
-            String cmd = pager + " > " + (new File("/dev/stdout")).getCanonicalPath();
-            
-            final Process process = (new ProcessBuilder("/bin/sh", "-c", cmd)).start();
-            final InputStream stream = process.getErrorStream();
-            OutputStream out = process.getOutputStream();
-            try
-            {   out.write(text.getBytes("UTF-8"));
-                out.flush();
-                
-                for (;;)
-                    if (stream.read() == -1)
-                        break;
-                
-                process.waitFor();
-            }
-            finally
-            {   try
-                {   out.close();
-                }
-                catch (final Throwable ignore)
-                {   //Ignore
-                }
-                try
-                {   stream.close();
-                }
-                catch (final Throwable ignore)
-                {   //Ignore
-            }   }
+            String cmd = "echo '" + text.replace("'", "'\\''") + "' | " + pager;
+	    cmd += " > " + (new File("/dev/stdout")).getCanonicalPath();
+	    
+	    final ProcessBuilder builder = new ProcessBuilder("/bin/sh", "-c", cmd);
+	    builder.inheritIO();
+            final Process process = builder.start();
+	    
+	    process.waitFor();
             if (process.exitValue() != 0)
                 throw new Exception();
         }
