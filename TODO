@@ -1,11 +1,9 @@
 shibboleet
-package sharing [PRIORITY 2]
+package sharing [PRIORITY 1]
 tcp + upnp port forwarding
 distributed hash table (¿ do we need this ?)
 encryption
 randomcast
-makepkg [PRIORITY 1]
-    license database
 
 core plugins:
     uuid resolver

@@ -51,24 +51,6 @@ containsSource=yes
 containsBinary=yes
 
 
-# Licenses this packages uses
-# Examples:
-#  * AGPL3
-#  * GPL3
-#  * GPL2
-#  * EPL
-#  * MIT
-#  * WTFPL
-#  * Public Domain
-licenses=(GPL3)
-
-# Whether the package is Free Software
-# Syntax:
-#  * yes
-#  * no
-isFreeSoftware=yes
-
-
 # Package groups in which this package is included
 groups=()
 
@@ -199,3 +181,73 @@ os=(gnulinux gnuhurd)
 # Package UUID: used to ensure uniqueness of package independent on version, epoch and release
 autofill uuid
 
+
+# Licenses this packages uses
+licenses=('GNU General Public License v3 or later')
+
+# Whether the package is Free Software
+# Syntax:
+#  * yes
+#  * no
+isFreeSoftware=yes
+
+
+#Free Software Licenses:
+`
+   *marks licenses that is known not to allow linking with code using a different license
+
+    COMPATIBLE WITH GNU GENERAL PUBLIC LICENSE
+    
+   *GNU General Public License
+    GNU Lesser General Public License
+    Clarified Artistic License (draft 2.0)
+    Artistic License 2.0
+   *Berkeley Database License
+    modified BSD license
+    Boost Software License
+   *CeCILL
+    Cryptix General License
+    Do What The Fuck You Want To Public License
+    Eiffel Forum License version 2
+    Fair Licence
+    Intel Open Source License
+    ISC license
+    MIT license
+    Mozilla Public License version 2.0
+    Python Software Foundation License 2.0.1; 2.1.1 and newer
+    W3C Software Notice and License
+    zlib/libpng license
+    Zope Public License version 2.0
+
+    COMPATIBLE WITH GNU GENERAL PUBLIC LICENSE 3, but not 2
+
+   *GNU Affero General Public License version 3
+    Apache License version 2
+    Educational Community License
+    XFree86 1.1 License
+
+    NOT COMPATIBLE WITH GNU GENERAL PUBLIC LICENSE
+
+    Academic Free License
+    Apache License version 1
+    Apache License version 1.1
+    Apple Public Source License version 2.0
+    original BSD license
+    Common Development and Distribution License
+    Common Public License
+    Creative Commons licenses (Tags: by & sa, but not nc & nd)
+    Eclipse Public License
+    IBM Public License
+    LaTeX Project Public License
+    Microsoft Public License
+    Microsoft Reciprocal License
+    Mozilla Public License version 1.1
+    Netscape Public License
+    Open Software License
+    OpenSSL license
+    PHP License
+   *Q Public License
+    Sun Industry Standards Source License
+    Sun Public License
+    Zope Public License version 1.0
+`
