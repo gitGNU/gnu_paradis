@@ -52,21 +52,21 @@ public class FileHandler
     public static InputStream readInternalFileStream(final String path)
     {
         for (final String $path : Properties.getClassPaths())
-	    try
-	    {
-		final File file = new File($path);
-		if ((file.exists() && file.isFile()) == false)
-		    continue;
-		
-		URLClassLoader classLoader = new URLClassLoader(new URL[] { file.toURI().toURL() });
-		InputStream stream = classLoader.getResourceAsStream(path);
-		
-		if (stream != null)
-		    return stream;
-	    }
+            try
+            {
+                final File file = new File($path);
+                if ((file.exists() && file.isFile()) == false)
+                    continue;
+                
+                URLClassLoader classLoader = new URLClassLoader(new URL[] { file.toURI().toURL() });
+                InputStream stream = classLoader.getResourceAsStream(path);
+                
+                if (stream != null)
+                    return stream;
+            }
             catch (final Throwable err)
-	    {   //Do nothing
-	    }
+            {   //Do nothing
+            }
         
         return ClassLoader.getSystemResourceAsStream(path);
     }
@@ -132,22 +132,22 @@ public class FileHandler
      */
     public static byte[] readExternalFileBytes(final String path) throws IOException
     {   try (final InputStream is = readExternalFileStream(path))
-	{
-	    final ArrayList<byte[]> old = new ArrayList<byte[]>();
-	    int ptr = 0, size = 0;
-	    for (int av; (av = is.available()) != 0;)
-	    {   final byte[] buf = new byte[av];
-		is.read(buf, 0, av);
-		size += av;
-	    }
-	    if (old.size() == 1)
-		return old.get(0);
-	    final byte[] rc = new byte[size];
-	    for (final byte[] buf : old)
-	    {   System.arraycopy(buf, 0, rc, ptr, buf.length);
-		ptr += buf.length;
-	    }
-	    return rc;
+        {
+            final ArrayList<byte[]> old = new ArrayList<byte[]>();
+            int ptr = 0, size = 0;
+            for (int av; (av = is.available()) != 0;)
+            {   final byte[] buf = new byte[av];
+                is.read(buf, 0, av);
+                size += av;
+            }
+            if (old.size() == 1)
+                return old.get(0);
+            final byte[] rc = new byte[size];
+            for (final byte[] buf : old)
+            {   System.arraycopy(buf, 0, rc, ptr, buf.length);
+                ptr += buf.length;
+            }
+            return rc;
     }   }
     
     
@@ -276,22 +276,22 @@ public class FileHandler
      */
     public static byte[] readInternalFileBytes(final String path) throws IOException
     {   try (final InputStream is = readInternalFileStream(path))
-	{
-	    final ArrayList<byte[]> old = new ArrayList<byte[]>();
-	    int ptr = 0, size = 0;
-	    for (int av; (av = is.available()) != 0;)
-	    {   final byte[] buf = new byte[av];
-		is.read(buf, 0, av);
-		size += av;
-	    }
-	    if (old.size() == 1)
-		return old.get(0);
-	    final byte[] rc = new byte[size];
-	    for (final byte[] buf : old)
-	    {   System.arraycopy(buf, 0, rc, ptr, buf.length);
-		ptr += buf.length;
-	    }
-	    return rc;
+        {
+            final ArrayList<byte[]> old = new ArrayList<byte[]>();
+            int ptr = 0, size = 0;
+            for (int av; (av = is.available()) != 0;)
+            {   final byte[] buf = new byte[av];
+                is.read(buf, 0, av);
+                size += av;
+            }
+            if (old.size() == 1)
+                return old.get(0);
+            final byte[] rc = new byte[size];
+            for (final byte[] buf : old)
+            {   System.arraycopy(buf, 0, rc, ptr, buf.length);
+                ptr += buf.length;
+            }
+            return rc;
     }   }
     
     
@@ -306,10 +306,10 @@ public class FileHandler
      */
     public static void writeFile(final String path, final String content, final String encoding) throws IOException
     {   String p = getFileName(path);
-	(new File(p)).getParentFile().mkdirs();
+        (new File(p)).getParentFile().mkdirs();
         try (final OutputStream os = writeFileStream(p))
         {   os.write(content.getBytes(encoding == null ? "UTF-8" : encoding));
-	    os.flush();
+            os.flush();
     }   }
     
     
@@ -336,8 +336,8 @@ public class FileHandler
      */
     public static void writeFile(final String path, final byte[] content) throws IOException
     {   try (final OutputStream os = writeFileStream(path))
-	{   os.write(content);
-	    os.flush();
+        {   os.write(content);
+            os.flush();
     }   }
     
     
@@ -475,11 +475,11 @@ public class FileHandler
      */
     public static String getFileName(final String file)
     {   if (file.equals("~"))
-	    return Properties.getHome();
-	String rc = file.replace("/", Properties.getFileSeparator());
-	if (rc.startsWith("~" + Properties.getFileSeparator()))
-	    rc = Properties.getHome() + rc.substring(1);
-	return rc;
+            return Properties.getHome();
+        String rc = file.replace("/", Properties.getFileSeparator());
+        if (rc.startsWith("~" + Properties.getFileSeparator()))
+            rc = Properties.getHome() + rc.substring(1);
+        return rc;
     }
     
 }

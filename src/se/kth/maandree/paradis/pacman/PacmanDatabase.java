@@ -111,7 +111,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
                 {   System.err.println(err.toString());
                 }
         else
-	    search(options, packages, System.out);
+            search(options, packages, System.out);
     }
     
     
@@ -127,116 +127,116 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
         final HashSet<String> packageSet = new HashSet<String>();
         for (final String pack : packages)
             packageSet.add(pack);
-	
-	final Common common = new Common();
-	common.loadDatabase(new FilenameFilter()
-	        {
-		    /** Regex pattern
-		     */ private final Pattern pattern;
-		    
-		    /** List dependency installations
-		     */ private final boolean deps = options.contains(DATABASE_DEPS);
-		    
-		    /** List explicit installations
-		     */ private final boolean explicit = options.contains(DATABASE_EXPLICIT);
-		    
-		    /** List installed
-		     */ private final boolean installed = options.contains(DATABASE_INSTALLED) | this.deps | this.explicit;
-		    
-		    /** List non-installed
-		     */ private final boolean noninstalled = options.contains(DATABASE_NONINSTALLED);
-		    
-		    /** Map with installed packages, mapping to {@link Boolean#TRUE} for explicitly installed software
-		     */ private final HashMap<String, Boolean> installmap = new HashMap<String, Boolean>();
-		    
+        
+        final Common common = new Common();
+        common.loadDatabase(new FilenameFilter()
+                {
+                    /** Regex pattern
+                     */ private final Pattern pattern;
+                    
+                    /** List dependency installations
+                     */ private final boolean deps = options.contains(DATABASE_DEPS);
+                    
+                    /** List explicit installations
+                     */ private final boolean explicit = options.contains(DATABASE_EXPLICIT);
+                    
+                    /** List installed
+                     */ private final boolean installed = options.contains(DATABASE_INSTALLED) | this.deps | this.explicit;
+                    
+                    /** List non-installed
+                     */ private final boolean noninstalled = options.contains(DATABASE_NONINSTALLED);
+                    
+                    /** Map with installed packages, mapping to {@link Boolean#TRUE} for explicitly installed software
+                     */ private final HashMap<String, Boolean> installmap = new HashMap<String, Boolean>();
                     
                     
-		    /**
-		     * Initialiser
-		     */
-		    {
-			if (options.contains(DATABASE_SEARCH))
-			    this.pattern = null;
-			else
+                    
+                    /**
+                     * Initialiser
+                     */
+                    {
+                        if (options.contains(DATABASE_SEARCH))
+                            this.pattern = null;
+                        else
                         {
-			    final StringBuilder buf = new StringBuilder();
-			    boolean first = true;
-			    for (final String pack : packages)
+                            final StringBuilder buf = new StringBuilder();
+                            boolean first = true;
+                            for (final String pack : packages)
                             {
-				if (first == false)
-				    buf.append("|");
-				first = false;
-				buf.append(pack);
-			    }
-			    this.pattern = Pattern.compile(buf.toString());
-			}
+                                if (first == false)
+                                    buf.append("|");
+                                first = false;
+                                buf.append(pack);
+                            }
+                            this.pattern = Pattern.compile(buf.toString());
+                        }
                         
-			if (this.installed ^ this.noninstalled)
-			    try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(PACKAGES_FILE)))
-			    {   for (;;)
-				{
-				    final String pack = tis.readObject(String.class);
-				    if (pack.isEmpty())
-					break;
-				    final Boolean expl = Boolean.valueOf(tis.readBoolean());
-				    this.installmap.put(pack, expl);
+                        if (this.installed ^ this.noninstalled)
+                            try (final TransferInputStream tis = new TransferInputStream(new FileInputStream(PACKAGES_FILE)))
+                            {   for (;;)
+                                {
+                                    final String pack = tis.readObject(String.class);
+                                    if (pack.isEmpty())
+                                        break;
+                                    final Boolean expl = Boolean.valueOf(tis.readBoolean());
+                                    this.installmap.put(pack, expl);
                             }   }
-			    catch (final FileNotFoundException ignore)
-			    {   //Ignore
-			    }
-			    catch (final Throwable err)
+                            catch (final FileNotFoundException ignore)
+                            {   //Ignore
+                            }
+                            catch (final Throwable err)
                             {   System.err.println(err.toString());
-			    }
-		    }
-		    
+                            }
+                    }
                     
                     
-		    /**
-		     * {@inheritDoc}
-		     */
-		    @Override
-		    public boolean accept(final File dir, final String name)
-		    {
-			if ((name.endsWith(".tar.xz") == false) || (name.contains("=") == false) || name.endsWith("=.tar.xz"))
-			    return false;
-			
-			final String _name = name.substring(0, name.length() - ".tar.xz".length());
+                    
+                    /**
+                     * {@inheritDoc}
+                     */
+                    @Override
+                    public boolean accept(final File dir, final String name)
+                    {
+                        if ((name.endsWith(".tar.xz") == false) || (name.contains("=") == false) || name.endsWith("=.tar.xz"))
+                            return false;
                         
-			if (packages.isEmpty() == false)
-			    if (this.pattern == null)
+                        final String _name = name.substring(0, name.length() - ".tar.xz".length());
+                        
+                        if (packages.isEmpty() == false)
+                            if (this.pattern == null)
                             {
-				if (packageSet.contains(_name) == false)
-				    return false;
-			    }
-			    else
-				if (this.pattern.matcher(_name).matches() == false)
-				    return false;
-			
-			if (this.installed ^ this.noninstalled)
+                                if (packageSet.contains(_name) == false)
+                                    return false;
+                            }
+                            else
+                                if (this.pattern.matcher(_name).matches() == false)
+                                    return false;
+                        
+                        if (this.installed ^ this.noninstalled)
                         {
-			    final Boolean inst = this.installmap.get(_name);
-			    if (inst == null)
-				return this.noninstalled;
-			    return (this.deps == this.explicit) || ((inst == Boolean.TRUE) == this.explicit);
-			}
-			return true;
-		    }
-	    });
-	
-	final boolean files = options.contains(DATABASE_FILES);
-	for (final VersionedPackage pack : common.databaseVector)
+                            final Boolean inst = this.installmap.get(_name);
+                            if (inst == null)
+                                return this.noninstalled;
+                            return (this.deps == this.explicit) || ((inst == Boolean.TRUE) == this.explicit);
+                        }
+                        return true;
+                    }
+            });
+        
+        final boolean files = options.contains(DATABASE_FILES);
+        for (final VersionedPackage pack : common.databaseVector)
         {   out.println(pack.toString());
-	    if (files)
-		try
+            if (files)
+                try
                 {   final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack));
-		    Arrays.sort(info.files);
-		    for (final String file : info.files)
-			out.println("\t" + file);
-		}
-		catch (final Throwable err)
+                    Arrays.sort(info.files);
+                    for (final String file : info.files)
+                        out.println("\t" + file);
+                }
+                catch (final Throwable err)
                 {   System.err.println(err.toString());
-		    continue;
-	}       }
+                    continue;
+        }       }
     }
     
 }

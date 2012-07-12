@@ -122,229 +122,229 @@ public class PacmanSync implements Blackboard.BlackboardObserver
     public static void sync(final ArrayList<String> packages, final HashSet<String> ignores, final boolean clean, final boolean nodeps, final boolean asexpl,
                             final boolean asdeps, final boolean force, final boolean needed, final boolean dbonly, final boolean recursive, final boolean upgrade) throws IOException
     {
-	/**
-	 * Set that can be uniserse
-	 * 
-	 * @param  <E>  Set element
-	 */
-	class FSet<E>
-	{
-	    //Has default constructor
-	    
-	    
-	    /** Underlaying map
-	     */ public final HashMap<E, E> map = new HashMap<E, E>();
-	    
-	    /** Whether the set is the universe set
-	     */ public boolean containsEverything = false;
-	    
-	    /** Whether the set is the empty set
-	     */ public boolean containsNothing = false;
-	    
-	    
-	    /**
-	     * Adds an item to the set
-	     * 
-	     * @param  item  The item
-	     */
-	    public void add(final E item)
-	    {   this.map.put(item, item);
-	    }
-	    
-	    /**
-	     * Checks whether the set contains an item
-	     * 
-	     * @param   item  The item
-	     * @return        Whether the set contains the item
-	     */
-	    public boolean contains(final E item)
-	    {   return this.containsEverything?true : this.containsNothing?false : this.map.containsKey(item);
-	    }
-	    
-	    /**
-	     * Return the intern of an item, or {@code null} is it does not exist
-	     * 
-	     * @param   item  The item
-	     * @return        The intern of an item, or {@code null} is it does not exist
-	     */
-	    public E get(final E item)
-	    {   return this.containsEverything?(this.map.containsKey(item) ? this.map.get(item) : item) : this.containsNothing?null : this.map.get(item);
-	    }
-	}
-	
-	final Common common = new Common();
-	common.loadDatabase();
-	common.loadInstalled();
-	common.loadGroups();
-	common.loadProviders();
-	
-	final FSet<VersionedPackage> explicits = new FSet<VersionedPackage>();
-	if (asexpl ^ asdeps)  if (asexpl)  explicits.containsEverything = true;
-	                      else         explicits.containsNothing    = true;
-	for (final String pack : packages)
-	    explicits.add(new VersionedPackage(pack));
-	
-	final FSet<VersionedPackage> skips = new FSet<VersionedPackage>();
-	for (final String pack : ignores)
-	    skips.add(new VersionedPackage(pack));
-	if (needed)
-	    for (final VersionedPackage pack : common.installedMap.values())
-		skips.add(pack);
-	
-	final HashMap<VersionedPackage, VersionedPackage> provided = new HashMap<VersionedPackage, VersionedPackage>();
-	final HashSet<VersionedPackage> install = new HashSet<VersionedPackage>();
-	final HashSet<VersionedPackage> uninstall = new HashSet<VersionedPackage>();
-	final ArrayDeque<VersionedPackage> queue = new ArrayDeque<VersionedPackage>();
-	final ArrayDeque<VersionedPackage> choice = new ArrayDeque<VersionedPackage>();
-	for (final String pack : packages)
-	    queue.offerFirst(new VersionedPackage(pack));
-	if (upgrade)
-	    for (final Map.Entry<String, String> entry : PacmanQuery.getUpgradable().entrySet())
-	    {
-		final VersionedPackage key = new VersionedPackage(entry.getKey());
-		final VersionedPackage value = new VersionedPackage(entry.getValue());
-		queue.offerFirst(value);
-		if (value.name.equals(key.name) == false)
-		    uninstall.add(key);
-	    }
-	
-	for (;;)
-	{
-	    VersionedPackage pack = queue.pollFirst(), tmp;
-	    
-	    if (pack == null)
-            {
-		if ((pack = choice.pollFirst()) == null)
-		    break;
-		if (provided.get(pack) != null)
-		    return;
-		
-		final Set<VersionedPackage> providers = common.provideMap.get(pack);
-		int i = 0, n;
-		final VersionedPackage[] packs = new VersionedPackage[n = providers.size()];
-		for (final VersionedPackage $pack : providers)
-		    packs[i++] = $pack;
-		Arrays.sort(packs);
-                    
-		System.out.println("Select provider for " + pack.name + ":\n");
-		for (i = 0; i < n; i++)
-		    System.out.println("  " + i + ".\t" + packs[i].name);
-		System.out.println();
-		System.out.print("Enter index (default = 0): ");
-		
-		i = 0;
-		mid:
-		    for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
-			if (d != 0)
-			    if (('0' <= d) && (d <= '9'))
-				i = (i * 10) - (d & 15);
-			    else
-				for (i = 1;;)
-				    if (((d = System.in.read()) == '\n') || (d == -1))
-					break mid;
-		i = -i;
-		
-		if ((0 > i) || (i >= n))
-		    i = 0;
-		
-		provided.put(pack, packs[i]);
-	    }
-	    
-	    if (provided.get(pack) != null)
-		return;
-	    
-	    if (skips.contains(pack) && pack.intersects(skips.get(pack)))
-		continue;
-	    
-	    if (common.groupMap.containsKey(pack))
-	    {   for (final VersionedPackage pac : common.groupMap.get(pack))
-		{   queue.offerFirst(pac);
-		    if (explicits.contains(pac))
-			explicits.add(pac);
-		}
-		continue;
-	    }
-	    
-	    if (skips.contains(pack) && pack.intersects(skips.get(pack)))
-		continue;
-	    
-	    if (pack.intersects(common.databaseMap.get(pack)))
-		pack = common.databaseMap.get(pack);
-	    
-	    install.add(pack);
-	    provided.put(pack, pack);
+        /**
+         * Set that can be uniserse
+         * 
+         * @param  <E>  Set element
+         */
+        class FSet<E>
+        {
+            //Has default constructor
             
-	    final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
-	    for (final String p : info.provides)
-		provided.put(tmp = new VersionedPackage(p), tmp);
-	    
-	    if ((nodeps == false) || recursive)
-	    {
-		Set<VersionedPackage> tmpset;
+            
+            /** Underlaying map
+             */ public final HashMap<E, E> map = new HashMap<E, E>();
+            
+            /** Whether the set is the universe set
+             */ public boolean containsEverything = false;
+            
+            /** Whether the set is the empty set
+             */ public boolean containsNothing = false;
+            
+            
+            /**
+             * Adds an item to the set
+             * 
+             * @param  item  The item
+             */
+            public void add(final E item)
+            {   this.map.put(item, item);
+            }
+            
+            /**
+             * Checks whether the set contains an item
+             * 
+             * @param   item  The item
+             * @return        Whether the set contains the item
+             */
+            public boolean contains(final E item)
+            {   return this.containsEverything?true : this.containsNothing?false : this.map.containsKey(item);
+            }
+            
+            /**
+             * Return the intern of an item, or {@code null} is it does not exist
+             * 
+             * @param   item  The item
+             * @return        The intern of an item, or {@code null} is it does not exist
+             */
+            public E get(final E item)
+            {   return this.containsEverything?(this.map.containsKey(item) ? this.map.get(item) : item) : this.containsNothing?null : this.map.get(item);
+            }
+        }
+        
+        final Common common = new Common();
+        common.loadDatabase();
+        common.loadInstalled();
+        common.loadGroups();
+        common.loadProviders();
+        
+        final FSet<VersionedPackage> explicits = new FSet<VersionedPackage>();
+        if (asexpl ^ asdeps)  if (asexpl)  explicits.containsEverything = true;
+                              else         explicits.containsNothing    = true;
+        for (final String pack : packages)
+            explicits.add(new VersionedPackage(pack));
+        
+        final FSet<VersionedPackage> skips = new FSet<VersionedPackage>();
+        for (final String pack : ignores)
+            skips.add(new VersionedPackage(pack));
+        if (needed)
+            for (final VersionedPackage pack : common.installedMap.values())
+                skips.add(pack);
+        
+        final HashMap<VersionedPackage, VersionedPackage> provided = new HashMap<VersionedPackage, VersionedPackage>();
+        final HashSet<VersionedPackage> install = new HashSet<VersionedPackage>();
+        final HashSet<VersionedPackage> uninstall = new HashSet<VersionedPackage>();
+        final ArrayDeque<VersionedPackage> queue = new ArrayDeque<VersionedPackage>();
+        final ArrayDeque<VersionedPackage> choice = new ArrayDeque<VersionedPackage>();
+        for (final String pack : packages)
+            queue.offerFirst(new VersionedPackage(pack));
+        if (upgrade)
+            for (final Map.Entry<String, String> entry : PacmanQuery.getUpgradable().entrySet())
+            {
+                final VersionedPackage key = new VersionedPackage(entry.getKey());
+                final VersionedPackage value = new VersionedPackage(entry.getValue());
+                queue.offerFirst(value);
+                if (value.name.equals(key.name) == false)
+                    uninstall.add(key);
+            }
+        
+        for (;;)
+        {
+            VersionedPackage pack = queue.pollFirst(), tmp;
+            
+            if (pack == null)
+            {
+                if ((pack = choice.pollFirst()) == null)
+                    break;
+                if (provided.get(pack) != null)
+                    return;
+                
+                final Set<VersionedPackage> providers = common.provideMap.get(pack);
+                int i = 0, n;
+                final VersionedPackage[] packs = new VersionedPackage[n = providers.size()];
+                for (final VersionedPackage $pack : providers)
+                    packs[i++] = $pack;
+                Arrays.sort(packs);
+                    
+                System.out.println("Select provider for " + pack.name + ":\n");
+                for (i = 0; i < n; i++)
+                    System.out.println("  " + i + ".\t" + packs[i].name);
+                System.out.println();
+                System.out.print("Enter index (default = 0): ");
+                
+                i = 0;
+                mid:
+                    for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
+                        if (d != 0)
+                            if (('0' <= d) && (d <= '9'))
+                                i = (i * 10) - (d & 15);
+                            else
+                                for (i = 1;;)
+                                    if (((d = System.in.read()) == '\n') || (d == -1))
+                                        break mid;
+                i = -i;
+                
+                if ((0 > i) || (i >= n))
+                    i = 0;
+                
+                provided.put(pack, packs[i]);
+            }
+            
+            if (provided.get(pack) != null)
+                return;
+            
+            if (skips.contains(pack) && pack.intersects(skips.get(pack)))
+                continue;
+            
+            if (common.groupMap.containsKey(pack))
+            {   for (final VersionedPackage pac : common.groupMap.get(pack))
+                {   queue.offerFirst(pac);
+                    if (explicits.contains(pac))
+                        explicits.add(pac);
+                }
+                continue;
+            }
+            
+            if (skips.contains(pack) && pack.intersects(skips.get(pack)))
+                continue;
+            
+            if (pack.intersects(common.databaseMap.get(pack)))
+                pack = common.databaseMap.get(pack);
+            
+            install.add(pack);
+            provided.put(pack, pack);
+            
+            final PackageInfo info = PackageInfo.fromFile(common.packageMap.get(pack.toString()));
+            for (final String p : info.provides)
+                provided.put(tmp = new VersionedPackage(p), tmp);
+            
+            if ((nodeps == false) || recursive)
+            {
+                Set<VersionedPackage> tmpset;
                 for (final String d : info.dependencies)
-		{
-		    final VersionedPackage pac = new VersionedPackage(d);
-		    
-		    if ((nodeps == false) && (recursive == false))
-		    {   if (common.installedMap.containsKey(pac))
-			    continue;
-		    }
-		    else if (nodeps)
-		    {   if (common.installedMap.containsKey(pac) == false)
-			    continue;
-		    }
-		    
+                {
+                    final VersionedPackage pac = new VersionedPackage(d);
+                    
+                    if ((nodeps == false) && (recursive == false))
+                    {   if (common.installedMap.containsKey(pac))
+                            continue;
+                    }
+                    else if (nodeps)
+                    {   if (common.installedMap.containsKey(pac) == false)
+                            continue;
+                    }
+                    
                     if (((tmpset = common.provideMap.get(pac)) != null) && (tmpset.size() > 1))
                         choice.offerLast(pac);
                     else
                         queue.offerLast(pac);
-		}
-		
-		if (info.optionalDependencies.length > 0)
-		{   System.out.println("Optional dependencies for " + pack.toString() + ":");
-		    for (final String d : info.optionalDependencies)
-			System.out.println("\t" + d);
-		}
-	    }
-	}
-	
-	int i = 0, n = install.size() + uninstall.size();
-	if (n == 0)
-	{   System.out.println("Everything is up to date");
-	    return;
-	}
-	final VersionedPackage[] packs = new VersionedPackage[n];
-	for (final VersionedPackage pack : install)    packs[i++] = pack;
-	for (final VersionedPackage pack : uninstall)  packs[i++] = pack;
-	
-	System.out.print("Targets:");
-	for (i = 0; i < n; i++)
-	{   System.out.print((i == 0 ? "  " : ",  ") + packs[i].toString());
-	    if (uninstall.contains(packs[i]))
-		System.out.print(" [remove]");
-	}
-	System.out.println();
-	
-	System.out.print("Are you sure you want to continue? [y/N]  ");
-	final StringBuilder verify = new StringBuilder();
-	for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
-	    if (d != 0)
-		verify.append((char)d);
-	if ((verify.toString().toLowerCase().equals("y") || verify.toString().toLowerCase().equals("yes")) == false)
-	    return;
-	
-	for (i = 0; i < n; i++)
-	{
-	    final VersionedPackage pack = packs[i];
-	    final boolean doInstall = uninstall.contains(pack) == false;
-	    final boolean doUninstall = clean || uninstall.contains(pack);
-	    final boolean asExplicit = explicits.contains(pack);
-	    
-	    if (doUninstall)  common.uninstall(pack, dbonly);
-	    if (doInstall)    common.install(pack, asExplicit, dbonly, force);
-	}
-	
-	common.syncInstalledMap();
+                }
+                
+                if (info.optionalDependencies.length > 0)
+                {   System.out.println("Optional dependencies for " + pack.toString() + ":");
+                    for (final String d : info.optionalDependencies)
+                        System.out.println("\t" + d);
+                }
+            }
+        }
+        
+        int i = 0, n = install.size() + uninstall.size();
+        if (n == 0)
+        {   System.out.println("Everything is up to date");
+            return;
+        }
+        final VersionedPackage[] packs = new VersionedPackage[n];
+        for (final VersionedPackage pack : install)    packs[i++] = pack;
+        for (final VersionedPackage pack : uninstall)  packs[i++] = pack;
+        
+        System.out.print("Targets:");
+        for (i = 0; i < n; i++)
+        {   System.out.print((i == 0 ? "  " : ",  ") + packs[i].toString());
+            if (uninstall.contains(packs[i]))
+                System.out.print(" [remove]");
+        }
+        System.out.println();
+        
+        System.out.print("Are you sure you want to continue? [y/N]  ");
+        final StringBuilder verify = new StringBuilder();
+        for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
+            if (d != 0)
+                verify.append((char)d);
+        if ((verify.toString().toLowerCase().equals("y") || verify.toString().toLowerCase().equals("yes")) == false)
+            return;
+        
+        for (i = 0; i < n; i++)
+        {
+            final VersionedPackage pack = packs[i];
+            final boolean doInstall = uninstall.contains(pack) == false;
+            final boolean doUninstall = clean || uninstall.contains(pack);
+            final boolean asExplicit = explicits.contains(pack);
+            
+            if (doUninstall)  common.uninstall(pack, dbonly);
+            if (doInstall)    common.install(pack, asExplicit, dbonly, force);
+        }
+        
+        common.syncInstalledMap();
     }
     
 }

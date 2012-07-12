@@ -108,25 +108,25 @@ public class PacmanDeptest implements Blackboard.BlackboardObserver
                     i = 0;
                     mid:
                         for (int d; ((d = System.in.read()) != '\n') && (d != -1);)
-			    if (d != 0)
-				if (('0' <= d) && (d <= '9'))
-				    i = (i * 10) - (d & 15);
-				else
-				    for (i = 1;;)
-					if (((d = System.in.read()) == '\n') || (d == -1))
-					    break mid;
+                            if (d != 0)
+                                if (('0' <= d) && (d <= '9'))
+                                    i = (i * 10) - (d & 15);
+                                else
+                                    for (i = 1;;)
+                                        if (((d = System.in.read()) == '\n') || (d == -1))
+                                            break mid;
                     i = -i;
                     
                     if ((0 > i) || (i >= n))
                         i = 0;
                     provided.put(p, packs[i]);
                 }
-		
+                
                 if (common.groupMap.containsKey(polled))
-	        {   for (final VersionedPackage pack : common.groupMap.get(polled))
+                {   for (final VersionedPackage pack : common.groupMap.get(polled))
                         $packages.offerFirst(pack.toString());
-		    continue;
-		}
+                    continue;
+                }
                 
                 final VersionedPackage pack = common.databaseMap.get(new VersionedPackage(polled));
                 

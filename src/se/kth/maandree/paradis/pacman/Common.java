@@ -130,16 +130,16 @@ public class Common
             this.packageMap.put(vpacks[i].toString(), new File(PACKAGE_DIR + p));
         }
         Arrays.sort(vpacks);
-	final HashSet<String> done = new HashSet<String>();
-	for (final String item : this.packageMap.keySet())
-	    done.add(item);
+        final HashSet<String> done = new HashSet<String>();
+        for (final String item : this.packageMap.keySet())
+            done.add(item);
         for (final VersionedPackage pack : vpacks)
         {
             this.databaseVector.add(pack);
             this.databaseSet.add(pack.toString());
             this.databaseMap.put(pack, pack);
-	    if (done.contains(pack.name) == false)
-		this.packageMap.put(pack.name, this.packageMap.get(packs.toString()));
+            if (done.contains(pack.name) == false)
+                this.packageMap.put(pack.name, this.packageMap.get(packs.toString()));
         }
     }
     
@@ -159,7 +159,7 @@ public class Common
                     break;
                 final VersionedPackage vpack = new VersionedPackage(pack);
                 this.packageMap.put(vpack.toString(), new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
-		this.packageMap.put(vpack.name,       new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
+                this.packageMap.put(vpack.name,       new File(PACKAGE_DIR + pack.replace(":", ";") + ".pkg.xz"));
                 this.installedMap.put(vpack, vpack);
                 if (tis.readBoolean())
                     this.installedExplicitly.add(vpack);
@@ -241,26 +241,26 @@ public class Common
      */
     public void uninstall(final VersionedPackage pack, final boolean dbonly) throws IOException
     {
-	if (this.installedMap.containsKey(pack) == false)
-	{   System.out.println(pack.name + " was not installed");
-	    return;
-	}
-	this.installedMap.remove(pack);
-	this.installedExplicitly.remove(pack);
-	if (dbonly == false)
-	{
-	    final String fs = Properties.getFileSeparator();
-	    final PackageInfo info = PackageInfo.fromFile(this.packageMap.get(pack));
-	    for (final String file : info.files)
-		try
-		{   final File f = new File((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs));
-		    if ((f.exists() && f.isDirectory()) == false)
-			f.delete();
-		}
-		catch (final Throwable err)
-		{   System.out.println(err.toString());
-		}
-	}
+        if (this.installedMap.containsKey(pack) == false)
+        {   System.out.println(pack.name + " was not installed");
+            return;
+        }
+        this.installedMap.remove(pack);
+        this.installedExplicitly.remove(pack);
+        if (dbonly == false)
+        {
+            final String fs = Properties.getFileSeparator();
+            final PackageInfo info = PackageInfo.fromFile(this.packageMap.get(pack));
+            for (final String file : info.files)
+                try
+                {   final File f = new File((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs));
+                    if ((f.exists() && f.isDirectory()) == false)
+                        f.delete();
+                }
+                catch (final Throwable err)
+                {   System.out.println(err.toString());
+                }
+        }
     }
     
     
@@ -276,59 +276,59 @@ public class Common
      */
     public void install(final VersionedPackage pack, final boolean explicit, final boolean dbonly, final boolean force) throws IOException
     {
-	final VersionedPackage prev = this.installedMap.get(pack);
-	this.installedMap.put(pack, pack);
-	if (explicit)  this.installedExplicitly.add(pack);
-	else           this.installedExplicitly.remove(pack);
-	if (dbonly == false)
-	{
-	    final PackageInfo iprev = prev == null ? null : PackageInfo.fromFile(this.packageMap.get(prev));
-	    final String fs = Properties.getFileSeparator();
-	    final HashSet<String> installed = new HashSet<String>();
-	    if (iprev != null)
-	        for (final String file : iprev.files)
-		    installed.add((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs));
-	    
-	    final PackageInfo info = PackageInfo.fromFile(this.packageMap.get(pack));
-	    for (final String file : info.files)
-	    {
-		final String f = (FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs);
-		if (installed.contains(f))
-		    continue;
-		if (force || ((new File(f)).exists() == false))
-		    installed.add(f);
-		else
-		    System.out.println("Skipping " + file + ", installed by another package");
-	    }
-	    
-	    String tarfile = this.packageMap.get(pack).getAbsolutePath();
-	    tarfile = tarfile.substring(0, tarfile.length() - ".pkg.xz".length()) + ".tar.xz";
-	    
-	    try (final TarInputStream tar = new TarInputStream(new XZInputStream(new FileInputStream(tarfile))))
-	    {   for (TarEntry entry; (entry = tar.getNextEntry()) != null;)
-		{
-		    final String top = entry.getName().replace("\\", "/").replace("/", fs);
-		    String dest = FILE_ROOT + (top.startsWith(fs) ? top.substring(fs.length()) : top);
-		    if (dest.endsWith(fs))
-			dest = dest.substring(0, dest.length() - fs.length());
-		    final File destFile = new File(dest);
-		    
-		    if (entry.isDirectory())
-		    {
-			destFile.mkdirs();
-			continue;
-		    }
-		    if (installed.contains(dest) == false)
-			continue;
-		    if (destFile.getParentFile().exists() == false)
-			destFile.getParentFile().mkdirs();
-		    
-		    try (final FileOutputStream out = new FileOutputStream(destFile))
-		    {   tar.copyEntryContents(out);
-			/* skipping mode, owner, links &c */
-		    }
-	    }   }
-	}
+        final VersionedPackage prev = this.installedMap.get(pack);
+        this.installedMap.put(pack, pack);
+        if (explicit)  this.installedExplicitly.add(pack);
+        else           this.installedExplicitly.remove(pack);
+        if (dbonly == false)
+        {
+            final PackageInfo iprev = prev == null ? null : PackageInfo.fromFile(this.packageMap.get(prev));
+            final String fs = Properties.getFileSeparator();
+            final HashSet<String> installed = new HashSet<String>();
+            if (iprev != null)
+                for (final String file : iprev.files)
+                    installed.add((FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs));
+            
+            final PackageInfo info = PackageInfo.fromFile(this.packageMap.get(pack));
+            for (final String file : info.files)
+            {
+                final String f = (FILE_ROOT + (file.startsWith("/") ? file.substring(1) : file)).replace("/", fs);
+                if (installed.contains(f))
+                    continue;
+                if (force || ((new File(f)).exists() == false))
+                    installed.add(f);
+                else
+                    System.out.println("Skipping " + file + ", installed by another package");
+            }
+            
+            String tarfile = this.packageMap.get(pack).getAbsolutePath();
+            tarfile = tarfile.substring(0, tarfile.length() - ".pkg.xz".length()) + ".tar.xz";
+            
+            try (final TarInputStream tar = new TarInputStream(new XZInputStream(new FileInputStream(tarfile))))
+            {   for (TarEntry entry; (entry = tar.getNextEntry()) != null;)
+                {
+                    final String top = entry.getName().replace("\\", "/").replace("/", fs);
+                    String dest = FILE_ROOT + (top.startsWith(fs) ? top.substring(fs.length()) : top);
+                    if (dest.endsWith(fs))
+                        dest = dest.substring(0, dest.length() - fs.length());
+                    final File destFile = new File(dest);
+                    
+                    if (entry.isDirectory())
+                    {
+                        destFile.mkdirs();
+                        continue;
+                    }
+                    if (installed.contains(dest) == false)
+                        continue;
+                    if (destFile.getParentFile().exists() == false)
+                        destFile.getParentFile().mkdirs();
+                    
+                    try (final FileOutputStream out = new FileOutputStream(destFile))
+                    {   tar.copyEntryContents(out);
+                        /* skipping mode, owner, links &c */
+                    }
+            }   }
+        }
     }
     
     
@@ -340,16 +340,16 @@ public class Common
     public void syncInstalledMap() throws IOException
     {
         try (final TransferOutputStream tos = new TransferOutputStream(new FileOutputStream(PACKAGES_FILE)))
-	{   for (final VersionedPackage pack : this.installedMap.values())
+        {   for (final VersionedPackage pack : this.installedMap.values())
             {
-		String file = this.packageMap.get(pack.toString()).getAbsolutePath().replace(";", ":");
-		file = file.substring(PACKAGE_DIR.length());
-		file = file.substring(0, file.length() - ".pkg.xz".length());
-		tos.writeObject(file);
-		tos.writeBoolean(this.installedExplicitly.contains(pack));
-	    }
-	    tos.flush();
-	}
+                String file = this.packageMap.get(pack.toString()).getAbsolutePath().replace(";", ":");
+                file = file.substring(PACKAGE_DIR.length());
+                file = file.substring(0, file.length() - ".pkg.xz".length());
+                tos.writeObject(file);
+                tos.writeBoolean(this.installedExplicitly.contains(pack));
+            }
+            tos.flush();
+        }
     }
     
 }

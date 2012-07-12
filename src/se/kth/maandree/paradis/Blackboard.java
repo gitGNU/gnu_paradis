@@ -349,7 +349,7 @@ public class Blackboard
      * Registers a priority for an observer and some message types
      * 
      * @param  observer      The observer
-     * @param  nice          The priority, zero is default, and negive is low priority (that is, executed later that positive)
+     * @param  nice          The priority, zero is default, and positive is low priority (that is, executed later that negative)
      * @param  messageTypes  The message types, must be {@link Class}<code>&lt;? extends </code>{@link BlackboardMessage}<code>&gt;</code>,
      *                       you can used {@code null} to set a default for the observer
      */

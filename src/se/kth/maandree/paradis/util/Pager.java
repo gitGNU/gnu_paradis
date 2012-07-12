@@ -174,13 +174,13 @@ public class Pager
         try
         {
             String cmd = "echo '" + text.replace("'", "'\\''") + "' | " + pager;
-	    cmd += " > " + (new File("/dev/stdout")).getCanonicalPath();
-	    
-	    final ProcessBuilder builder = new ProcessBuilder("/bin/sh", "-c", cmd);
-	    builder.inheritIO();
+            cmd += " > " + (new File("/dev/stdout")).getCanonicalPath();
+            
+            final ProcessBuilder builder = new ProcessBuilder("/bin/sh", "-c", cmd);
+            builder.inheritIO();
             final Process process = builder.start();
-	    
-	    process.waitFor();
+            
+            process.waitFor();
             if (process.exitValue() != 0)
                 throw new Exception();
         }
