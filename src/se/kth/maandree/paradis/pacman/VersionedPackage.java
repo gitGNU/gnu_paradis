@@ -59,7 +59,7 @@ public class VersionedPackage implements Comparable<VersionedPackage>
             final String _versionA, _versionB;
             final Version versionA = new Version(_versionA = parts[0].replace(";", ":"));
             final Version versionB = new Version(_versionB = parts[2].replace(";", ":"));
-            final String opA = _pkg.substring(_versionA.length(), _pkg.indexOf(this.name, _versionA.length()) - _versionA.length());
+            final String opA = _pkg.substring(_versionA.length(), _pkg.indexOf(this.name, _versionA.length()));
             String opB = _pkg.substring(_versionA.length() + opA.length() + this.name.length());
             opB = opB.substring(0, opB.length() - _versionB.length());
             if (opA.contains(">") && opB.contains(">"))
@@ -81,7 +81,7 @@ public class VersionedPackage implements Comparable<VersionedPackage>
         {
             this.name = parts[0];
             final Version version = new Version(parts[1].replace(";", ":"));
-            final String op = _pkg.substring(this.name.length(), _pkg.length() - this.name.length() - parts[1].length());
+            final String op = _pkg.substring(this.name.length(), _pkg.length() - parts[1].length());
             if (op.equals("<"))
             {   this.lowClosed = this.highClosed = false;
                 this.low = null;

@@ -324,7 +324,7 @@ public class Pacman
                 packages.add(arg);
             else
                 for (int i = 1, n = arg.length(); i < n; i++)
-                {   final String larg = shortopts.get(arg.substring(i, 1));
+                {   final String larg = shortopts.get(arg.substring(i, i + 1));
                     if (masteropt == null)
                         shortopts = shortoptses.get(masteropt = larg);
                     else

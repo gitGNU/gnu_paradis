@@ -99,7 +99,8 @@ public class Makepkg
                 FileHandler.writeFile(args[2] + fs + "PKGBUILD", buf.toString());
         }   }
         catch (final Throwable err)
-        {   System.err.println(err.toString());
+        {   //System.err.println(err.toString());
+            err.printStackTrace(System.err);
         }
     }
     
@@ -118,7 +119,7 @@ public class Makepkg
         final String pkgfile = directory + fs + "PKGBUILD";
         final HashMap<String, String> map = map(FileHandler.readExternalFile(pkgfile));
         
-        String[] files = parseStrings(map.get("files"));
+        String[] files = map.containsKey("files") ? parseStrings(map.get("files")) : null;
         if (files == null)
         {
             final ArrayList<String> list = new ArrayList<String>();
@@ -239,10 +240,18 @@ public class Makepkg
                 }
                 continue;
             }
-            if (((c == '\t') || (c == ' ')) && beginning && !aq && !dq && !sq)
+            if (((c == '\t') || (c == ' ')) && beginning && !aq && !dq && !sq && !esc)
                 continue;
-            buf.append(c);
             
+            if ((c == '#') && !esc && !aq && !dq && !sq)
+            {   comment = true;
+                continue;
+            }
+            
+            if ((esc || dq || sq || (c != '`')) && !aq)
+                buf.append(c);
+            
+            beginning = false;
             if ((c == '\n') && !esc && !aq && !dq && !sq)
                 beginning = true;
             
@@ -250,7 +259,7 @@ public class Makepkg
                 esc = false;
             else if (aq)
             {   if (c == '`')
-                    dq = false;
+                    aq = false;
                 else if (c == '\\')
                     esc = true;
             }
@@ -290,9 +299,11 @@ public class Makepkg
                 String seg = buf.toString();
                 int eq = seg.indexOf("=");
                 if (eq > 0)
-                {   buf = new StringBuilder();
-                    map.put(seg.substring(0, eq).trim(), seg.substring(eq + 1).trim());
+                {   final String key = seg.substring(0, eq).trim();
+                    final String value = seg.substring(eq + 1).trim();
+                    map.put(key, value);
                 }
+                buf = new StringBuilder();
                 continue;
             }
             buf.append(c);
@@ -468,7 +479,7 @@ public class Makepkg
     {
         if ((value.startsWith("(") && value.endsWith(")")) == false)
             return null;
-        String tmp = value.substring(1, value.length() - 2);
+        String tmp = value.substring(1, value.length() - 1);
         while (tmp.contains("  "))  tmp = tmp.replace("  ", " ");
         if (tmp.startsWith(" "))    tmp = tmp.substring(1);
         if (tmp.endsWith(" "))      tmp = tmp.substring(0, tmp.length() - 1);
@@ -535,7 +546,8 @@ public class Makepkg
             process.waitFor();
         }
         catch (final Throwable err)
-        {   System.err.println(err.toString());
+        {   //System.err.println(err.toString());
+            err.printStackTrace(System.err);
         }
     }
     

@@ -134,18 +134,20 @@ public class FileHandler
     {   try (final InputStream is = readExternalFileStream(path))
         {
             final ArrayList<byte[]> old = new ArrayList<byte[]>();
+            final ArrayDeque<int[]> sizes = new ArrayDeque<int[]>();
             int ptr = 0, size = 0;
             for (int av; (av = is.available()) != 0;)
             {   final byte[] buf = new byte[av];
-                is.read(buf, 0, av);
-                size += av;
+                size += av = is.read(buf, 0, av);
+                old.add(buf);
+                sizes.offerLast(new int[] { av });
             }
             if (old.size() == 1)
                 return old.get(0);
             final byte[] rc = new byte[size];
             for (final byte[] buf : old)
-            {   System.arraycopy(buf, 0, rc, ptr, buf.length);
-                ptr += buf.length;
+            {   System.arraycopy(buf, 0, rc, ptr, size = sizes.pollFirst()[0]);
+                ptr += size;
             }
             return rc;
     }   }
@@ -278,18 +280,20 @@ public class FileHandler
     {   try (final InputStream is = readInternalFileStream(path))
         {
             final ArrayList<byte[]> old = new ArrayList<byte[]>();
+            final ArrayDeque<int[]> sizes = new ArrayDeque<int[]>();
             int ptr = 0, size = 0;
             for (int av; (av = is.available()) != 0;)
             {   final byte[] buf = new byte[av];
-                is.read(buf, 0, av);
-                size += av;
+                size += av = is.read(buf, 0, av);
+                old.add(buf);
+                sizes.offerLast(new int[] { av });
             }
             if (old.size() == 1)
                 return old.get(0);
             final byte[] rc = new byte[size];
             for (final byte[] buf : old)
-            {   System.arraycopy(buf, 0, rc, ptr, buf.length);
-                ptr += buf.length;
+            {   System.arraycopy(buf, 0, rc, ptr, size = sizes.pollFirst()[0]);
+                ptr += size;
             }
             return rc;
     }   }

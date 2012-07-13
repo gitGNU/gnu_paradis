@@ -47,8 +47,8 @@ public class Version implements Comparable<Version>
         
         if (tc > 0)
             tc = Integer.parseInt(t.substring(tc, t.indexOf("-", tc) < 0
-                                              ? t.length() - tc
-                                              : t.indexOf("-", tc) - tc
+                                              ? t.length()
+                                              : t.indexOf("-", tc)
                                               ));
         
         String _tv = t.contains("-") ? t.substring(0, t.indexOf("-")) : t;
