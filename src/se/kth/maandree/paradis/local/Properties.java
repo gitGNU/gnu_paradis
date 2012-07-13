@@ -183,13 +183,24 @@ public class Properties
     
     
     /**
-     * Gets the terminal on which the program is runningmmaccording to the terminal itself and maybe even the user
+     * Gets the terminal on which the program is running, according to the terminal itself and maybe even the user
      * 
-     * @return  The terminal on which the program is runningmm
+     * @return  The terminal on which the program is running
      */
     public static String getTerminal()
     {
         return getEnvironmentVariable("TERM");
+    }
+    
+    
+    /**
+     * Gets the shell the program was started from
+     * 
+     * @return  The shell the program was started from
+     */
+    public static String getShell()
+    {
+        return getEnvironmentVariable("SHELL");
     }
     
     

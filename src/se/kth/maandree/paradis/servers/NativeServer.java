@@ -44,6 +44,7 @@ public class NativeServer extends AbstractServer
      * {@inheritDoc}
      */
     @Override
+    @requires("java-runtime>=7")
     public boolean invoke(final String command, final boolean consumed)
     {
         if (command.equals("help"))
@@ -120,6 +121,19 @@ public class NativeServer extends AbstractServer
                 return true;
             System.out.println("Paradis — Ever growing network for parallell and distributed computing.");
             System.out.println("Copyright © 2012  Mattias Andrée");
+        }
+        else if (command.equals("shell"))
+        {
+            if (consumed)
+                return true;
+            try
+            {   final ProcessBuilder builder = new ProcessBuilder(Properties.getShell());
+                builder.inheritIO();
+                builder.start().waitFor();
+            }
+            catch (final Throwable err)
+            {   System.out.print("Cannot manage to start shell");
+            }
         }
         else if (command.equals("pacman") || command.startsWith("pacman "))
         {
