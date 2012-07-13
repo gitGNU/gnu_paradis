@@ -126,7 +126,7 @@ public class HubChat
         if (remote.startsWith("[") && remote.contains("]:"))
         {
             remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
-            remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("}:")));
+            remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("]:")));
         }
         else
         {

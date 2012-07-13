@@ -95,7 +95,7 @@ public class User implements Comparable<User>
     /**
      * The port the user uses for communications
      */
-    private final int port;
+    private int port;
     
     /**
      * The DNS names of the user
@@ -307,6 +307,15 @@ public class User implements Comparable<User>
      */
     public int getPort()
     {   return this.port;
+    }
+    
+    /**
+     * Sets the port the user uses for communications
+     * 
+     * @param  value  The descripted data
+     */
+    public void setPort(final int value)
+    {   this.port = value;
     }
     
     /**
