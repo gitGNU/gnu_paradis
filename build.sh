@@ -11,7 +11,7 @@
 
 ## package info
 program=paradis
-dirpackage=se.kth.maandree.${program}
+dirpackage=org.nongnu.${program}
 srcpackage=${dirpackage/:/\/}
 
 

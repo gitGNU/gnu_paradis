@@ -7,7 +7,7 @@
 
 ## program execution information
 program=paradis
-package=se.kth.maandree.${program}
+package=org.nongnu.${program}
 hasMain=1
 hasHome=1
 mainClass=Program
