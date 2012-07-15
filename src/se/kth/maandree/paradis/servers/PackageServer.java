@@ -49,7 +49,7 @@ public class PackageServer extends AbstractServer
 			if (message instanceof PacketReceived)
 			{
 			    final Packet packet = ((PacketReceived)message).packet;
-			    if (packet.messageType.equals("fetchpkg"))
+			    if (packet.messageType.startsWith("fetchpkg"))
 				System.out.print(packet.message);
 			}
 		    }
