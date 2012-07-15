@@ -189,7 +189,15 @@ licenses=('GNU General Public License v3 or later')
 # Syntax:
 #  * yes
 #  * no
-isFreeSoftware=yes
+isFreeSoftware=no
+`Make sure to correct this`
+
+# Whether the package is GNU General Public License v3+ compatible
+# Syntax:
+#  * yes
+#  * no
+isGPL3compat=no
+`Make sure to correct this`
 
 
 #Free Software Licenses:

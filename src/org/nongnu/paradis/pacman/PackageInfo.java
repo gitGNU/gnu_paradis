@@ -53,6 +53,7 @@ public final class PackageInfo
      * @param  containsBinary              Whether the package contains executable files
      * @param  licenses                    Licenses this packages uses
      * @param  isFreeSoftware              Whether the package is Free Software
+     * @param  isGPL3compat                Whether the package is GNU General Public License v3+ compatible
      * @param  url                         Upstream URL
      * @param  arch                        Supported architectures
      * @param  os                          Supported operating systems
@@ -64,37 +65,40 @@ public final class PackageInfo
      * @param  uuid                        Package UUID
      */
     public PackageInfo(final String[] optionalSystemDependencies, final String[] optionalDependencies, final String[] systemDependencies, final String[] dependencies,
-                       final int packageEpoch, final String packageVersion, final int packageRelease, final String packageName, final String packageDesc,
-                       final String packageDescription, final String[] provides, final String[] replaces, final String[] conflicts, final boolean containsSource,
-                       final boolean containsBinary, final String[] licenses, final boolean isFreeSoftware, final String url, final String[] arch, final String[] os,
-                       final String[] groups, final String[] files, final boolean[] backup, final String[] checksums, final String category, final UUID uuid)
+		       final int      packageEpoch,               final String   packageVersion,       final int      packageRelease,     final String packageName,
+		       final String   packageDesc,                final String   packageDescription,   final String[] provides,           final String[] replaces,
+		       final String[] conflicts,                  final boolean  containsSource,       final boolean  containsBinary,     final String[] licenses,
+		       final boolean  isFreeSoftware,             final boolean  isGPL3compat,         final String   url,                final String[] arch,
+		       final String[] os,                         final String[] groups,               final String[] files,              final boolean[] backup,
+		       final String[] checksums,                  final String   category,             final UUID     uuid)
     {
         assert optionalSystemDependencies != null;  this.optionalSystemDependencies = optionalSystemDependencies;
-        assert optionalDependencies != null;        this.optionalDependencies = optionalDependencies;
-        assert systemDependencies != null;          this.systemDependencies = systemDependencies;
-        assert dependencies != null;                this.dependencies = dependencies;
-                                                    this.packageEpoch = packageEpoch;
-        assert packageVersion != null;              this.packageVersion = packageVersion;
-                                                    this.packageRelease = packageRelease;
-        assert packageName != null;                 this.packageName = packageName;
-        assert packageDesc != null;                 this.packageDesc = packageDesc;
-        assert packageDescription != null;          this.packageDescription = packageDescription;
-        assert provides != null;                    this.provides = provides;
-        assert replaces != null;                    this.replaces = replaces;
-        assert conflicts != null;                   this.conflicts = conflicts;
-                                                    this.containsSource = containsSource;
-                                                    this.containsBinary = containsBinary;
-        assert licenses != null;                    this.licenses = licenses;
-                                                    this.isFreeSoftware = isFreeSoftware;
-        assert url != null;                         this.url = url;
-        assert arch != null;                        this.arch = arch;
-        assert os != null;                          this.os = os;
-        assert groups != null;                      this.groups = groups;
-        assert files != null;                       this.files = files;
-        assert backup != null;                      this.backup = backup;
-        assert checksums != null;                   this.checksums = checksums;
-        assert category != null;                    this.category = category;
-        assert uuid != null;                        this.uuid = uuid;
+        assert optionalDependencies       != null;  this.optionalDependencies       = optionalDependencies;
+        assert systemDependencies         != null;  this.systemDependencies         = systemDependencies;
+        assert dependencies               != null;  this.dependencies               = dependencies;
+                                                    this.packageEpoch               = packageEpoch;
+        assert packageVersion             != null;  this.packageVersion             = packageVersion;
+                                                    this.packageRelease             = packageRelease;
+        assert packageName                != null;  this.packageName                = packageName;
+        assert packageDesc                != null;  this.packageDesc                = packageDesc;
+        assert packageDescription         != null;  this.packageDescription         = packageDescription;
+        assert provides                   != null;  this.provides                   = provides;
+        assert replaces                   != null;  this.replaces                   = replaces;
+        assert conflicts                  != null;  this.conflicts                  = conflicts;
+                                                    this.containsSource             = containsSource;
+                                                    this.containsBinary             = containsBinary;
+        assert licenses                   != null;  this.licenses                   = licenses;
+                                                    this.isFreeSoftware             = isFreeSoftware;
+                                                    this.isGPL3compat               = isGPL3compat;
+        assert url                        != null;  this.url                        = url;
+        assert arch                       != null;  this.arch                       = arch;
+        assert os                         != null;  this.os                         = os;
+        assert groups                     != null;  this.groups                     = groups;
+        assert files                      != null;  this.files                      = files;
+        assert backup                     != null;  this.backup                     = backup;
+        assert checksums                  != null;  this.checksums                  = checksums;
+        assert category                   != null;  this.category                   = category;
+        assert uuid                       != null;  this.uuid                       = uuid;
     }
     
     
@@ -132,6 +136,7 @@ public final class PackageInfo
                                    stream.readBoolean(),
                                    stream.readObject(String[].class),
                                    stream.readBoolean(),
+                                   stream.readBoolean(),
                                    stream.readObject(String.class),
                                    stream.readObject(String[].class),
                                    stream.readObject(String[].class),
@@ -166,6 +171,7 @@ public final class PackageInfo
             stream.writeBoolean(data.containsBinary);
             stream.writeObject(data.licenses);
             stream.writeBoolean(data.isFreeSoftware);
+	    stream.writeBoolean(data.isGPL3compat);
             stream.writeObject(data.url);
             stream.writeObject(data.arch);
             stream.writeObject(data.os);
@@ -345,6 +351,11 @@ public final class PackageInfo
      * Whether the package is Free Software
      */
     public final boolean isFreeSoftware;
+    
+    /**
+     * Whether the package is GNU General Public License v3+ compatible
+     */
+    public final boolean isGPL3compat;
     
     /**
      * Upstream URL

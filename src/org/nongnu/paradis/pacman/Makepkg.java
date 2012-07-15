@@ -70,32 +70,33 @@ public class Makepkg
             {
                 final PackageInfo info = PackageInfo.fromFile(args[1]);
                 final StringBuilder buf = new StringBuilder();
-                buf.append("optionalSystemDependencies=" + encodeArray(info.optionalSystemDependencies));
-                buf.append("optionalDependencies=" + encodeArray(info.optionalDependencies));
-                buf.append("systemDependencies=" + encodeArray(info.systemDependencies));
-                buf.append("dependencies=" + encodeArray(info.dependencies));
-                buf.append("packageEpoch=" + Integer.toString(info.packageEpoch));
-                buf.append("packageVersion=" + info.packageVersion);
-                buf.append("packageRelease=" + Integer.toString(info.packageRelease));
-                buf.append("packageName=" + info.packageName);
-                buf.append("packageDesc='" + info.packageDesc.replace("'", "'\\''") + "'");
-                buf.append("packageDescription='" + info.packageDescription.replace("'", "'\\''") + "'");
-                buf.append("provides=" + encodeArray(info.provides));
-                buf.append("replaces=" + encodeArray(info.replaces));
-                buf.append("conflicts=" + encodeArray(info.conflicts));
-                buf.append("containsSource=" + (info.containsSource ? "yes" : "no"));
-                buf.append("containsBinary=" + (info.containsBinary ? "yes" : "no"));
-                buf.append("licenses=" + encodeArray(info.licenses));
-                buf.append("isFreeSoftware=" + (info.isFreeSoftware ? "yes" : "no"));
-                buf.append("url='" + info.url.replace("'", "'\\''") + "'");
-                buf.append("arch=" + encodeArray(info.arch));
-                buf.append("os=" + encodeArray(info.os));
-                buf.append("groups=" + encodeArray(info.groups));
-                buf.append("files=" + encodeArray(info.files));
-                buf.append("backup=" + encodeArray(info.backup));
-                buf.append("`checksums=" + encodeArray(info.checksums) + "`");
-                buf.append("category='" + info.category.replace("'", "'\\''") + "'");
-                buf.append("uuid=" + info.uuid.toString());
+                buf.append("optionalSystemDependencies=" +      encodeArray(info.optionalSystemDependencies));
+                buf.append("optionalDependencies="       +      encodeArray(info.optionalDependencies));
+                buf.append("systemDependencies="         +      encodeArray(info.systemDependencies));
+                buf.append("dependencies="               +      encodeArray(info.dependencies));
+                buf.append("packageEpoch="               + Integer.toString(info.packageEpoch));
+                buf.append("packageVersion="             +                  info.packageVersion);
+                buf.append("packageRelease="             + Integer.toString(info.packageRelease));
+                buf.append("packageName="                +                  info.packageName);
+                buf.append("packageDesc='"               +                  info.packageDesc       .replace("'", "'\\''") + "'");
+                buf.append("packageDescription='"        +                  info.packageDescription.replace("'", "'\\''") + "'");
+                buf.append("provides="                   +      encodeArray(info.provides));
+                buf.append("replaces="                   +      encodeArray(info.replaces));
+                buf.append("conflicts="                  +      encodeArray(info.conflicts));
+                buf.append("containsSource="             +                 (info.containsSource ? "yes" : "no"));
+                buf.append("containsBinary="             +                 (info.containsBinary ? "yes" : "no"));
+                buf.append("licenses="                   +      encodeArray(info.licenses));
+                buf.append("isFreeSoftware="             +                 (info.isFreeSoftware ? "yes" : "no"));
+                buf.append("isGPL3compat="               +                 (info.isGPL3compat   ? "yes" : "no"));
+                buf.append("url='"                       +                  info.url.replace("'", "'\\''") + "'");
+                buf.append("arch="                       +      encodeArray(info.arch));
+                buf.append("os="                         +      encodeArray(info.os));
+                buf.append("groups="                     +      encodeArray(info.groups));
+                buf.append("files="                      +      encodeArray(info.files));
+                buf.append("backup="                     +      encodeArray(info.backup));
+                buf.append("`checksums="                 +      encodeArray(info.checksums) + "`");
+                buf.append("category='"                  +                  info.category.replace("'", "'\\''") + "'");
+                buf.append("uuid="                       +                  info.uuid.toString());
                 FileHandler.writeFile(args[2] + fs + "PKGBUILD", buf.toString());
         }   }
         catch (final Throwable err)
@@ -176,6 +177,7 @@ public class Makepkg
                                                  parseBoolean(map.get("containsBinary")),
                                                  parseStrings(map.get("licenses")),
                                                  parseBoolean(map.get("isFreeSoftware")),
+                                                 parseBoolean(map.get("isGPL3compat")),
                                                  parseString(map.get("url")),
                                                  parseStrings(map.get("arch")),
                                                  parseStrings(map.get("os")),
@@ -186,7 +188,20 @@ public class Makepkg
                                                  parseString(map.get("category")),
                                                  uuid
                                                  );
-        
+	
+	if (! info.isFreeSoftware && ! info.isGPL3compat)
+	{   System.out.println("Your package must be Free Software with a GNU General Public License compatible license.");
+	    return;
+	}
+	else if (! info.isFreeSoftware && info.isGPL3compat)
+	{   System.out.println("Your package must be Free Software in order to have a GNU General Public License compatible license.");
+	    return;
+	}
+	else if (info.isFreeSoftware && ! info.isGPL3compat)
+	{   System.out.println("The package's license must be GNU General Public License v3+ compatible.");
+	    return;
+	}
+	
         final String root = directory + fs + map.get("packageName") + "=" + epoch + ";" + map.get("packageVersion") + "-" + release;
         final String pkgxz = root + ".pkg.xz"; //Create first
         final String tarxz = root + ".tar.xz"; //Create last
