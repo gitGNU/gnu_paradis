@@ -18,6 +18,8 @@
 package org.nongnu.paradis.servers;
 import org.nongnu.paradis.*;
 
+import java.util.*;
+
 
 /**
  * Abstract server
@@ -45,9 +47,10 @@ public abstract class AbstractServer implements Blackboard.BlackboardObserver
      * 
      * @param   command   The command to execute
      * @param   consumed  Whether the command is already consumed, in which case, do not execute
+     * @param   scanner   Input scanner you can use
      * @return            Whether the server recognises the command
      */
-    public abstract boolean invoke(final String command, final boolean consumed);
+    public abstract boolean invoke(final String command, final boolean consumed, final Scanner scanner);
     
     
     /**
@@ -69,7 +72,7 @@ public abstract class AbstractServer implements Blackboard.BlackboardObserver
         {
             final ServerInvoke invocation = (ServerInvoke)message;
             try
-            {   if (invoke(invocation.command, invocation.consumed))
+		{   if (invoke(invocation.command, invocation.consumed, invocation.scanner))
                     if (invocation.consumed)
                         System.err.println("Warning: command already consumed by another server");
                     else

@@ -21,6 +21,7 @@ import org.nongnu.paradis.net.messages.*;
 import org.nongnu.paradis.local.*;
 import org.nongnu.paradis.*;
 
+import java.util.*;
 import java.net.*;
 import java.io.*;
 
@@ -57,7 +58,7 @@ public class NetworkServer extends AbstractServer
      * {@inheritDoc}
      */
     @Override
-    public boolean invoke(final String command, final boolean consumed)
+    public boolean invoke(final String command, final boolean consumed, final Scanner scanner)
     {
 	if ((command.equals("network") || command.startsWith("network ")) == false)
 	    return false;

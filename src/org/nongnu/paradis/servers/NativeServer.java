@@ -22,6 +22,8 @@ import org.nongnu.paradis.util.*;
 import org.nongnu.paradis.io.*;
 import org.nongnu.paradis.*;
 
+import java.util.*;
+
 
 /**
  * Paradis native server
@@ -45,7 +47,7 @@ public class NativeServer extends AbstractServer
      */
     @Override
     @requires("java-runtime>=7")
-    public boolean invoke(final String command, final boolean consumed)
+    public boolean invoke(final String command, final boolean consumed, final Scanner scanner)
     {
         if (command.equals("help"))
         {

@@ -18,6 +18,8 @@
 package org.nongnu.paradis.servers;
 import org.nongnu.paradis.*;
 
+import java.util.*;
+
 
 /**
  * Server invocation message
@@ -30,10 +32,12 @@ public class ServerInvoke implements Blackboard.BlackboardMessage
      * Constructor
      * 
      * @param  command  Command to run
+     * @param  scanner  Input scanner you can use
      */
-    public ServerInvoke(final String command)
+    public ServerInvoke(final String command, final Scanner scanner)
     {
         this.command = command;
+	this.scanner = scanner;
     }
     
     
@@ -42,6 +46,11 @@ public class ServerInvoke implements Blackboard.BlackboardMessage
      * Command to run
      */
     public final String command;
+    
+    /**
+     * Input scanner you can use
+     */
+    public final Scanner scanner;
     
     /**
      * Whether the command has been ran by a server

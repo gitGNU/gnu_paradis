@@ -19,7 +19,10 @@ package org.nongnu.paradis.servers;
 import org.nongnu.paradis.net.*;
 import org.nongnu.paradis.net.messages.*;
 import org.nongnu.paradis.io.*;
+import org.nongnu.paradis.util.*;
 import org.nongnu.paradis.*;
+
+import java.util.*;
 
 
 /**
@@ -49,7 +52,7 @@ public class PackageServer extends AbstractServer
 			if (message instanceof PacketReceived)
 			{
 			    final Packet packet = ((PacketReceived)message).packet;
-			    if (packet.messageType.equals("fetchpkg"))
+			    if (packet.messageType.equals("fetchpkg+search"))
 				System.out.print(packet.message);
 			}
 		    }
@@ -63,13 +66,18 @@ public class PackageServer extends AbstractServer
      */
     private PacketFactory factory = null;
     
+    /**
+     * Shows the current command
+     */
+    private volatile String currentCommand = null;
+    
     
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean invoke(final String command, final boolean consumed)
+    public boolean invoke(final String command, final boolean consumed, final Scanner scanner)
     {
 	if ((command.equals("fetchpkg") || command.startsWith("fetchpkg ")) == false)
 	    return false;
@@ -79,13 +87,53 @@ public class PackageServer extends AbstractServer
 	if (this.factory == null)
 	{   if (NetworkServer.localUser == null)
 	    {
-		System.out.println("Please initialise network first:  network init");
+		System.out.println("Please initialise network first: network init");
 		return true;
 	    }
-	    this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)32);
+	    this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)32); //TODO use configurations
 	}
+	else if (command.equals("fetchpkg reinit"))
+	    this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)32);
 	
-	Blackboard.getInstance(null).broadcastMessage(new SendPacket(this.factory.createBroadcast(command.substring("fetchpkg ".length()) + '\n', "fetchpkg")));
+	
+	final Options opts = Options.get(null, null,
+					 new String[][] {   {"-S", "--search", "--browse"},
+							    {"-F", "--fetch", "--download"},
+							    {"-p", "--allow-nonfree", "--allow-proprietary"},
+							    {"-f", "--only-free", "--free", "--ignore-proprietary"},
+							    {"-r", "--regex"},
+					                },
+					 new String[][] {   {"-i", "--ignore"},
+							    {"-c", "--category"},
+							    {"-h", "--peer", "--host"},
+							    {"+h", "--ignore-peer", "--ignore-host"},
+							    {"--help"},
+					                },
+					 command.substring("fetchpkg ".length()).split(" "));
+	
+	if (opts.containsKey("--help"))
+	{
+	    System.out.println("-S  --search           Search for packages");
+	    System.out.println("-F  --fetch            Fetch packages");
+	    System.out.println("-p  --allow-nonfree    Allow non-free packages");
+	    System.out.println("-f  --only-free       +Allow only free packages (default; peers should warn if not implemented)");
+	    System.out.println("-r  --regex            Use regular expression for packages");
+	    System.out.println("-i  --ignore           Ignore a package");
+	    System.out.println("-c  --category         Search old specified category (if implemented by peer; should warn otherwise)");
+	    System.out.println("-h  --peer             Specify allowed peers");
+	    System.out.println("+h  --ignore-peer      Specify ignored peers");
+	}
+	else if (opts.containsKey("-S") == opts.containsKey("-F"))  System.out.println("Use either --search or --fetch");
+	else if (opts.unrecognised.isEmpty() == false)              System.out.println("Unrecognised option: " + opts.unrecognised.get(0));
+	else if (opts.containsKey("-S"))
+	{
+	    String cmd = (opts.containsKey("-p") || opts.containsKey("-f")) ? "" : "-f ";
+	    this.currentCommand = cmd += command.substring("fetchpkg ".length());
+	    System.out.println("Waiting for responses, + marks responses, press Enter to stop waiting: ");
+	    Blackboard.getInstance(null).broadcastMessage(new SendPacket(this.factory.createBroadcast(cmd, "fetchpkg+search")));
+	    scanner.nextLine();
+	    this.currentCommand = null;
+	}
 	
 	return true;
     }

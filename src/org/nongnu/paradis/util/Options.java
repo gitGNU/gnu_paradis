@@ -76,17 +76,19 @@ public class Options extends HashMap<String, ArrayList<String>> //FIXME this cla
 	final HashMap<String, String[][]> masterArgumentlessMap = new HashMap<String, String[][]>();
 	final HashMap<String, String>     masterArgumentPreMap  = new HashMap<String, String>();
 	
-	for (final String[] array : argumentless)  for (final String element : array)  argumentlessMap.put(element, array[0]);
-	for (final String[] array : argumented)    for (final String element : array)  argumentedMap  .put(element, array[0]);
+	if (argumentless != null)  for (final String[] array : argumentless)  for (final String element : array)  argumentlessMap.put(element, array[0]);
+	if (argumented   != null)  for (final String[] array : argumented)    for (final String element : array)  argumentedMap  .put(element, array[0]);
 	
-	for (int i = 0, n = masterArgumented.length; i < n; i += 2)
-        {   final String[] array = masterArgumented[i][0];    for (final String element : array)  masterArgumentPreMap.put(element, array[0]);
-	    masterArgumentedMap  .put(array[0], masterArgumented[i | 1]);
-	}
-	for (int i = 0, n = masterArgumentless.length; i < n; i += 2)
-        {   final String[] array = masterArgumentless[i][0];  for (final String element : array)  masterArgumentPreMap.put(element, array[0]);
-	    masterArgumentlessMap.put(array[0], masterArgumentless[i | 1]);
-	}
+	if (masterArgumented != null)
+	    for (int i = 0, n = masterArgumented.length; i < n; i += 2)
+	    {   final String[] array = masterArgumented[i][0];    for (final String element : array)  masterArgumentPreMap.put(element, array[0]);
+		masterArgumentedMap  .put(array[0], masterArgumented[i | 1]);
+	    }
+	if (masterArgumentless != null)
+	    for (int i = 0, n = masterArgumentless.length; i < n; i += 2)
+	    {   final String[] array = masterArgumentless[i][0];  for (final String element : array)  masterArgumentPreMap.put(element, array[0]);
+		masterArgumentlessMap.put(array[0], masterArgumentless[i | 1]);
+	    }
 	
 	final ArrayDeque<String> deque = new ArrayDeque<String>();
 	for (final String arg : args)

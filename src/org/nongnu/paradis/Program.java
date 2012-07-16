@@ -78,7 +78,7 @@ public class Program
                 if (line.isEmpty())
                     continue;
                 
-                final ServerInvoke message = new ServerInvoke(line);
+                final ServerInvoke message = new ServerInvoke(line, sc);
                 Blackboard.getInstance(null).broadcastMessage(message);
                 if (message.consumed == false)
                     System.out.println("Unrecognised command.");
