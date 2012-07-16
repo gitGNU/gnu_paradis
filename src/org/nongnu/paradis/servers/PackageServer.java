@@ -33,13 +33,37 @@ import java.util.*;
 public class PackageServer extends AbstractServer
 {
     /**
+     * Options with arguments
+     */
+    final String[][] ARGUMENTED = {   {"-S", "--search", "--browse"},
+				      {"-F", "--fetch", "--download"},
+				      {"-p", "--allow-nonfree", "--allow-proprietary"},
+				      {"-f", "--only-free", "--free", "--ignore-proprietary"},
+				      {"-r", "--regex"},
+                                  };
+    
+    /**
+     * Options without arguments
+     */
+    final String[][] ARGUMENTLESS = {   {"-i", "--ignore"},
+					{"-c", "--category"},
+					{"-h", "--peer", "--host"},
+					{"+h", "--ignore-peer", "--ignore-host"},
+					{"--help"},
+                                    };
+    
+    
+    
+    /**
      * Constructor
      */
     public PackageServer()
     {
         super(-1 ^ (-1 >>> 1));
 	
-	TransferProtocolRegister.register(String.class, "fetchpkg");
+	TransferProtocolRegister.register(String.class, "fetchpkg+found");
+	TransferProtocolRegister.register(String.class, "fetchpkg+search");
+	// fetchpkg+fetch  fetchpkg+upload
 	
 	Blackboard.getInstance(null).registerObserver(new Blackboard.BlackboardObserver()
 	        {
@@ -52,8 +76,18 @@ public class PackageServer extends AbstractServer
 			if (message instanceof PacketReceived)
 			{
 			    final Packet packet = ((PacketReceived)message).packet;
-			    if (packet.messageType.equals("fetchpkg+search"))
-				System.out.print(packet.message);
+			    if ((PackageServer.this.currentCommand != null) && packet.messageType.equals("fetchpkg+found"))
+			    {   if (packet.message.startsWith(PackageServer.this.currentCommand))
+				{
+				    System.out.print('+');
+				    synchronized (PackageServer.this.received)
+				    {   PackageServer.this.received.add(packet);
+				    }
+			    }   }
+			    else if (packet.messageType.equals("fetchpkg+search"))
+			    {
+				//final Options opts = Options.get(null, null, ARGUMENTED, ARGUMENTLESS, `command`); FIXME
+			    }
 			}
 		    }
 	        });
@@ -70,6 +104,11 @@ public class PackageServer extends AbstractServer
      * Shows the current command
      */
     private volatile String currentCommand = null;
+    
+    /**
+     * Received package search results
+     */
+    private final ArrayList<Packet> received = new ArrayList<Packet>();
     
     
     
@@ -90,26 +129,13 @@ public class PackageServer extends AbstractServer
 		System.out.println("Please initialise network first: network init");
 		return true;
 	    }
-	    this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)32); //TODO use configurations
+	    this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)16); //TODO use configurations
 	}
 	else if (command.equals("fetchpkg reinit"))
-	    this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)32);
+	    this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)16);
 	
 	
-	final Options opts = Options.get(null, null,
-					 new String[][] {   {"-S", "--search", "--browse"},
-							    {"-F", "--fetch", "--download"},
-							    {"-p", "--allow-nonfree", "--allow-proprietary"},
-							    {"-f", "--only-free", "--free", "--ignore-proprietary"},
-							    {"-r", "--regex"},
-					                },
-					 new String[][] {   {"-i", "--ignore"},
-							    {"-c", "--category"},
-							    {"-h", "--peer", "--host"},
-							    {"+h", "--ignore-peer", "--ignore-host"},
-							    {"--help"},
-					                },
-					 command.substring("fetchpkg ".length()).split(" "));
+	final Options opts = Options.get(null, null, ARGUMENTED, ARGUMENTLESS, command.substring("fetchpkg ".length()).split(" "));
 	
 	if (opts.containsKey("--help"))
 	{
@@ -120,19 +146,25 @@ public class PackageServer extends AbstractServer
 	    System.out.println("-r  --regex            Use regular expression for packages");
 	    System.out.println("-i  --ignore           Ignore a package");
 	    System.out.println("-c  --category         Search old specified category (if implemented by peer; should warn otherwise)");
-	    System.out.println("-h  --peer             Specify allowed peers");
-	    System.out.println("+h  --ignore-peer      Specify ignored peers");
+	    System.out.println("-h  --peer             Specify allowed peers [not yet implemented]"); //TODO not implemented
+	    System.out.println("+h  --ignore-peer      Specify ignored peers [not yet implemented]");
 	}
 	else if (opts.containsKey("-S") == opts.containsKey("-F"))  System.out.println("Use either --search or --fetch");
 	else if (opts.unrecognised.isEmpty() == false)              System.out.println("Unrecognised option: " + opts.unrecognised.get(0));
 	else if (opts.containsKey("-S"))
 	{
 	    String cmd = (opts.containsKey("-p") || opts.containsKey("-f")) ? "" : "-f ";
-	    this.currentCommand = cmd += command.substring("fetchpkg ".length());
+	    this.currentCommand = (cmd += command.substring("fetchpkg ".length())) + "\n";
 	    System.out.println("Waiting for responses, + marks responses, press Enter to stop waiting: ");
 	    Blackboard.getInstance(null).broadcastMessage(new SendPacket(this.factory.createBroadcast(cmd, "fetchpkg+search")));
 	    scanner.nextLine();
 	    this.currentCommand = null;
+	    
+	    //FIXME print to stdout and then to pager data from this.received
+	    
+	    synchronized (this.received)
+	    {   this.received.clear();
+	    }
 	}
 	
 	return true;

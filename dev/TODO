@@ -4,6 +4,7 @@ tcp + upnp port forwarding
 distributed hash table (¿ do we need this ?)
 encryption
 randomcast
+gettext
 
 core plugins:
     uuid resolver
