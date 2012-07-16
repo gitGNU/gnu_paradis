@@ -188,20 +188,20 @@ public class Makepkg
                                                  parseString(map.get("category")),
                                                  uuid
                                                  );
-	
-	if (! info.isFreeSoftware && ! info.isGPL3compat)
-	{   System.out.println("Your package must be Free Software with a GNU General Public License compatible license.");
-	    return;
-	}
-	else if (! info.isFreeSoftware && info.isGPL3compat)
-	{   System.out.println("Your package must be Free Software in order to have a GNU General Public License compatible license.");
-	    return;
-	}
-	else if (info.isFreeSoftware && ! info.isGPL3compat)
-	{   System.out.println("The package's license must be GNU General Public License v3+ compatible.");
-	    return;
-	}
-	
+        
+        if (! info.isFreeSoftware && ! info.isGPL3compat)
+        {   System.out.println("Your package must be Free Software with a GNU General Public License compatible license.");
+            return;
+        }
+        else if (! info.isFreeSoftware && info.isGPL3compat)
+        {   System.out.println("Your package must be Free Software in order to have a GNU General Public License compatible license.");
+            return;
+        }
+        else if (info.isFreeSoftware && ! info.isGPL3compat)
+        {   System.out.println("The package's license must be GNU General Public License v3+ compatible.");
+            return;
+        }
+        
         final String root = directory + fs + map.get("packageName") + "=" + epoch + ";" + map.get("packageVersion") + "-" + release;
         final String pkgxz = root + ".pkg.xz"; //Create first
         final String tarxz = root + ".tar.xz"; //Create last

@@ -56,6 +56,31 @@ public class UUID implements Comparable<UUID>
         counter++;
     }
     
+    /**
+     * Constructor
+     * 
+     * @param  text  Text representation of the UUID
+     */
+    public UUID(final String text)
+    {
+        final long[] hi_lo = new long[2];
+        for (int j = 0, e = 0; j < 2; j++)
+            for (int i = 0; i < 16; i++)
+            {
+                int d = text.charAt((i | (j << 4)) + e);
+                if (d == '-')
+                {   e++;
+                    i--;
+                    continue;
+                }
+                hi_lo[j] = (hi_lo[j] << 4) | ((d & 15) + ((d >> 6) * 10));
+            }
+        
+        this.high = hi_lo[0];
+        this.low = hi_lo[1];
+        counter++;
+    }
+    
     
     
     /**

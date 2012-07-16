@@ -60,75 +60,75 @@ public class NetworkServer extends AbstractServer
     @Override
     public boolean invoke(final String command, final boolean consumed, final Scanner scanner)
     {
-	if ((command.equals("network") || command.startsWith("network ")) == false)
-	    return false;
-	if (consumed)
-	    return true;
-	
-	try
-	{   if (command.equals("network init"))
-	    {
-		localUser = new User(LocalUser.getUUID(),
-				     LocalUser.getName(),
-				     Toolkit.getLocalIP(),
-				     Toolkit.getPublicIP(),
-				     LocalUser.getPort() == 0 ? Toolkit.getRandomPortUDP() : LocalUser.getPort(),
-				     LocalUser.getDNSNames(),
-				     LocalUser.getUUID(),
-				     LocalUser.getSignature(),
-				     LocalUser.getFriendUUIDs(),
-				     LocalUser.getFriendUpdates(),
-				     LocalUser.getFriendNames(),
-				     LocalUser.getFriendLocalIPs(),
-				     LocalUser.getFriendPublicIPs(),
-				     LocalUser.getFriendPorts(),
-				     LocalUser.getFriendDNSNames(),
-				     LocalUser.getFriendSignatures());
-		
-		this.intrf = new Interface(localUser.getPort(), localUser);
-		if (this.intrf.localPort != localUser.getPort())
-		{
-		    localUser.setPort(this.intrf.localPort);
-		    LocalUser.setPort(this.intrf.localPort);
-		}
-		
-		System.out.println("Your connection information:");
-		System.out.println("    Public IP address:    " + localUser.getPublicIP());
-		System.out.println("    LAN-local IP address: " + localUser.getLocalIP());
-		System.out.println("    UDP port:             " + localUser.getPort());
-	    }
-	    else if (command.startsWith("network connect "))
-	    {
-		final String remote;
-		final String[] args = command.split(" ");
-		
-		if (args.length == 4)
-		    remote = "[" + args[2] + "]:" + args[3];
-		else
-		    remote = args[2];
-		
-		final InetAddress remoteAddress;
-		final int remotePort;
-		
-		if (remote.startsWith("[") && remote.contains("]:"))
-		{
-		    remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
-		    remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("]:")));
-		}
-		else
-		{
-		    remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
-		    remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
-		}
-		
-		Blackboard.getInstance(null).broadcastMessage(new MakeConnection(remoteAddress, remotePort));
-	    }
-	}
-	catch (final Throwable err)
-	{   err.printStackTrace(System.err);
-	}
-	    
-	return true;
+        if ((command.equals("network") || command.startsWith("network ")) == false)
+            return false;
+        if (consumed)
+            return true;
+        
+        try
+        {   if (command.equals("network init"))
+            {
+                localUser = new User(LocalUser.getUUID(),
+                                     LocalUser.getName(),
+                                     Toolkit.getLocalIP(),
+                                     Toolkit.getPublicIP(),
+                                     LocalUser.getPort() == 0 ? Toolkit.getRandomPortUDP() : LocalUser.getPort(),
+                                     LocalUser.getDNSNames(),
+                                     LocalUser.getUUID(),
+                                     LocalUser.getSignature(),
+                                     LocalUser.getFriendUUIDs(),
+                                     LocalUser.getFriendUpdates(),
+                                     LocalUser.getFriendNames(),
+                                     LocalUser.getFriendLocalIPs(),
+                                     LocalUser.getFriendPublicIPs(),
+                                     LocalUser.getFriendPorts(),
+                                     LocalUser.getFriendDNSNames(),
+                                     LocalUser.getFriendSignatures());
+                
+                this.intrf = new Interface(localUser.getPort(), localUser);
+                if (this.intrf.localPort != localUser.getPort())
+                {
+                    localUser.setPort(this.intrf.localPort);
+                    LocalUser.setPort(this.intrf.localPort);
+                }
+                
+                System.out.println("Your connection information:");
+                System.out.println("    Public IP address:    " + localUser.getPublicIP());
+                System.out.println("    LAN-local IP address: " + localUser.getLocalIP());
+                System.out.println("    UDP port:             " + localUser.getPort());
+            }
+            else if (command.startsWith("network connect "))
+            {
+                final String remote;
+                final String[] args = command.split(" ");
+                
+                if (args.length == 4)
+                    remote = "[" + args[2] + "]:" + args[3];
+                else
+                    remote = args[2];
+                
+                final InetAddress remoteAddress;
+                final int remotePort;
+                
+                if (remote.startsWith("[") && remote.contains("]:"))
+                {
+                    remoteAddress = InetAddress.getByName(remote.substring(1, remote.lastIndexOf("]:")));
+                    remotePort = Integer.parseInt(remote.substring(2 + remote.lastIndexOf("]:")));
+                }
+                else
+                {
+                    remoteAddress = InetAddress.getByName(remote.substring(0, remote.lastIndexOf(":")));
+                    remotePort = Integer.parseInt(remote.substring(1 + remote.lastIndexOf(":")));
+                }
+                
+                Blackboard.getInstance(null).broadcastMessage(new MakeConnection(remoteAddress, remotePort));
+            }
+        }
+        catch (final Throwable err)
+        {   err.printStackTrace(System.err);
+        }
+            
+        return true;
     }
     
     
@@ -138,13 +138,13 @@ public class NetworkServer extends AbstractServer
     @Override
     public void dispose()
     {
-	try
-	{   this.intrf.close();
-	}
-	catch (final IOException err)
-	{   err.printStackTrace(System.err);
-	}
-	super.dispose();
+        try
+        {   this.intrf.close();
+        }
+        catch (final IOException err)
+        {   err.printStackTrace(System.err);
+        }
+        super.dispose();
     }
     
 }

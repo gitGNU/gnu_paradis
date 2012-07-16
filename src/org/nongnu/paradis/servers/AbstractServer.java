@@ -72,7 +72,7 @@ public abstract class AbstractServer implements Blackboard.BlackboardObserver
         {
             final ServerInvoke invocation = (ServerInvoke)message;
             try
-		{   if (invoke(invocation.command, invocation.consumed, invocation.scanner))
+                {   if (invoke(invocation.command, invocation.consumed, invocation.scanner))
                     if (invocation.consumed)
                         System.err.println("Warning: command already consumed by another server");
                     else

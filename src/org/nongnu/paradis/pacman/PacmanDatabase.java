@@ -122,7 +122,7 @@ public class PacmanDatabase implements Blackboard.BlackboardObserver
      * @param  packages  The package arguments
      * @param  out       The stream to print to
      */
-    public final void search(final HashSet<String> options, final ArrayList<String> packages, final PrintStream out)
+    public static void search(final Set<String> options, final List<String> packages, final PrintStream out)
     {
         final HashSet<String> packageSet = new HashSet<String>();
         for (final String pack : packages)

@@ -104,5 +104,13 @@ public class Anycast implements Cast
     {   return false;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UUID getSender()
+    {   return this.sender;
+    }
+    
 }
 

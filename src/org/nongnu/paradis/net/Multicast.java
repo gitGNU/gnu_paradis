@@ -163,5 +163,13 @@ public class Multicast implements Cast
     {   return Arrays.binarySearch(this.received, 0, this.receivedCount, uuid) >= 0;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UUID getSender()
+    {   return this.sender;
+    }
+    
 }
 

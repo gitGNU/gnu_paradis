@@ -128,18 +128,18 @@ public class NativeServer extends AbstractServer
         {
             if (consumed)
                 return true;
-	    String shell = Properties.getShell();
-	    if ((shell == null) || shell.isEmpty())
-		System.out.println("Impossible to determine shell, your shell should export SHELL to it's file name (e.g. bash).");
-	    else
-		try
-		{   final ProcessBuilder builder = new ProcessBuilder(shell);
-		    builder.inheritIO();
-		    builder.start().waitFor();
-		}
-		catch (final Throwable err)
-		{   System.out.print("Cannot manage to start shell");
-		}
+            String shell = Properties.getShell();
+            if ((shell == null) || shell.isEmpty())
+                System.out.println("Impossible to determine shell, your shell should export SHELL to it's file name (e.g. bash).");
+            else
+                try
+                {   final ProcessBuilder builder = new ProcessBuilder(shell);
+                    builder.inheritIO();
+                    builder.start().waitFor();
+                }
+                catch (final Throwable err)
+                {   System.out.print("Cannot manage to start shell");
+                }
         }
         else if (command.equals("pacman") || command.startsWith("pacman "))
         {

@@ -40,5 +40,12 @@ public interface Cast
      */
     public boolean hasReceived(final UUID uuid);
     
+    /**
+     * Gets the sender of the packet
+     * 
+     * @param  uuid  The sender of the packet
+     */
+    public UUID getSender();
+    
 }
 

@@ -65,12 +65,12 @@ public final class PackageInfo
      * @param  uuid                        Package UUID
      */
     public PackageInfo(final String[] optionalSystemDependencies, final String[] optionalDependencies, final String[] systemDependencies, final String[] dependencies,
-		       final int      packageEpoch,               final String   packageVersion,       final int      packageRelease,     final String packageName,
-		       final String   packageDesc,                final String   packageDescription,   final String[] provides,           final String[] replaces,
-		       final String[] conflicts,                  final boolean  containsSource,       final boolean  containsBinary,     final String[] licenses,
-		       final boolean  isFreeSoftware,             final boolean  isGPL3compat,         final String   url,                final String[] arch,
-		       final String[] os,                         final String[] groups,               final String[] files,              final boolean[] backup,
-		       final String[] checksums,                  final String   category,             final UUID     uuid)
+                       final int      packageEpoch,               final String   packageVersion,       final int      packageRelease,     final String packageName,
+                       final String   packageDesc,                final String   packageDescription,   final String[] provides,           final String[] replaces,
+                       final String[] conflicts,                  final boolean  containsSource,       final boolean  containsBinary,     final String[] licenses,
+                       final boolean  isFreeSoftware,             final boolean  isGPL3compat,         final String   url,                final String[] arch,
+                       final String[] os,                         final String[] groups,               final String[] files,              final boolean[] backup,
+                       final String[] checksums,                  final String   category,             final UUID     uuid)
     {
         assert optionalSystemDependencies != null;  this.optionalSystemDependencies = optionalSystemDependencies;
         assert optionalDependencies       != null;  this.optionalDependencies       = optionalDependencies;
@@ -171,7 +171,7 @@ public final class PackageInfo
             stream.writeBoolean(data.containsBinary);
             stream.writeObject(data.licenses);
             stream.writeBoolean(data.isFreeSoftware);
-	    stream.writeBoolean(data.isGPL3compat);
+            stream.writeBoolean(data.isGPL3compat);
             stream.writeObject(data.url);
             stream.writeObject(data.arch);
             stream.writeObject(data.os);

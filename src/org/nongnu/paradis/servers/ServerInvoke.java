@@ -37,7 +37,7 @@ public class ServerInvoke implements Blackboard.BlackboardMessage
     public ServerInvoke(final String command, final Scanner scanner)
     {
         this.command = command;
-	this.scanner = scanner;
+        this.scanner = scanner;
     }
     
     
