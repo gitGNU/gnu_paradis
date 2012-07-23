@@ -17,6 +17,7 @@
  */
 package org.nongnu.paradis.servers;
 import org.nongnu.paradis.pacman.*;
+import org.nongnu.paradis.local.Properties; //Explicit
 import org.nongnu.paradis.util.*;
 import org.nongnu.paradis.net.*;
 import org.nongnu.paradis.net.UUID; //Explicit
@@ -221,21 +222,38 @@ public class PackageServer extends AbstractServer
 		final ArrayList<String> peers = new ArrayList<String>();
 		int pi = 0;
 		
-		for (final Packet packet : received)
+		final HashMap<String, StringBuilder> packmap = new HashMap<String, StringBuilder>();
+		final ArrayList<String> packlist = new ArrayList<String>();
+		
+		for (final Packet packet : this.received)
 		{
 		    pi++;
 		    peers.add("Peer " + pi + " = " + packet.cast.getSender().toString());
 		    for (final String line : ((String)(packet.message)).split("\n"))
 			if (line.startsWith("Warning:"))
 			    warns.add(pi + ": " + line);
+			else if (packmap.containsKey(line))
+			    packmap.get(line).append(" " + pi);
 			else
 			{
-			    buf.append(line);
-			    buf.append("\n");
+			    packmap.put(line, new StringBuilder(Integer.toString(pi)));
+			    packlist.add(line);
 			}
 		}
 		
-		for (final String warn : warns)
+		final String[] packs = new String[packlist.size()];
+		packlist.toArray(packs);
+		Arrays.sort(packs);
+		for (final String pack : packs)
+		{
+		    buf.append(pack);
+		    buf.append(" @ ");
+		    buf.append(packmap.get(pack).toString());
+		    buf.append("\n");
+		}
+		
+		buf.append("\n");
+	        for (final String warn : warns)
 		{
 		    buf.append(warn);
 		    buf.append("\n");
@@ -251,7 +269,7 @@ public class PackageServer extends AbstractServer
             }
 	    
 	    String str;
-	    System.out.println(str, buf.toString()); /* sic! */
+	    System.out.println(str = buf.toString()); /* sic! */
 	    Pager.page(Properties.getPager(), "Found packages", str);
         }
         
