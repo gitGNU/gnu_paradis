@@ -214,11 +214,45 @@ public class PackageServer extends AbstractServer
             scanner.nextLine();
             this.currentCommand = null;
             
-            //FIXME print to stdout and then to pager data from this.received
-            
+	    final StringBuilder buf = new StringBuilder();
             synchronized (this.received)
-            {   this.received.clear();
+            {
+		final ArrayList<String> warns = new ArrayList<String>();
+		final ArrayList<String> peers = new ArrayList<String>();
+		int pi = 0;
+		
+		for (final Packet packet : received)
+		{
+		    pi++;
+		    peers.add("Peer " + pi + " = " + packet.cast.getSender().toString());
+		    for (final String line : ((String)(packet.message)).split("\n"))
+			if (line.startsWith("Warning:"))
+			    warns.add(pi + ": " + line);
+			else
+			{
+			    buf.append(line);
+			    buf.append("\n");
+			}
+		}
+		
+		for (final String warn : warns)
+		{
+		    buf.append(warn);
+		    buf.append("\n");
+		} 
+		buf.append("\n");
+		for (final String peer : peers)
+		{
+		    buf.append(peer);
+		    buf.append("\n");
+		} 
+		
+		this.received.clear();
             }
+	    
+	    String str;
+	    System.out.println(str, buf.toString()); /* sic! */
+	    Pager.page(Properties.getPager(), "Found packages", str);
         }
         
         return true;
