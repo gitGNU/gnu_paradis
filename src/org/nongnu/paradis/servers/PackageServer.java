@@ -189,6 +189,7 @@ public class PackageServer extends AbstractServer
                                 {   err.printStackTrace(System.err);
                                 }
                                 
+				
 				packloop:
 				    for (final String pack : packs)
 				    {
@@ -196,34 +197,40 @@ public class PackageServer extends AbstractServer
 					final String tar = Pacman.PACKAGE_DIR + pack + "tar.xz";
 					final ArrayList<byte[]> buf = new ArrayList<byte[]>();
 					
-					buf.add((msg + "\n" + pack + ".pkg.xz\n" + pack + ".tar.xz\n\n").getBytes("UTF-8"));
 					int bufsize = buf.get(0).length;
-					for (final String file : new String[] { pkg, tar })
-					{
-					    final int size = (int)((new File(file)).length());
-					    if (size != (new File(file)).length())
-						continue packloop;
-					    final byte[] bs = new byte[8];
-					    bs[0] = (byte)((size >>> 24) & 255);
-					    bs[1] = (byte)((size >>> 16) & 255);
-					    bs[2] = (byte)((size >>>  8) & 255);
-					    bs[3] = (byte)( size         & 255);
-					    buf.add(bs);
-					    bufsize += 4 + size;
-					}
-					
-					for (final String file : new String[] { pkg, tar })
-					{
-					    final long size = (new File(file)).length();
-					    long ptr = 0;
-					    final byte[] bs = new byte[size > 4092 ? 4092 : (int)size];
-					    final FileInputStream is = new FileInputStream(file);
-					    while (ptr < size)
+					try
+				        {
+					    buf.add((msg + "\n" + pack + ".pkg.xz\n" + pack + ".tar.xz\n\n").getBytes("UTF-8"));
+					    for (final String file : new String[] { pkg, tar })
 					    {
-						final byte[] data = new byte[is.read(bs, 0, bs.length)];
-						System.arraycopy(bs, 0, data, 0, data.length);
-						ptr += data.length;
+						final int size = (int)((new File(file)).length());
+						if (size != (new File(file)).length())
+						    continue packloop;
+						final byte[] bs = new byte[8];
+						bs[0] = (byte)((size >>> 24) & 255);
+						bs[1] = (byte)((size >>> 16) & 255);
+						bs[2] = (byte)((size >>>  8) & 255);
+						bs[3] = (byte)( size         & 255);
+						buf.add(bs);
+						bufsize += 4 + size;
 					    }
+					    
+					    for (final String file : new String[] { pkg, tar })
+					    {
+						final long size = (new File(file)).length();
+						long ptr = 0;
+						final byte[] bs = new byte[size > 4092 ? 4092 : (int)size];
+						final FileInputStream is = new FileInputStream(file);
+						while (ptr < size)
+						{
+						    final byte[] data = new byte[is.read(bs, 0, bs.length)];
+						    System.arraycopy(bs, 0, data, 0, data.length);
+						    ptr += data.length;
+						}
+					    }
+					}
+					catch (final IOException err) /* but they will not throw IOException */
+					{   err.printStackTrace(System.err);
 					}
 				        
 					final byte[] data = new byte[bufsize];
