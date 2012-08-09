@@ -22,7 +22,7 @@ import java.util.*;
 
 
 /**
- * The is the main class of the program
+ * This is the main class of the program
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */

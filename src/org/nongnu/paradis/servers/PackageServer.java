@@ -23,11 +23,12 @@ import org.nongnu.paradis.net.*;
 import org.nongnu.paradis.net.UUID; //Explicit
 import org.nongnu.paradis.net.messages.*;
 import org.nongnu.paradis.io.*;
+import org.nongnu.paradis.io.PipedInputStream; //Explicit
+import org.nongnu.paradis.io.PipedOutputStream; //Explicit
 import org.nongnu.paradis.*;
 
 import java.util.*;
-import java.io.PrintStream;
-import java.io.IOException;
+import java.io.*;
 
 
 /**
@@ -68,7 +69,8 @@ public class PackageServer extends AbstractServer
         
         TransferProtocolRegister.register(String.class, "fetchpkg+found");
         TransferProtocolRegister.register(String.class, "fetchpkg+search");
-        // fetchpkg+fetch  fetchpkg+upload
+        TransferProtocolRegister.register(String.class, "fetchpkg+fetch");
+        TransferProtocolRegister.register(byte[].class, "fetchpkg+upload"); //FIXME  receive
         
         Blackboard.getInstance(null).registerObserver(new Blackboard.BlackboardObserver()
                 {
@@ -78,8 +80,7 @@ public class PackageServer extends AbstractServer
                     @Override
                     @requires("java-environment>=7")
                     public void messageBroadcasted(final Blackboard.BlackboardMessage message)
-                    {
-                        if (NetworkServer.localUser == null)
+                    {   if (NetworkServer.localUser == null)
                             return;
                         
                         if (message instanceof PacketReceived)
@@ -143,8 +144,98 @@ public class PackageServer extends AbstractServer
                                 
                                 Blackboard.getInstance(null).broadcastMessage(new SendPacket(PackageServer.this.factory.createUnicast(buf.toString(), "fetchpkg+found", packet.cast.getSender())));
                             }
-                        }
-                    }
+			    else if (packet.messageType.equals("fetchpkg+fetch"))
+			    {
+                                final String msg = (String)(packet.message);
+                                final ArrayList<String> packs = new ArrayList<String>();
+                                final Options opts = Options.get(null, null, PackageServer.ARGUMENTED, PackageServer.ARGUMENTLESS, msg.split(" "));
+                                
+                                if (opts.containsKey("+h"))
+                                    for (final String ignoredHost : opts.get("+h"))
+                                        if (new UUID(ignoredHost).equals(NetworkServer.localUser.getUUID()))
+                                            return;
+                                
+                                try (final PipedInputStream  pis    = new PipedInputStream();
+                                     final PipedOutputStream pos    = new PipedOutputStream(pis);
+                                     final PrintStream       stream = new PrintStream(pos);
+                                     final Scanner           sc     = new Scanner(pis))
+                                {
+                                    final HashSet<String> options = new HashSet<String>();
+                                    if (opts.containsKey("-r"))  options.add(PacmanDatabase.DATABASE_SEARCH);
+                                    if (opts.containsKey("-p"))  { /*TODO not implemented*/ }
+                                    if (opts.containsKey("-f"))  { /*TODO not implemented*/ }
+                                    PacmanDatabase.search(options, opts.files, stream);
+                                    
+                                    while (sc.hasNextLine())
+                                    {   final String line = sc.nextLine();
+					if (line.startsWith("\t") == false)
+					    if (opts.containsKey("-i"))
+					    {
+						boolean ignore = false;
+						final VersionedPackage pack = new VersionedPackage(line);
+						for (final String ipack : opts.get("-i"))
+						    if (pack.intersects(new VersionedPackage(ipack)))
+						    {   ignore = true;
+							break;
+						    }
+						if (ignore == false)
+						    packs.add(line);
+					    }
+					    else
+						packs.add(line);
+                                    }
+                                }
+                                catch (final IOException err) /* but they will not throw IOException */
+                                {   err.printStackTrace(System.err);
+                                }
+                                
+				packloop:
+				    for (final String pack : packs)
+				    {
+					final String pkg = Pacman.PACKAGE_DIR + pack + "pkg.xz";
+					final String tar = Pacman.PACKAGE_DIR + pack + "tar.xz";
+					final ArrayList<byte[]> buf = new ArrayList<byte[]>();
+					
+					buf.add((msg + "\n" + pack + ".pkg.xz\n" + pack + ".tar.xz\n\n").getBytes("UTF-8"));
+					int bufsize = buf.get(0).length;
+					for (final String file : new String[] { pkg, tar })
+					{
+					    final int size = (int)((new File(file)).length());
+					    if (size != (new File(file)).length())
+						continue packloop;
+					    final byte[] bs = new byte[8];
+					    bs[0] = (byte)((size >>> 24) & 255);
+					    bs[1] = (byte)((size >>> 16) & 255);
+					    bs[2] = (byte)((size >>>  8) & 255);
+					    bs[3] = (byte)( size         & 255);
+					    buf.add(bs);
+					    bufsize += 4 + size;
+					}
+					
+					for (final String file : new String[] { pkg, tar })
+					{
+					    final long size = (new File(file)).length();
+					    long ptr = 0;
+					    final byte[] bs = new byte[size > 4092 ? 4092 : (int)size];
+					    final FileInputStream is = new FileInputStream(file);
+					    while (ptr < size)
+					    {
+						final byte[] data = new byte[is.read(bs, 0, bs.length)];
+						System.arraycopy(bs, 0, data, 0, data.length);
+						ptr += data.length;
+					    }
+					}
+				        
+					final byte[] data = new byte[bufsize];
+					int ptr = 0;
+					for (final byte[] seg : buf)
+					{   System.arraycopy(data, 0, seg, ptr, seg.length);
+					    ptr += seg.length;
+					}
+					Blackboard.getInstance(null).broadcastMessage(new SendPacket(PackageServer.this.factory.createUnicast(data, "fetchpkg+upload", packet.cast.getSender())));
+				    }
+			    }
+                    }   }
                 });
     }
     
@@ -177,7 +268,13 @@ public class PackageServer extends AbstractServer
             return false;
         if (consumed)
             return true;
-        
+	
+	
+	if (command.equals("fetchpkg stop"))
+	{
+	    this.currentCommand = null;
+	    return true;
+	}
         if (this.factory == null)
         {   if (NetworkServer.localUser == null)
             {
@@ -187,13 +284,17 @@ public class PackageServer extends AbstractServer
             this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)16); //TODO use configurations
         }
         else if (command.equals("fetchpkg reinit"))
+	{
             this.factory = new PacketFactory(NetworkServer.localUser, false, false, (short)16);
+	    return true;
+	}
         
         
         final Options opts = Options.get(null, null, ARGUMENTED, ARGUMENTLESS, command.substring("fetchpkg ".length()).split(" "));
         
         if (opts.containsKey("--help"))
         {
+            System.out.println("'fetchpkg stop' will stop this server");
             System.out.println("-S  --search           Search for packages");
             System.out.println("-F  --fetch            Fetch packages");
             System.out.println("-p  --allow-nonfree    Allow non-free packages");
@@ -272,6 +373,12 @@ public class PackageServer extends AbstractServer
 	    System.out.println(str = buf.toString()); /* sic! */
 	    Pager.page(Properties.getPager(), "Found packages", str);
         }
+	else if (opts.containsKey("-F"))
+	{
+            String cmd = (opts.containsKey("-p") || opts.containsKey("-f")) ? "" : "-f ";
+            this.currentCommand = (cmd += command.substring("fetchpkg ".length())) + "\n";
+            Blackboard.getInstance(null).broadcastMessage(new SendPacket(this.factory.createBroadcast(cmd, "fetchpkg+fetch")));
+	}
         
         return true;
     }
