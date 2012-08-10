@@ -1,5 +1,4 @@
 shibboleet
-package sharing [PRIORITY 1]
 tcp + upnp port forwarding
 distributed hash table (¿ do we need this ?)
 encryption
