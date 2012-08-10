@@ -39,6 +39,11 @@ import java.io.*;
 public class PackageServer extends AbstractServer
 {
     /**
+     * The directory to where the packages are downloaded
+     */
+    public static final String DOWNLOAD_DIR = "~/.paradis/downloads/".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    
+    /**
      * Options with arguments
      */
     static final String[][] ARGUMENTED = {   {"-S", "--search", "--browse"},
@@ -70,7 +75,7 @@ public class PackageServer extends AbstractServer
         TransferProtocolRegister.register(String.class, "fetchpkg+found");
         TransferProtocolRegister.register(String.class, "fetchpkg+search");
         TransferProtocolRegister.register(String.class, "fetchpkg+fetch");
-        TransferProtocolRegister.register(byte[].class, "fetchpkg+upload"); //FIXME  receive
+        TransferProtocolRegister.register(byte[].class, "fetchpkg+upload");
         
         Blackboard.getInstance(null).registerObserver(new Blackboard.BlackboardObserver()
                 {
@@ -88,11 +93,20 @@ public class PackageServer extends AbstractServer
                             final Packet packet = ((PacketReceived)message).packet;
                             if ((PackageServer.this.currentCommand != null) && packet.messageType.equals("fetchpkg+found"))
                             {   if (((String)(packet.message)).startsWith(PackageServer.this.currentCommand))
-                                {   synchronized (PackageServer.this.received)
-                                    {
-                                        System.out.print('+');
+                                {
+				    final String cmd = PackageServer.this.currentCommand.substring(0, PackageServer.this.currentCommand.length() - 1);
+				    final Options opts = Options.get(null, null, PackageServer.ARGUMENTED, PackageServer.ARGUMENTLESS, cmd.split(" "));
+				    
+				    if (opts.containsKey("+h"))
+					for (final String ignoredHost : opts.get("+h"))
+					    if ((new UUID(ignoredHost)).equals(packet.cast.getSender()))
+						return;
+				    
+				    synchronized (PackageServer.this.received)
+				    {   System.out.print('+');
                                         PackageServer.this.received.add(packet);
-                            }   }   }
+				    }
+			    }   }
                             else if (packet.messageType.equals("fetchpkg+search"))
                             {
                                 final String msg = (String)(packet.message);
@@ -101,7 +115,7 @@ public class PackageServer extends AbstractServer
                                 
                                 if (opts.containsKey("+h"))
                                     for (final String ignoredHost : opts.get("+h"))
-                                        if (new UUID(ignoredHost).equals(NetworkServer.localUser.getUUID()))
+                                        if ((new UUID(ignoredHost)).equals(NetworkServer.localUser.getUUID()))
                                             return;
                                 
                                 try (final PipedInputStream  pis    = new PipedInputStream();
@@ -140,6 +154,7 @@ public class PackageServer extends AbstractServer
                                 }
                                 catch (final IOException err) /* but they will not throw IOException */
                                 {   err.printStackTrace(System.err);
+				    return;
                                 }
                                 
                                 Blackboard.getInstance(null).broadcastMessage(new SendPacket(PackageServer.this.factory.createUnicast(buf.toString(), "fetchpkg+found", packet.cast.getSender())));
@@ -152,7 +167,7 @@ public class PackageServer extends AbstractServer
                                 
                                 if (opts.containsKey("+h"))
                                     for (final String ignoredHost : opts.get("+h"))
-                                        if (new UUID(ignoredHost).equals(NetworkServer.localUser.getUUID()))
+                                        if ((new UUID(ignoredHost)).equals(NetworkServer.localUser.getUUID()))
                                             return;
                                 
                                 try (final PipedInputStream  pis    = new PipedInputStream();
@@ -187,9 +202,9 @@ public class PackageServer extends AbstractServer
                                 }
                                 catch (final IOException err) /* but they will not throw IOException */
                                 {   err.printStackTrace(System.err);
+				    return;
                                 }
                                 
-				
 				packloop:
 				    for (final String pack : packs)
 				    {
@@ -229,8 +244,9 @@ public class PackageServer extends AbstractServer
 						}
 					    }
 					}
-					catch (final IOException err) /* but they will not throw IOException */
+					catch (final IOException err)
 					{   err.printStackTrace(System.err);
+					    return;
 					}
 				        
 					final byte[] data = new byte[bufsize];
@@ -240,6 +256,79 @@ public class PackageServer extends AbstractServer
 					    ptr += seg.length;
 					}
 					Blackboard.getInstance(null).broadcastMessage(new SendPacket(PackageServer.this.factory.createUnicast(data, "fetchpkg+upload", packet.cast.getSender())));
+				    }
+			    }
+			    else if ((PackageServer.this.currentCommand != null) && packet.messageType.equals("fetchpkg+upload"))
+			    {
+				final String cmd = PackageServer.this.currentCommand.substring(0, PackageServer.this.currentCommand.length() - 1);
+                                final Options opts = Options.get(null, null, PackageServer.ARGUMENTED, PackageServer.ARGUMENTLESS, cmd.split(" "));
+                                
+                                if (opts.containsKey("+h"))
+                                    for (final String ignoredHost : opts.get("+h"))
+                                        if ((new UUID(ignoredHost)).equals(packet.cast.getSender()))
+                                            return;
+                                
+				final byte[] msg = (byte[])(packet.message);
+			        
+				int end = 0, start = 0;
+				for (;;)
+				    if (msg[end++] == '\n')
+					break;
+				
+				final ArrayList<String> files = new ArrayList<String>();
+				final ArrayList<Integer> sizes = new ArrayList<Integer>();
+				
+				try
+				{
+				    if (PackageServer.this.currentCommand.equals(new String(msg, start, end - start, "UTF-8")) == false)
+					return;
+				    
+				    for (;;)
+				    {   start = end;
+					for (;;)
+					    if (msg[end++] == '\n')
+						break;
+					if (start == end - 1)
+					    break;
+					files.add(new String(msg, start, end - start - 1, "UTF-8"));
+				    }
+				    
+				    for (int i = 0, n = files.size(); i < n; i++)
+				    {   start = end;
+					for (;;)
+					    if (msg[end++] == '\n')
+						break;
+					if (start == end - 1)
+					    break;
+					sizes.add(Integer.valueOf(new String(msg, start, end - start - 1, "UTF-8")));
+				    }
+				    
+				    (new File(DOWNLOAD_DIR)).mkdirs();
+				}
+                                catch (final IOException err)
+                                {   err.printStackTrace(System.err);
+				    return;
+                                }
+			        
+				for (int i = 0, n = files.size(), size; i < n; i++)
+				    try
+				    {
+					final String dfile = DOWNLOAD_DIR + files.get(i);
+					start = end;
+					end += size = sizes.get(i).intValue();
+					
+					if ((new File(dfile)).exists() == false)
+					{
+					    try (final RandomAccessFile raf = new RandomAccessFile(dfile, "rw"))
+					    {   raf.setLength(size);
+						raf.write(msg, start, size);
+						raf.getFD().sync();
+					    }
+					    System.out.println("Downloaded " + files.get(i) + " to " + DOWNLOAD_DIR + " from " + packet.cast.getSender());
+					}
+				    }
+				    catch (final IOException err)
+				    {   err.printStackTrace(System.err);
 				    }
 			    }
                     }   }
