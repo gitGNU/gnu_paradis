@@ -117,7 +117,7 @@ public class FSH
     /** Data relevant to running process
      */ public static String RUN_DATA = "/var/run/<pkg>/".replace("/", DIR).replace("<pkg>", PACKAGE).replace("<home>", HOME);
     
-    /** Application spool data (like cache, except the user should not removed files manually)
+    /** Application spool data (like cache, except data is lost if the user removes files manually)
      */ public static String SPOOL = "/var/spool/<pkg>/".replace("/", DIR).replace("<pkg>", PACKAGE).replace("<home>", HOME);
     
     /** Persistent temporary files
