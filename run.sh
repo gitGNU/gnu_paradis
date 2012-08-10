@@ -12,6 +12,7 @@ hasMain=1
 hasHome=1
 mainClass=Program
 demos=demo
+tests=test
 
 
 ## java executer if default is for Java 7
@@ -44,7 +45,7 @@ if [[ $hasMain = 1 ]]; then
 fi
 
 ## custom runs
-runs+='chat multichat hubchat interfacechat plugins'
+runs+='chat multichat hubchat interfacechat plugins xz'
 
 
 ## default run
@@ -83,6 +84,12 @@ elif [[ $1 = "interfacechat" ]]; then
 
 elif [[ $1 = "plugins" ]]; then
     javaSeven -ea -cp bin$jars "$package"."$demos".PluginDemo
+
+
+## test runs
+
+elif [[ $1 = "xz" ]]; then
+    javaSeven -ea -cp bin$jars "$package"."$tests".XZ
 
 
 ## completion
