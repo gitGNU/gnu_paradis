@@ -187,7 +187,7 @@ public class Pacman
     /** Do not return up to date packages
      */ public static final String QUERY_UPGRADE = "--upgrade"; // -u
     
-    // TODO implement equivalent to Arch:s pacman -Qo
+    // TODO implement equivalent to Arch's pacman -Qo
     /** Finds the owner package of an installed file
      */ public static final String DATABASE_OWNER = "--owner"; // -o
     
