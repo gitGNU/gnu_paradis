@@ -27,6 +27,7 @@ import java.util.*;
  * Network tool kit
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Calle Lejdbrandt, <a href="mailto:callel@kth.se">callel@kth.se</a> (Author of <a href="www.github.com/maandree/cnt">CNT</a>'s method ported to {@link #getLocalIP()})
  */
 @requires("java-runtime>=7")
 public class Toolkit
@@ -82,9 +83,6 @@ public class Toolkit
      * @return  The LAN local IP address
      * 
      * @throws  IOException  If it was not possible to get the IP address
-     * 
-     * @author  Calle Lejdbrandt, <a href="mailto:callel@kth.se">callel@kth.se</a>, as a port of <a href="www.gitub.com/maandree/cnt">CNT</a>.
-     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>, changed failure precedure
      */
     @requires("java-runtime>=6")
     public static String getLocalIP() throws IOException

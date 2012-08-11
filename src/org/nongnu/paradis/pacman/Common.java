@@ -333,7 +333,7 @@ public class Common
     
     
     /**
-     * Stores {@link installedMap}
+     * Stores {@link #installedMap}
      * 
      * @throws  IOException  On I/O exception
      */

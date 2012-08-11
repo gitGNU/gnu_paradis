@@ -541,7 +541,7 @@ public class Makepkg
     /**
      * Invokes another program
      * 
-     * @param  cmd  The command to run
+     * @param  command  The command to run
      */
     @requires({"java-runtime>=7", "sh"})
     public static void exec(final String command)

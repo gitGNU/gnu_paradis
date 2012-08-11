@@ -45,21 +45,25 @@ import java.io.*;
 // PipedReader code.
 
 /**
-  * An input stream that reads its bytes from an output stream
-  * to which it is connected. 
   * <p>
-  * Data is read and written to an internal buffer.  It is highly recommended
-  * that the <code>PipedInputStream</code> and connected 
-  * <code>PipedOutputStream</code>
-  * be part of different threads.  If they are not, the read and write 
-  * operations could deadlock their thread.
-  *
-  * @specnote The JDK implementation appears to have some undocumented 
-  *           functionality where it keeps track of what thread is writing
-  *           to pipe and throws an IOException if that thread susequently
-  *           dies. This behaviour seems dubious and unreliable - we don't
-  *           implement it.
-  *
+  *   An input stream that reads its bytes from an output stream
+  *   to which it is connected. 
+  * </p>
+  * <p>
+  *   Data is read and written to an internal buffer.  It is highly recommended
+  *   that the <code>PipedInputStream</code> and connected 
+  *   <code>PipedOutputStream</code>
+  *   be part of different threads.  If they are not, the read and write 
+  *   operations could deadlock their thread.
+  * </p>
+  * <p>
+  *   <b>specnote</b> The JDK implementation appears to have some undocumented 
+  *                   functionality where it keeps track of what thread is writing
+  *                   to pipe and throws an IOException if that thread susequently
+  *                   dies. This behaviour seems dubious and unreliable - we don't
+  *                   implement it.
+  * </p>
+  * 
   * @author Aaron M. Renn (arenn@urbanophile.com)
   */
 @SuppressWarnings("all")
@@ -188,14 +192,18 @@ public class PipedInputStream extends InputStream
   }
   
   /**
-  * This method receives a byte of input from the source PipedOutputStream.
-  * If the internal circular buffer is full, this method blocks.
-  *
-  * @param val The byte to write to this stream
-  *
-  * @exception IOException if error occurs
-  * @specnote Weird. This method must be some sort of accident.
-  */
+    * <p>
+    *   This method receives a byte of input from the source PipedOutputStream.
+    *   If the internal circular buffer is full, this method blocks.
+    * </p>
+    * <p>
+    *   <b>specnote</b> Weird. This method must be some sort of accident.
+    * </p>
+    *
+    * @param val The byte to write to this stream
+    *
+    * @exception IOException if error occurs
+    */
   protected synchronized void receive(int val) throws IOException
   {
     read_buf[0] = (byte) (val & 0xff);
@@ -203,17 +211,21 @@ public class PipedInputStream extends InputStream
   }
 
   /**
-    * This method is used by the connected <code>PipedOutputStream</code> to
-    * write bytes into the buffer.
+    * <p>
+    *   This method is used by the connected <code>PipedOutputStream</code> to
+    *   write bytes into the buffer.
+    * </p>
+    * <p>
+    *   <b>specnote</b> This code should be in PipedOutputStream.write, but we
+    *                   put it here in order to support that bizarre recieve(int)
+    *                   method.
+    * </p>
     *
     * @param buf The array containing bytes to write to this stream
     * @param offset The offset into the array to start writing from
     * @param len The number of bytes to write.
     *
     * @exception IOException If an error occurs
-    * @specnote This code should be in PipedOutputStream.write, but we
-    *           put it here in order to support that bizarre recieve(int)
-    *           method.
     */  
   synchronized void receive(byte[] buf, int offset, int len)
     throws IOException

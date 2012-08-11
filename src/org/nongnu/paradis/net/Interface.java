@@ -18,7 +18,6 @@
 package org.nongnu.paradis.net;
 import org.nongnu.paradis.net.messages.*;
 import org.nongnu.paradis.local.*;
-import org.nongnu.paradis.local.Properties; //Explicit
 import org.nongnu.paradis.util.*;
 import org.nongnu.paradis.io.*;
 import org.nongnu.paradis.*;
@@ -38,7 +37,7 @@ public class Interface implements Blackboard.BlackboardObserver
     /**
      * The file containing the connection cache
      */
-    private static final String CONNECTION_CACHE_FILE = CONF.CACHE + "connections";
+    private static final String CONNECTION_CACHE_FILE = FSH.CACHE + "connections";
     
     
     

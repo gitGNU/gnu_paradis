@@ -43,7 +43,7 @@ public interface Cast
     /**
      * Gets the sender of the packet
      * 
-     * @param  uuid  The sender of the packet
+     * @return  The sender of the packet
      */
     public UUID getSender();
     

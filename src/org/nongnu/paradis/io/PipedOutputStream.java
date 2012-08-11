@@ -151,12 +151,14 @@ public class PipedOutputStream extends OutputStream
   }
 
   /**
-    * This method does nothing.
+    * <p>This method does nothing.</p>
+    * <p>
+    * <b>specnote</b> You'd think that this method would block until the sink
+    *                 had read all available data. That's not the case — this method
+    *                 appears to be a no-op?
+    * </p>
     *
     * @exception IOException If the stream is closed.
-    * @specnote You'd think that this method would block until the sink
-    *           had read all available data. Thats not the case - this method
-    *           appears to be a no-op?
     */
   public void flush() throws IOException
   {
