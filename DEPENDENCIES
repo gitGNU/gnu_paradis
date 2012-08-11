@@ -4,7 +4,7 @@ java-runtime>=7, provided by jdk7-openjdk:
 GNU General Public License, version 2, with GNU Classpath Exception
 http://openjdk.java.net/
 
-xz-java, provided by xz-java-git:
+xz-java:
 Public Domain,
 http://tukaani.org/xz/java.html
 
