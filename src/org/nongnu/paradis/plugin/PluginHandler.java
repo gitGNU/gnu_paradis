@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.nongnu.paradis.plugin;
+import org.nongnu.paradis.local.*;
 import org.nongnu.paradis.local.Properties; //Explicit
 import org.nongnu.paradis.*;
 
@@ -41,12 +42,12 @@ public class PluginHandler
     /**
      * The directory where the plug-ins are located
      */
-    private static final String PLUGIN_DIR = "~/.paradis/plugins".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    private static final String PLUGIN_DIR = FSH.CONF + "plugins";
     
     /**
      * The file where the settings are saved
      */
-    private static final String PLUGINS_FILE = "~/.paradis/plugins.data".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    private static final String PLUGINS_FILE = FSH.CONF + "plugins.data";
     
     
     

@@ -4,7 +4,6 @@ distributed hash table (¿ do we need this ?)
 encryption
 randomcast
 gettext
-use shared space for packages
 
 core plugins:
     uuid resolver

@@ -17,6 +17,7 @@
  */
 package org.nongnu.paradis.servers;
 import org.nongnu.paradis.pacman.*;
+import org.nongnu.paradis.local.*;
 import org.nongnu.paradis.local.Properties; //Explicit
 import org.nongnu.paradis.util.*;
 import org.nongnu.paradis.net.*;
@@ -41,7 +42,7 @@ public class PackageServer extends AbstractServer
     /**
      * The directory to where the packages are downloaded
      */
-    public static final String DOWNLOAD_DIR = "~/.paradis/downloads/".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    public static final String DOWNLOAD_DIR = FSH.SPOOL + "packages/downloaded/".replace("/", Properties.getFileSeparator());
     
     /**
      * Options with arguments

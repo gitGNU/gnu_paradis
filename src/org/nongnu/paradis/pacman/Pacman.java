@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.nongnu.paradis.pacman;
+import org.nongnu.paradis.local.*;
 import org.nongnu.paradis.local.Properties; //Explicit
 import org.nongnu.paradis.*;
 
@@ -32,17 +33,17 @@ public class Pacman
     /**
      * The directory where the packages are located
      */
-    public static final String PACKAGE_DIR = "~/.paradis/packages/".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    public static final String PACKAGE_DIR = FSH.SITE_PKG + "packages/".replace("/", Properties.getFileSeparator());
     
     /**
      * The file where the data are saved
      */
-    public static final String PACKAGES_FILE = "~/.paradis/packages.data".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    public static final String PACKAGES_FILE = FSH.SITE_PKG + "packages.data".replace("/", Properties.getFileSeparator());
     
     /**
      * File root for installed files
      */
-    public static final String FILE_ROOT = "~/.paradis/".replace("/", Properties.getFileSeparator()).replace("~", Properties.getHome());
+    public static final String FILE_ROOT = FSH.VAR + "installed/".replace("/", Properties.getFileSeparator());
     
     
     

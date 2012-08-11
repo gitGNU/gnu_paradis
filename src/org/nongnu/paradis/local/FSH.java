@@ -51,6 +51,9 @@ public class FSH
     /** Data for services provided by the system
      */ public static String SITE = "/srv/".replace("/", DIR).replace("<pkg>", PACKAGE).replace("<home>", HOME);
     
+    /** Data for services provided by the package
+     */ public static String SITE_PKG = "/srv/<pkg>".replace("/", DIR).replace("<pkg>", PACKAGE).replace("<home>", HOME);
+    
     /** Transient temporary files
      */ public static String TEMP_TRANSIENT = "/tmp/<pkg>/".replace("/", DIR).replace("<pkg>", PACKAGE).replace("<home>", HOME);
     
@@ -125,6 +128,9 @@ public class FSH
     
     /** Log files
      */ public static String LOGS = "/var/log/<pkg>/".replace("/", DIR).replace("<pkg>", PACKAGE).replace("<home>", HOME);
+    
+    /** Variable data for package, not fitting anywhere else
+     */ public static String VAR = "/var/<pkg>/".replace("/", DIR).replace("<pkg>", PACKAGE).replace("<home>", HOME);
     
     
     
