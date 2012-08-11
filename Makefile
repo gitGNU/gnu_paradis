@@ -11,6 +11,8 @@ all:
 
 ## INSTALL
 
+install-var: install-var-dirs install-var-files
+
 install-var-dirs:
 	install -d -m 7773 "/var/spool/paradis/packages/downloaded/"
 	chown   ":users"   "/var/spool/paradis/packages/downloaded/"
@@ -22,18 +24,19 @@ install-var-dirs:
 	chown   ":users"   "/var/paradis/installed/"
 
 install-var-files:
-	install -m 662 "/srv/paradis/packages.data"
+	touch     "/srv/paradis/packages.data"
+	chmod 662 "/srv/paradis/packages.data"
 
-install: all install-var-dirs install-var-files
+install: all install-var
 
 
 ## MISC
 
 uninstall:
-	rm -rf "/var/spool/paradis/"
-	rm -rf "/srv/paradis/"
-	rm -rf "/var/paradis/"
+	[[ -d "/var/spool/paradis/" ]] &&  rm -rf "/var/spool/paradis/"
+	[[ -d "/srv/paradis/" ]] &&        rm -rf "/srv/paradis/"
+	[[ -d "/var/paradis/" ]] &&        rm -rf "/var/paradis/"
 
 clean:
-	rm -rf bin
+	[[ -d "bin" ]] &&  rm -rf "bin"
 
