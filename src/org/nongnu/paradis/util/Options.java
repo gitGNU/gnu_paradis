@@ -22,12 +22,12 @@ import java.util.*;
 
 
 /**
- * ¿?
+ * Option parsing utility
  * 
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
 @SuppressWarnings("serial")
-public class Options extends HashMap<String, ArrayList<String>> //FIXME this class needs documentation
+public class Options extends HashMap<String, ArrayList<String>>
 {
     //Has default constructor
     
@@ -56,17 +56,20 @@ public class Options extends HashMap<String, ArrayList<String>> //FIXME this cla
     
     
     /**
-     * ¿?
+     * Parse options
      * 
-     * @param   masterArgumented    ¿?
-     * @param   masterArgumentless  ¿?
-     * @param   argumentless        ¿?
-     * @param   argumented          ¿?
-     * @param   args                ¿?
-     * @return                      ¿?
+     * @param   masterArgumented    Array of matrices akin to the <tt>argumented</tt>-matrix, except it is only used if no options as been fetched yet, and
+     *                              even indexed (zero-based) matrices are one row matrices that if matched, the next (odd index) matrix is merged into
+     *                              <tt>argumented</tt>. Naturally the match will be registrered as an used option.
+     * @param   masterArgumentless  Just like <tt>masterArgumented</tt>, except it contains options without arguments
+     * @param   argumented          Matrix (irregular) of all common options with arguments, each row (first dimension) describes options, for each cell in a row,
+     *                              a synonym option is put. The first column contains all standard synonym, those that is used in the code when reading the data.
+     * @param   argumentless        Just like <tt>argumented</tt>, except it contains the common options without arguments
+     * @param   args                All passed arguments, excluding the name of executable
+     * @return                      An instance of this class describing the options and arguments
      */
     @requires("java-runtime>=6")
-    public static Options get(final String[][][] masterArgumented, final String[][][] masterArgumentless, final String[][] argumentless, final String[][] argumented, final String[] args)
+    public static Options get(final String[][][] masterArgumented, final String[][][] masterArgumentless, final String[][] argumented, final String[][] argumentless, final String[] args)
     {
         final Options rc = new Options();
         
