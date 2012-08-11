@@ -124,8 +124,8 @@ done
 if [[ $paramDoc = 1 ]]; then
     ## generate javadoc
     docparams="-sourcepath src -source 7 -encoding utf-8 -version -author -charset utf-8 -linksource -sourcetab 8 -keywords -docencoding utf-8 -d doc/javadoc -private"
-    javadoc7 $docparams $(find src | grep '\.java$') $(find bin | grep '\.java$') ||
-    javadoc  £docparams $(find src | grep '\.java$') $(find bin | grep '\.java$')
+    javadoc7 $docparams $(find src | grep '\.java$') $(find bin | grep '\.java$') $(find dev/libsrc | grep '\.java$') ||
+    javadoc  $docparams $(find src | grep '\.java$') $(find bin | grep '\.java$') $(find dev/libsrc | grep '\.java$')
     
     ## fixing html heads
     old='<meta http-equiv="Content-Type" content="text\/html" charset="utf-8">'
