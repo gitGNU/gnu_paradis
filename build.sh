@@ -12,7 +12,7 @@
 ## package info
 program=paradis
 dirpackage=org.nongnu.${program}
-srcpackage=${dirpackage/:/\/}
+srcpackage=${sed -e 's/\./\//g' <<<$dirpackage}
 
 
 ## create directory for Java binaries
@@ -171,8 +171,8 @@ else
     fi &&
     
     ## compile annotations and annotation processorors
-    if [ -f 'src/se/kth/maandree/paradis/requires.java' ]; then
-        ( javacSeven $warns -cp .:bin$jars $params src/se/kth/maandree/paradis/{ATProcessor,requires}.java  2>&1
+    if [ -f 'src/'"$srcpackage"'/requires.java' ]; then
+        ( javacSeven $warns -cp .:bin$jars $params src/"$srcpackage"/{ATProcessor,requires}.java  2>&1
         ) | colourise
     fi &&
     
