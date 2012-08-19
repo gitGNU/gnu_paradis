@@ -21,6 +21,7 @@ import org.nongnu.paradis.*;
 import java.util.*;
 
 
+//TODO support for variadic
 /**
  * Option parsing utility
  * 
