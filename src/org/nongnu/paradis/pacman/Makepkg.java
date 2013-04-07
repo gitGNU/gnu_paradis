@@ -363,7 +363,7 @@ public class Makepkg
 	if (files == null)
 	    return null;
 	synchronized(SHA3.class)
-	{   final String[] rc = new Sring[files.length];
+	{   final String[] rc = new String[files.length];
 	    final byte[] buffer = new byte[DEFAULT_BLOCK_SIZE];
 	    
 	    int index = 0;
