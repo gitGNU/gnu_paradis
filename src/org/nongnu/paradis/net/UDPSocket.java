@@ -67,11 +67,6 @@ public class UDPSocket
     //** ASCII control character */ private static final byte INFORMATION_SEPARATOR_ONE = 0x1F;
     //** ASCII control character */ private static final byte DELETE = 0x7F;
     
-    /**
-     * Time to wait for acknowledgement before deeming receiver dead
-     */
-    public static final int TIME_OUT = 4000; // FIXME use user configurations
-    
     
     
     /**
@@ -226,7 +221,7 @@ public class UDPSocket
         
         synchronized (this.transmissionMonitor)
         {   try
-            {   this.transmissionMonitor.wait(TIME_OUT);
+	    {   this.transmissionMonitor.wait(NetConf.getTimeout());
                 if (this.waiting)
                 {   this.waiting = false;
                     synchronized (this.errors)
@@ -314,7 +309,7 @@ public class UDPSocket
         
         synchronized (this.enquiryMonitor)
         {   try
-            {   this.enquiryMonitor.wait(TIME_OUT);
+            {   this.enquiryMonitor.wait(NetConf.getTimeout());
                 if (this.ackWaiting)
                 {   this.ackWaiting = false;
                     return false;
