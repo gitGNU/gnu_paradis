@@ -24,7 +24,7 @@ import java.net.*;
 /**
  * Blackboard message to connect to remote machines
  * 
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public class MakeConnection implements Blackboard.BlackboardMessage
 {

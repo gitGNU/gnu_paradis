@@ -1,6 +1,6 @@
 /**
  *  Paradis — Ever growing network for parallel and distributed computing.
- *  Copyright © 2012  Mattias Andrée
+ *  Copyright © 2012, 2013  Mattias Andrée (maandree@member.fsf.org)
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * Multicast sending path information
  * 
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public class Multicast implements Cast
 {
@@ -90,7 +90,7 @@ public class Multicast implements Cast
     /**
      * Protocol for transfering {@link Multicast}s
      * 
-     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+     * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
      */
     public static class MulticastTransferProtocol implements TransferProtocol<Multicast>
     {

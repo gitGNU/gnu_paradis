@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Reads and writes INI- and INF-files
  *
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public class INI implements INIInterface
 {

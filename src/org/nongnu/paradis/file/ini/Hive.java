@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Instances of this class represents hives in a INI-file
  *
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 class Hive implements Serializable
 {

@@ -1,6 +1,6 @@
 /**
  *  Paradis — Ever growing network for parallel and distributed computing.
- *  Copyright © 2012  Mattias Andrée
+ *  Copyright © 2012, 2013  Mattias Andrée (maandree@member.fsf.org)
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ import java.io.IOException;
 /**
  * User identification class
  * 
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public class User implements Comparable<User>
 {
@@ -158,7 +158,7 @@ public class User implements Comparable<User>
     /**
      * Protocol for transfering {@link User}s
      * 
-     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+     * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
      */
     public static class UserTransferProtocol implements TransferProtocol<User>
     {

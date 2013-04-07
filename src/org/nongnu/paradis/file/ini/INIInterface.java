@@ -23,7 +23,7 @@ import java.io.Serializable;
 /**
  * Interface for INI needed to eliminate circle dependency
  *
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public interface INIInterface extends Serializable
 {

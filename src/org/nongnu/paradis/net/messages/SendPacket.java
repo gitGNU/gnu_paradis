@@ -23,7 +23,7 @@ import org.nongnu.paradis.*;
 /**
  * Blackboard message to send a packet
  * 
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public class SendPacket implements Blackboard.BlackboardMessage
 {

@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # This script is put in Public Domain
-# Year: 2012
-# Author: Mattias Andrée (maandree@kth.se)
+# Year: 2012, 2013
+# Author: Mattias Andrée (maandree@member.fsf.org)
 
 
 rm -r bin  2>  /dev/null

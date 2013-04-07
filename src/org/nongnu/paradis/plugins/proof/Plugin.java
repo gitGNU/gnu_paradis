@@ -24,7 +24,7 @@ import javax.swing.ImageIcon;
 /**
  * Proof-of-concept plug-in
  * 
- * @author   Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author   Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public class Plugin implements PluginV1
 {

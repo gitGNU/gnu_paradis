@@ -26,7 +26,7 @@ import java.util.*;
  *   This validator most be used if you don't want comments on your keyvalues.
  * </p>
  * 
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 public class Validator
 {

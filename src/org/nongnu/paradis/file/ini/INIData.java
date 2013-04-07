@@ -21,7 +21,7 @@ package org.nongnu.paradis.file.ini;
 /**
  * Instances of this class holds data for <code>INI</code>
  *
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 class INIData
 {

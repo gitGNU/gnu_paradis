@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * This is the root-level of the buffering class for the INI-file
  *
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 class TreeRoot implements Serializable
 {

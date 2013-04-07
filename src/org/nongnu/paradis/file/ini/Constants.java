@@ -21,7 +21,7 @@ package org.nongnu.paradis.file.ini;
 /**
  * This class holds constants used in the classes
  *
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 class Constants
 {

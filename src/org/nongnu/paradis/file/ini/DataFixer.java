@@ -23,7 +23,7 @@ import org.nongnu.paradis.file.ini.INI.KeyEnding;
 /**
  * This class is used to fix and clean the content in the INI-file
  *
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:maandree@member.fsf.org">maandree@member.fsf.org</a>
  */
 class DataFixer
 {
