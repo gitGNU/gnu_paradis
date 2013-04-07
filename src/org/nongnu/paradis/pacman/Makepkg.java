@@ -21,6 +21,7 @@ import org.nongnu.paradis.net.UUID;
 import org.nongnu.paradis.io.*;
 import org.nongnu.paradis.*;
 
+import se.kth.maandree.sha3sum.*;
 import org.tukaani.xz.*;
 import com.ice.tar.*;
 
@@ -35,6 +36,13 @@ import java.io.*;
  */
 public class Makepkg
 {
+    /**
+     * The default block size for files
+     */
+    private static int DEFAULT_BLOCK_SIZE = 8 << 10;
+    
+    
+    
     /**
      * Non-constructor
      */
@@ -350,10 +358,47 @@ public class Makepkg
      * @param   files  The files
      * @return         The files' checksums
      */
-    @SuppressWarnings("unused")
     public static String[] checksums(final String[] files)
     {
-        return new String[0]; //TODO calculate checksums
+	if (files == null)
+	    return null;
+	synchronized()
+	{   final String[] rc = new Sring[files.length];
+	    final byte[] buffer = new byte[DEFAULT_BLOCK_SIZE];
+	    
+	    int index = 0;
+	    for (final String file : files)
+	    {   SHA3.initialise(576, 1024, 1024);
+		final int blocksize = DEFAULT_BLOCK_SIZE; // XXX: ask the from file
+		try (final InputStream is = new FileInputStream(file))
+		{   for (;;)
+		    {   int read = is.read(buffer);
+			if (read <= 0)
+			    break;
+			SHA3.update(buffer, read);
+		}   }
+		rc[index] = "sha3[576,1024,1024]:" + hexsum(SHA3.digest());
+	    }
+	    
+	    return rc;
+	}
+    }
+    
+    
+    /**
+     * Converts a byte array for a checksum to hexadecimal representation
+     * 
+     * @param   sum  The checksum
+     * @return       Hexadecimal representation
+     */
+    private static String hexsum(final byte[] sum)
+    {
+	final char[] rc = new char[sum.length << 1];
+	for (int i = 0, n = sum.length; i < n; i++)
+	{   rc[(i << 1) | 0] = "0123456789ABCDEF".charAt((sum[i] >> 4) & 15);
+	    rc[(i << 1) | 1] = "0123456789ABCDEF".charAt((sum[i] >> 0) & 15);
+	}
+	return new String(rc);
     }
     
     

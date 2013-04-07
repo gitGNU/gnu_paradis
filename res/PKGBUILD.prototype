@@ -97,7 +97,7 @@ backup=()
 
 # File checksums
 # Element syntax: list of '|' (one pipe) separated algorithm:checksum,
-# whether algorithm is in lowercase and checksum is in upper case
+# where algorithms are in lower case and checksum is in upper case
 # dashless hexadecimal.
 autofill checksums
 
