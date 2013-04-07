@@ -35,6 +35,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
+[01;33mThis program uses parts of sha3sum: https://github.com/maandree/sha3sum[21;39m
+
+    sha3sum – SHA-3 (Keccak) checksum calculator
+    
+    [01;34mCopyright © 2013  Mattias Andrée  (maandree@member.fsf.org)[21;39m
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the [01;31mGNU General Public License[21;39m as published by
+    the Free Software Foundation, either [31mversion 3[39m of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
 [01;33mThis program uses parts of GNU Classpath:[21;39m
 
     The software in this package is distributed under the [01;31mGNU General Public
