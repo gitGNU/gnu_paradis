@@ -86,7 +86,7 @@ public class ATProcessor extends AbstractProcessor
                         nhigh = parts[2];
                     else
                     {
-                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        System.out.println("\033[31mUnparsable: " + req + "\033[00m");
                         continue;
                     }
                 }
@@ -98,7 +98,7 @@ public class ATProcessor extends AbstractProcessor
                         nlow = parts[0];
                     else
                     {
-                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        System.out.println("\033[31mUnparsable: " + req + "\033[00m");
                         continue;
                     }
                     
@@ -108,20 +108,20 @@ public class ATProcessor extends AbstractProcessor
                         nhigh = parts[4];
                     else
                     {
-                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        System.out.println("\033[31mUnparsable: " + req + "\033[00m");
                         continue;
                     }
                     
                     if ((nlow == null) || (nhigh == null) || isGreater(nlow, nhigh))
                     {
                         nlow = nhigh = null;
-                        System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                        System.out.println("\033[31mUnparsable: " + req + "\033[00m");
                         continue;
                     }
                 }
                 else if (parts.length != 1)
                 {
-                    System.out.println("\033[31mUnparsable: " + req + "\033[39m");
+                    System.out.println("\033[31mUnparsable: " + req + "\033[00m");
                     continue;
                 }
                 
@@ -150,7 +150,7 @@ public class ATProcessor extends AbstractProcessor
                 else                                    System.out.println("  " + pkg);
             }
             
-            System.out.println("\033[39m");
+            System.out.println("\033[00m");
         }
         
         return true;

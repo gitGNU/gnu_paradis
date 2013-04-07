@@ -1,9 +1,9 @@
-[01;33mParadis — Ever growing network for parallel and distributed computing.[21;39m
-[01;34mCopyright © 2012, 2013  Mattias Andrée  (maandree@member.fsf.org)[21;39m
+[01;33mParadis — Ever growing network for parallel and distributed computing.[00m
+[01;34mCopyright © 2012, 2013  Mattias Andrée  (maandree@member.fsf.org)[00m
 
-This program is [01;31mfree software[21;39m: you can redistribute it and/or modify
-it under the terms of the [01;31mGNU Affero General Public License[21;39m as published by
-the Free Software Foundation, either [31mversion 3[39m of the License, or
+This program is [01;31mfree software[00m: you can redistribute it and/or modify
+it under the terms of the [01;31mGNU Affero General Public License[00m as published by
+the Free Software Foundation, either [31mversion 3[00m of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -16,13 +16,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-[01;33mImage in this programs are licensed under GNU General Public License 3:[21;39m
+[01;33mImage in this programs are licensed under GNU General Public License 3:[00m
 
-    [01;34mCopyright © 2010  Mattias Andrée  (maandree@member.fsf.org)[21;39m
+    [01;34mCopyright © 2010  Mattias Andrée  (maandree@member.fsf.org)[00m
 
     This media is free software: you can redistribute it and/or modify
-    it under the terms of the [01;31mGNU General Public License[21;39m as published by
-    the Free Software Foundation, either [31mversion 3[39m of the License, or
+    it under the terms of the [01;31mGNU General Public License[00m as published by
+    the Free Software Foundation, either [31mversion 3[00m of the License, or
     (at your option) any later version.
 
     This media is distributed in the hope that it will be useful,
@@ -35,15 +35,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-[01;33mThis program uses parts of sha3sum: https://github.com/maandree/sha3sum[21;39m
+[01;33mThis program uses parts of sha3sum: https://github.com/maandree/sha3sum[00m
 
     sha3sum – SHA-3 (Keccak) checksum calculator
     
-    [01;34mCopyright © 2013  Mattias Andrée  (maandree@member.fsf.org)[21;39m
+    [01;34mCopyright © 2013  Mattias Andrée  (maandree@member.fsf.org)[00m
     
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the [01;31mGNU General Public License[21;39m as published by
-    the Free Software Foundation, either [31mversion 3[39m of the License, or
+    it under the terms of the [01;31mGNU General Public License[00m as published by
+    the Free Software Foundation, either [31mversion 3[00m of the License, or
     (at your option) any later version.
     
     This program is distributed in the hope that it will be useful,
@@ -56,10 +56,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-[01;33mThis program uses parts of GNU Classpath:[21;39m
+[01;33mThis program uses parts of GNU Classpath:[00m
 
     The software in this package is distributed under the [01;31mGNU General Public
-    License (with a special exception described below)[21;39m.
+    License (with a special exception described below)[00m.
     
     A copy of GNU General Public License (GPL) is included in this distribution,
     in the file COPYING.  If you do not have the source code, it is available at:
@@ -81,5 +81,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       or based on this library.  If you modify this library, you may extend
       this exception to your version of the library, but you are not
       obligated to do so.  If you do not wish to do so, delete this
-      exception statement from your version.[39m
+      exception statement from your version.[00m
 

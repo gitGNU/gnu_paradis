@@ -89,7 +89,7 @@ public class Chat
                                     final int len = socket.inputStream.read(buf);
                                     System.out.print("\033[33m");
                                     System.out.write(buf, 0, len);
-                                    System.out.print("\033[39m\n");
+                                    System.out.print("\033[00m\n");
                                     System.out.flush();
                                 }
                             }
@@ -107,7 +107,7 @@ public class Chat
                     return;
                 }
                 else if (line.equals("?"))
-                {   System.out.println("\033[34m" + (socket.isAlive() ? "alive" : "dead") + "\033[39m");
+                {   System.out.println("\033[34m" + (socket.isAlive() ? "alive" : "dead") + "\033[00m");
                 }
                 else
                 {   socket.outputStream.write(line.getBytes("UTF-8"));

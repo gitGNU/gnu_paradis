@@ -90,7 +90,7 @@ public class MultiChat
                                                             synchronized (System.out)
                                                             {   System.out.print("\033[" + sockcolour + "m");
                                                                 System.out.write(buf, 0, len);
-                                                                System.out.print("\033[39m\n");
+                                                                System.out.print("\033[00m\n");
                                                                 System.out.flush();
                                                      }   }   }
                                                     catch (final Throwable err)
@@ -134,7 +134,7 @@ public class MultiChat
                                             synchronized (System.out)
                                             {   System.out.print("\033[" + sockcolour + "m");
                                                 System.out.write(buf, 0, len);
-                                                System.out.print("\033[39;49m\n");
+                                                System.out.print("\033[00m\n");
                                                 System.out.flush();
                                     }   }   }
                                     catch (final Throwable err)
@@ -150,9 +150,9 @@ public class MultiChat
                     synchronized (System.out)
                     {   synchronized (sockets)
                         {   for (final UDPSocket socket : sockets)
-                            {   System.out.println("\033[1;" + Integer.toString(c++) + "m" + (socket.isAlive() ? "alive" : "dead") + "\033[21;39;49m");
+                            {   System.out.println("\033[1;" + Integer.toString(c++) + "m" + (socket.isAlive() ? "alive" : "dead") + "\033[00m");
                         }   }
-                        System.out.println("\033[35mdone\033[39m");
+                        System.out.println("\033[35mdone\033[00m");
                     }
                 }
                 else
@@ -164,7 +164,7 @@ public class MultiChat
                             socket.outputStream.flush();
                     }   }
                     synchronized (System.out)
-                    {   System.out.println("\033[35mdone\033[39m");
+                    {   System.out.println("\033[35mdone\033[00m");
                     }
                 }
         }
