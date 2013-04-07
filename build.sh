@@ -18,7 +18,7 @@
 ## package info
 program=paradis
 dirpackage=org.nongnu.${program}
-srcpackage=${sed -e 's/\./\//g' <<<$dirpackage}
+srcpackage=$(sed -e 's/\./\//g' <<<$dirpackage)
 
 
 ## create directory for Java binaries
