@@ -357,8 +357,10 @@ public class Makepkg
      * 
      * @param   files  The files
      * @return         The files' checksums
+     * 
+     * @throws  IOException  On file reading error
      */
-    public static String[] checksums(final String[] files)
+    public static String[] checksums(final String[] files) throws IOException
     {
 	if (files == null)
 	    return null;
