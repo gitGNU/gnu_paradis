@@ -8,4 +8,4 @@ gettext
 core plugins:
     uuid resolver
     uuid fetcher
-    union routing
+    onion routing
