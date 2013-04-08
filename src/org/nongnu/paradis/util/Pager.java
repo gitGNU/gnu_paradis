@@ -178,15 +178,11 @@ public class Pager
 			    buf[ptr++] = bf.charAt(j);
 		    }
 	    }   }
-	    else if ((c == '\f') || (c == '\n'))
+	    else if (c == '\n')
 	    {   if (colour == null)
 		    lines.append(new String(buf, ptr));
 		else
 		    lines.append(new String(buf, ptr) + "\033[00m");
-		if (c == '\f')
-		{   lines.append("");
-		    lines.append("");
-		}
 		ptr = 0;
 		if (colour != null)
 		    for (int j = 0, jn = colour.length(); j < jn; j++)
@@ -194,7 +190,7 @@ public class Pager
 	    }
 	    else if (c == '\033')
 		esc = 1;
-	    else
+	    else if (c != '\f')
 		buf[ptr++] = c;
 	}
 	
@@ -219,25 +215,52 @@ public class Pager
 	    final int rows = Integer.parseInt(rows_cols[0]);
 	    final int cols = Integer.parseInt(rows_cols[1]);
 	    
+	    esc = 0;
 	    for (int d; (d = System.in.read()) != -1;)
 	    {
-		if ((d == 'h') || (d == 'H'))
-		    ;//h --> help
+		if (esc == 1)
+		    if (d == '\033')
+			;// esc esc --> quit
+		    else if (d == 'O')
+			esc = 2;
+		    else if (d == '[')
+			esc = 3;
+		    else
+			esc = 0;
+		else if (esc == 2)
+		    if (d == 'H')
+			;//home
+		    else if (d == 'F')
+			;//end
+		    else
+			esc = 0;
+		else if (esc == 3)
+		{   if (c == 'A')
+			;//up
+		    else if (c == 'B')
+			;//down
+		    else if (c == '2')
+			;//home
+		    else if (c == '3')
+			;//end
+		    else if (c == '5')
+			;//page up
+		    else if (c == '6')
+			;//page down
+		    esc = 0;
+		}
 		else if ((d == 'l') || (d == 'L') || (d == 'L' - '@'))
 		    ;//l --> reload terminal size and reprint
 		else if ((d == 'q') || (d == 'Q') || (d == '\n'))
 		    ;//q --> quit
 		else if (d == ' ')
-		    ;//space --> paragraph down
-		//arrows --> navigate  \e[A=↑ \e[B=↓ \e[C=→ \e[D=←
-		//home(\eOH \e[2~)/end(\eOF \e[3~)/pgup(\e[5~)/pgdn(\e[6~) --> navigate
-		//esc esc esc --> quit
-		
+		    ;//space --> 5 lines down
+		else if (d == '\033')
+		    esc = 1;
 		
 		//show title
 		//show content
 		//show status bar
-		//  h for help
 		//  q for quit
 		//  All/Top/Bot/??%
 		//  first line - last line
