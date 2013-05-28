@@ -21,7 +21,7 @@ import javax.swing.ImageIcon;
 
 
 /**
- * Plug-ins most implement this interface or a newer version.<br/>
+ * Plug-ins must implement this interface or a newer version.<br/>
  * Public nullary (default) construct.<br/>
  * Implemention class should be named {@code Plugin}.
  * 
